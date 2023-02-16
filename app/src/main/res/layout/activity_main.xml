@@ -1,18 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/blue_fon"
+    android:orientation="vertical">
 
     <TextView
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_width="wrap_content"
+        android:text="@string/playlist_maker"
+        android:textColor="@color/white"
+        android:textSize="@dimen/standard_text_size"
+        android:layout_marginTop="14dp"
+        android:layout_marginStart="@dimen/standard_margin"
+        android:layout_marginBottom="@dimen/standard_margin"
+        />
+    <Button
+        android:id="@+id/search"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginLeft="@dimen/standard_margin"
+        android:layout_marginRight="@dimen/standard_margin"
+        android:layout_weight="1"
+        android:backgroundTint="@color/white"
+        app:cornerRadius="@dimen/button_corner_radius"
+        app:icon="@drawable/search"
+        app:iconGravity="textStart"
+        app:iconPadding="@dimen/icon_padding"
+        app:iconTint="@color/black"
+        android:textAllCaps="false"
+        android:textSize="@dimen/standard_text_size"
+        android:text="@string/find_button"
+        android:textColor="@color/black"
+        android:foreground="?attr/selectableItemBackground"
+        />
+    <Button
+        android:id="@+id/media"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginLeft="@dimen/standard_margin"
+        android:layout_marginRight="@dimen/standard_margin"
+        android:layout_weight="1"
+        android:backgroundTint="@color/white"
+        app:cornerRadius="@dimen/button_corner_radius"
+        app:icon="@drawable/media"
+        app:iconGravity="textStart"
+        app:iconPadding="@dimen/icon_padding"
+        app:iconTint="@color/black"
+        android:textAllCaps="false"
+        android:textSize="@dimen/standard_text_size"
+        android:text="@string/media_button"
+        android:textColor="@color/black"
+        android:foreground="?attr/selectableItemBackground"
+        />
+    <Button
+        android:id="@+id/search_button"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginLeft="@dimen/standard_margin"
+        android:layout_marginRight="@dimen/standard_margin"
+        android:layout_weight="1"
+        android:backgroundTint="@color/white"
+        app:cornerRadius="@dimen/button_corner_radius"
+        app:icon="@drawable/search"
+        app:iconGravity="textStart"
+        app:iconPadding="@dimen/icon_padding"
+        app:iconTint="@color/black"
+        android:textAllCaps="false"
+        android:textSize="@dimen/standard_text_size"
+        android:text="@string/settings_button"
+        android:textColor="@color/black"
+        android:foreground="?attr/selectableItemBackground"
+        />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
