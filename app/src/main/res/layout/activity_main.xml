@@ -17,7 +17,7 @@
         android:layout_marginBottom="@dimen/standard_margin"
         />
     <Button
-        android:id="@+id/search"
+        android:id="@+id/search_button"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginLeft="@dimen/standard_margin"
@@ -36,7 +36,7 @@
         android:foreground="?attr/selectableItemBackground"
         />
     <Button
-        android:id="@+id/media"
+        android:id="@+id/media_button"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginLeft="@dimen/standard_margin"
@@ -55,7 +55,7 @@
         android:foreground="?attr/selectableItemBackground"
         />
     <Button
-        android:id="@+id/search_button"
+        android:id="@+id/setting_button"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginLeft="@dimen/standard_margin"
