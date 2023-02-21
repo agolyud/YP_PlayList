@@ -12,10 +12,11 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-
-        val toolbar = findViewById<Toolbar>(R.id.settings_toolbar)
-        toolbar.setNavigationOnClickListener { onBackPressed() }
-
+        val homeButton = findViewById<Button>(R.id.settings_toolbar)
+        homeButton.setOnClickListener {
+            val displayIntent = Intent(this, MainActivity::class.java)
+            startActivity(displayIntent)
         }
     }
+}
 
