@@ -14,8 +14,7 @@ class SettingsActivity : AppCompatActivity() {
 
         val homeButton = findViewById<Button>(R.id.settings_toolbar)
         homeButton.setOnClickListener {
-            val displayIntent = Intent(this, MainActivity::class.java)
-            startActivity(displayIntent)
+            finish()
         }
     }
 }
