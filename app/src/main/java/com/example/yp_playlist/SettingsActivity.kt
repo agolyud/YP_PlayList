@@ -21,6 +21,8 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
 
+        findViewById<Switch>(R.id.switch_compat).isChecked = AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
+
         findViewById<Switch>(R.id.switch_compat).setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
