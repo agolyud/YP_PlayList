@@ -9,4 +9,10 @@
     <string name="share_application">Поделиться приложением</string>
     <string name="black_theme">Темная тема</string>
     <string name="playlist_maker">Playlist maker</string>
+
+    <string name="supportMessage">«Спасибо разработчикам и разработчицам за крутое приложение!»</string>
+    <string name="supportMail">support@yandex.ru</string>
+    <string name="mailSubject">«Сообщение разработчикам и разработчицам приложения Playlist Maker»</string>
+    <string name="agreement">https://yandex.ru/legal/practicum_offer/</string>
+    <string name="android_development_course">https://practicum.yandex.ru/android-developer/</string>
 </resources>

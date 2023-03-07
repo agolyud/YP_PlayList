@@ -61,6 +61,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/Share"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -92,6 +93,7 @@
 
 
     <LinearLayout
+        android:id="@+id/Support"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -122,6 +124,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/Agreement"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
