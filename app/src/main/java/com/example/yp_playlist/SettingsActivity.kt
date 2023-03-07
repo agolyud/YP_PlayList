@@ -6,7 +6,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 
 class SettingsActivity : AppCompatActivity() {
@@ -18,6 +20,15 @@ class SettingsActivity : AppCompatActivity() {
         homeButton.setOnClickListener {
             finish()
         }
+
+        findViewById<Switch>(R.id.switch_compat).setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+        }
+
         val shareButton = findViewById<LinearLayout>(R.id.Share)
         shareButton.setOnClickListener {
             val androidDevelopment = getString(R.string.android_development_course)

@@ -68,4 +68,16 @@ class SearchActivity : AppCompatActivity() {
             imm.hideSoftInputFromWindow(searchEditText.windowToken, 0)
         }
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        val searchText = searchEditText.text.toString()
+        outState.putString("searchText", searchText)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        val searchText = savedInstanceState.getString("searchText")
+        searchEditText.setText(searchText)
+    }
 }
