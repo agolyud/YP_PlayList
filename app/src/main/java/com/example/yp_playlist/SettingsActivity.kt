@@ -21,7 +21,8 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
 
-        findViewById<Switch>(R.id.switch_compat).isChecked = AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
+        findViewById<Switch>(R.id.switch_compat).isChecked =
+            AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
 
         findViewById<Switch>(R.id.switch_compat).setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -42,23 +43,27 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         val supportButton = findViewById<LinearLayout>(R.id.Support)
-        supportButton.setOnClickListener{
-            val callSupport = Intent(Intent.ACTION_SENDTO).apply {
+        supportButton.setOnClickListener {
+
+            Intent(Intent.ACTION_SENDTO).apply {
                 data = Uri.parse("mailto:")
                 putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.supportMail)))
                 putExtra(Intent.EXTRA_SUBJECT, getString(R.string.mailSubject))
                 putExtra(Intent.EXTRA_TEXT, getString(R.string.supportMessage))
+                startActivity(this)
             }
-            startActivity(callSupport)
         }
 
-        val agreementButton = findViewById<LinearLayout>(R.id.Agreement)
-        agreementButton.setOnClickListener {
-            val openPage = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.agreement)))
-            startActivity(openPage)
-        }
 
+            val agreementButton = findViewById<LinearLayout>(R.id.Agreement)
+            agreementButton.setOnClickListener {
+                val openPage = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.agreement)))
+                startActivity(openPage)
+            }
+
+
+        }
 
     }
-}
+
 

@@ -59,7 +59,7 @@
         android:padding="8dp"
         android:paddingStart="12dp"
         android:paddingEnd="32dp"
-        android:textColor="?attr/settingsPageTitleText"
+        android:textColor="@color/black"
         android:textColorHint="@color/light_grey"
         android:textCursorDrawable="@drawable/color_cursor"
 
