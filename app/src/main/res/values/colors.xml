@@ -11,4 +11,5 @@
     <color name="white_fon">#F5F5F5</color>
     <color name="light_grey">#AEAFB4</color>
     <color name="button_text">#1A1B22</color>
+    <color name="grey_tint_search">#E6E8EB</color>
 </resources>
