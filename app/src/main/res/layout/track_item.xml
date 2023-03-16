@@ -9,8 +9,8 @@
 
     <ImageView
         android:id="@+id/trackImage"
-        android:layout_width="@dimen/layout_width_48"
-        android:layout_height="@dimen/layout_height_48"
+        android:layout_width="@dimen/layout_width_45"
+        android:layout_height="@dimen/layout_height_45"
         android:src="@drawable/placeholder"
         android:layout_margin="@dimen/button_margins"
         android:layout_gravity="center_vertical"/>
@@ -25,7 +25,7 @@
         <TextView
             android:id="@+id/trackName"
             style="@style/track_view"
-            android:textColor="?attr/colorOnSecondary"
+            android:textColor="?attr/settingsPageTitleText"
             android:textSize="@dimen/button_corner_radius"
             tools:text="Song title"/>
 
@@ -43,6 +43,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                style="@style/track_view"
                 android:src="@drawable/ellipse"
                 android:layout_margin="@dimen/textSize2"/>
 

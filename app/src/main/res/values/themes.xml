@@ -36,5 +36,14 @@
                 <item name="settingsPageBackground">@color/white_fon</item>
             </style>
 
+    <style name="textColor_Artist">
+        <item name="android:textColor">#AEAFB4</item>
+        <item name="android:drawableTint">#AEAFB4</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
 
         </resources>
