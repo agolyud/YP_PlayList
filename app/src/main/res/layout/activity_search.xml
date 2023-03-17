@@ -76,5 +76,12 @@
         android:visibility="invisible"
         app:tint="@color/light_grey" />
 </FrameLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/trackRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="@dimen/small_text_size"
+        android:paddingTop="@dimen/padding_24"
+        />
 
 </LinearLayout>

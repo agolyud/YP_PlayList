@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:theme="@style/Theme.YP_PlayList.Settings">
+
+    <ImageView
+        android:id="@+id/trackImage"
+        android:layout_width="@dimen/layout_width_45"
+        android:layout_height="@dimen/layout_height_45"
+        android:src="@drawable/placeholder"
+        android:layout_margin="@dimen/button_margins"
+        android:layout_gravity="center_vertical"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/trackName"
+            style="@style/track_view"
+            android:textColor="?attr/settingsPageTitleText"
+            android:textSize="@dimen/button_corner_radius"
+            tools:text="Song title"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="@dimen/marginTextTrack">
+
+            <TextView
+                android:id="@+id/artistName"
+                style="@style/track_view"
+                tools:text="The artist of the song"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/track_view"
+                android:src="@drawable/ellipse"
+                android:layout_margin="@dimen/textSize2"/>
+
+            <TextView
+                android:layout_weight="0"
+                android:id="@+id/trackTime"
+                style="@style/track_view"
+                tools:text="5:01"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <ImageView
+        style="@style/ImageViewSettings"
+        android:layout_marginEnd="24dp"
+        android:src="@drawable/arrow_forward"/>
+</LinearLayout>

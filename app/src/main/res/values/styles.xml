@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="MainButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:layout_width">match_parent</item>
@@ -43,6 +43,25 @@
         <item name="android:backgroundTint">?attr/settingsPageBackground</item>
         <item name="android:textColor">?attr/settingsPageButtonText</item>
         <item name="android:textSize">@dimen/small_text_size</item>
+    </style>
+    <style name="track_view">
+
+            <item name="android:textColor">#AEAFB4</item>
+            <item name="android:drawableTint">#AEAFB4</item>
+            <item name="android:fontFamily">@font/ys_display_medium</item>
+            <item name="android:textSize">12sp</item>
+            <item name="android:layout_width">wrap_content</item>
+            <item name="android:layout_height">wrap_content</item>
+
+    </style>
+
+    <style name="ImageViewSettings">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">end|center_vertical</item>
+        <item name="android:layout_margin">@dimen/margin_settings_20</item>
+        <item name="android:textColor">#AEAFB4</item>
+        <item name="android:checked">false</item>
     </style>
 
 </resources>
