@@ -15,4 +15,5 @@
     <dimen name="marginTextTrack">1dp</dimen>
     <dimen name="margin_settings_20">20dp</dimen>
     <dimen name="textSize2">5dp</dimen>
+    <dimen name="text_size_14">14dp</dimen>
 </resources>

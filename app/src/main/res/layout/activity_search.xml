@@ -9,79 +9,120 @@
     android:theme="@style/Theme.YP_PlayList.Settings">
 
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="40dp"
-    android:orientation="horizontal">
-
-    <Button
-        android:id="@+id/settings_toolbar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:backgroundTint="?attr/settingsPageBackground"
-        android:stateListAnimator="@null"
-        app:icon="@drawable/back"
-        app:iconGravity="textStart"
-        app:iconTint="?attr/settingsPageTitleText"/>
-
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/find_button"
-        android:textColor="?attr/settingsPageTitleText"
-        android:textSize="@dimen/standard_text_size"
-        />
-</LinearLayout>
+        android:layout_marginBottom="40dp"
+        android:orientation="horizontal">
 
-<FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="16dp">
+        <Button
+            android:id="@+id/settings_toolbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:backgroundTint="?attr/settingsPageBackground"
+            android:stateListAnimator="@null"
+            app:icon="@drawable/back"
+            app:iconGravity="textStart"
+            app:iconTint="?attr/settingsPageTitleText" />
 
-    <EditText
-        android:background="@drawable/edittext"
-        android:id="@+id/SearchForm"
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/find_button"
+            android:textColor="?attr/settingsPageTitleText"
+            android:textSize="@dimen/standard_text_size" />
+    </LinearLayout>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="36dp"
-        android:backgroundTint="@color/grey_tint_search"
-        android:drawableStart="@drawable/search"
-        android:drawablePadding="8dp"
-        android:drawableTint="@color/light_grey"
-        android:fontFamily="@font/ys_display_regular"
-        android:hint="@string/find_button"
-        android:inputType="text"
-        android:maxLength="255"
-        android:maxLines="1"
-        android:padding="8dp"
-        android:paddingStart="12dp"
-        android:paddingEnd="32dp"
-        android:textColor="@color/black"
-        android:textColorHint="@color/light_grey"
-        android:textCursorDrawable="@drawable/color_cursor"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
 
-        />
+        <EditText
+            android:id="@+id/SearchForm"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:background="@drawable/edittext"
+            android:backgroundTint="@color/grey_tint_search"
+            android:drawableStart="@drawable/search"
+            android:drawablePadding="8dp"
+            android:drawableTint="@color/light_grey"
+            android:fontFamily="@font/ys_display_regular"
+            android:hint="@string/find_button"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:maxLength="255"
+            android:maxLines="1"
+            android:padding="8dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="32dp"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textColorHint="@color/light_grey"
+            android:textCursorDrawable="@drawable/color_cursor" />
 
-    <ImageView
-        android:id="@+id/clear"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:layout_gravity="center|end"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="12dp"
-        android:src="@android:drawable/ic_menu_close_clear_cancel"
-        android:visibility="invisible"
-        app:tint="@color/light_grey" />
-</FrameLayout>
+        <ImageView
+            android:id="@+id/clear"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="center|end"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="12dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:visibility="invisible"
+            app:tint="@color/light_grey" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/trackRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingHorizontal="@dimen/small_text_size"
-        android:paddingTop="@dimen/padding_24"
-        />
+        android:paddingTop="@dimen/padding_24" />
 
+    <LinearLayout
+        android:id="@+id/placeholderNothingWasFound"
+        style="@style/search_plaseholder">
+
+        <ImageView
+            style="@style/search_image"
+            android:src="@drawable/error_no_data" />
+
+        <TextView
+            style="@style/search_textview"
+            android:text="@string/no_data" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/placeholderCommunicationsProblem"
+        style="@style/search_plaseholder">
+
+        <ImageView
+            style="@style/search_image"
+            android:src="@drawable/error_no_data" />
+
+        <TextView
+            style="@style/search_textview"
+            android:text="@string/no_connection" />
+
+
+        <Button
+            android:id="@+id/button_return"
+            style="@style/search_button_refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/ys_display_medium"
+            android:inputType="textCapSentences"
+            android:text="@string/refresh_button"
+            android:textSize="@dimen/text_size_14" />
+    </LinearLayout>
+    </FrameLayout>
 </LinearLayout>

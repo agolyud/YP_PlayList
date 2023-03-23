@@ -64,4 +64,37 @@
         <item name="android:checked">false</item>
     </style>
 
+    <style name="search_textview">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/padding_24</item>
+        <item name="android:layout_marginEnd">@dimen/padding_24</item>
+        <item name="android:layout_marginBottom">@dimen/padding_24</item>
+        <item name="iconTint">@color/button_text</item>
+        <item name="android:textSize">@dimen/margin_settings_20</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="search_plaseholder">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">86dp</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:visibility">invisible</item>
+    </style>
+
+    <style name="search_image">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical|center</item>
+        <item name="android:layout_marginBottom">@dimen/button_corner_radius</item>
+    </style>
+
+    <style name="search_button_refresh">
+        <item name="cornerRadius">54dp</item>
+        <item name="android:backgroundTint">@color/button_text</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
 </resources>
