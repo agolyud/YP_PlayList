@@ -7,6 +7,7 @@
     <dimen name="small_text_size">16sp</dimen>
     <dimen name="icon_padding">10dp</dimen>
     <dimen name="button_corner_radius">16dp</dimen>
+    <dimen name="text_16sp">16sp</dimen>
     <dimen name="settings_text_margin">21dp</dimen>
     <dimen name="page_button">30dp</dimen>
     <dimen name="padding_24">24dp</dimen>
@@ -15,4 +16,6 @@
     <dimen name="marginTextTrack">1dp</dimen>
     <dimen name="margin_settings_20">20dp</dimen>
     <dimen name="textSize2">5dp</dimen>
+    <dimen name="text_size_14">14dp</dimen>
+    <dimen name="corner_radius">2dp</dimen>
 </resources>

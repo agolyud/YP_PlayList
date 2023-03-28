@@ -26,7 +26,9 @@
             android:id="@+id/trackName"
             style="@style/track_view"
             android:textColor="?attr/settingsPageTitleText"
-            android:textSize="@dimen/button_corner_radius"
+            android:textSize="@dimen/text_16sp"
+            android:maxLines="1"
+            android:ellipsize="end"
             tools:text="Song title"/>
 
         <LinearLayout
@@ -38,6 +40,9 @@
             <TextView
                 android:id="@+id/artistName"
                 style="@style/track_view"
+                android:ellipsize="end"
+                android:lines="1"
+                android:layout_weight="1"
                 tools:text="The artist of the song"/>
 
             <ImageView
