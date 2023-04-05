@@ -35,20 +35,18 @@ class SearchActivity : AppCompatActivity() {
         .build()
 
     private val tracksApi = retrofit.create(iTunesApi::class.java)
-    private val trackAdapter = TrackAdapter ()
+    private var trackAdapter = TrackAdapter ()
+    private var tracksHistoryAdapter = TrackAdapter()
     lateinit var placeholderNothingWasFound: LinearLayout
     lateinit var placeholderCommunicationsProblem: LinearLayout
     lateinit var buttonReturn: Button
     private lateinit var searchEditText: EditText
     private lateinit var clearButton: ImageView
 
-    //lateinit var historyList: LinearLayout
+
     lateinit var buttonClear: Button
-    lateinit var sharedPref: SharedPreferences
     lateinit var searchHistory: SearchHistory
-
     lateinit var historyList: LinearLayout
-
     var historyTracks  = ArrayList<Track>()
 
 
@@ -59,8 +57,11 @@ class SearchActivity : AppCompatActivity() {
         val trackRecyclerView = findViewById<RecyclerView>(R.id.trackRecyclerView)
         trackRecyclerView.layoutManager = LinearLayoutManager(this)
 
+
         val historyRecyclerView = findViewById<RecyclerView>(R.id.recyclerViewHistory)
         historyRecyclerView.layoutManager = LinearLayoutManager(this)
+        historyRecyclerView.adapter = tracksHistoryAdapter
+
 
         val homeButton = findViewById<Button>(R.id.settings_toolbar)
         homeButton.setOnClickListener {
@@ -74,19 +75,17 @@ class SearchActivity : AppCompatActivity() {
         placeholderNothingWasFound = findViewById(R.id.placeholderNothingWasFound)
         placeholderCommunicationsProblem = findViewById(R.id.placeholderCommunicationsProblem)
         buttonReturn = findViewById(R.id.button_return)
-
         historyList = findViewById(R.id.history_list)
-
         buttonClear = findViewById(R.id.clearHistoryButton)
 
-        //Shared Preferences
-        sharedPref = getSharedPreferences(HISTORY_TRACKS_SHARED_PREF, MODE_PRIVATE)
 
         //Объект класса для работы с историей поиске
-        searchHistory = SearchHistory(sharedPref)
-
-        //Присвоить значение из сохраненного поиска треков
+        searchHistory = SearchHistory(getSharedPreferences(HISTORY_TRACKS_SHARED_PREF, Context.MODE_PRIVATE))
         historyTracks = searchHistory.tracksHistoryFromJson() as ArrayList<Track>
+        if (historyTracks.isNotEmpty()) {
+            historyList.visibility = View.VISIBLE
+            tracksHistoryAdapter.updateTracks(historyTracks)
+        }
 
 
         // Если поисковый запрос пустой, то кнопка не отображается
@@ -114,20 +113,28 @@ class SearchActivity : AppCompatActivity() {
             false
         }
 
+        searchEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                historyList.visibility = View.VISIBLE
+            } else {
+                historyList.visibility = View.INVISIBLE
+            }
+        }
+
         //Очистка истории поиска
-        buttonClear.setOnClickListener(){
+
+        buttonClear.setOnClickListener {
             searchHistory.clearHistory()
             historyTracks = searchHistory.tracksHistoryFromJson() as ArrayList<Track>
-            trackAdapter.updateTracksHistory(emptyList())
-            trackAdapter.notifyDataSetChanged()
+            tracksHistoryAdapter.updateTracks(historyTracks)
             historyList.visibility = View.INVISIBLE
         }
 
-        trackAdapter.itemClickListener = { position, track ->
+
+        trackAdapter.itemClickListener =  { position, track ->
             searchHistory.addTrack(track, position)
-            historyTracks = searchHistory.tracksHistoryFromJson() as ArrayList<Track>
-            historyTracks.addAll(historyTracks)
         }
+
 
 
         // Нажатие на поле ввода
@@ -136,6 +143,7 @@ class SearchActivity : AppCompatActivity() {
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT)
             }
+
         }
 
         //Повторить предыдущий запрос после нажатия на кнопку "Обновить"
@@ -154,18 +162,24 @@ class SearchActivity : AppCompatActivity() {
             placeholderCommunicationsProblem.visibility = View.INVISIBLE
 
             //Показать историю поисков
-            historyList.visibility = View.VISIBLE
-            historyTracks = searchHistory.tracksHistoryFromJson() as ArrayList<Track>
-            trackAdapter.tracksHistory =  historyTracks
-            trackAdapter.notifyDataSetChanged()
 
 
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(searchEditText.windowToken, 0)
+
+            //Показать историю поисков
+            historyList.visibility = View.VISIBLE
+            historyTracks = searchHistory.tracksHistoryFromJson() as ArrayList<Track>
+            tracksHistoryAdapter.tracksHistory = historyTracks
+            tracksHistoryAdapter.notifyDataSetChanged()
         }
     }
 
+
+
+
     private fun searchTracks(searchText: String) {
+
         tracksApi.searchTrack(searchText).enqueue(object : Callback<TrackResponse> {
             override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
                 trackAdapter.updateTracks(emptyList())
@@ -202,5 +216,12 @@ class SearchActivity : AppCompatActivity() {
         super.onRestoreInstanceState(savedInstanceState)
         val searchText = savedInstanceState.getString("searchText")
         searchEditText.setText(searchText)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        historyTracks = searchHistory.tracksHistoryFromJson() as ArrayList<Track>
+        tracksHistoryAdapter.tracksHistory = historyTracks
+        tracksHistoryAdapter.notifyDataSetChanged()
     }
 }
