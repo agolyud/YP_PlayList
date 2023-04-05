@@ -1,6 +1,7 @@
 package com.example.yp_playlist
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -19,6 +20,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+
+const val HISTORY_TRACKS_SHARED_PREF = "history_tracks_shared_pref"
 
 class SearchActivity : AppCompatActivity() {
 
@@ -39,13 +42,25 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchEditText: EditText
     private lateinit var clearButton: ImageView
 
+    //lateinit var historyList: LinearLayout
+    lateinit var buttonClear: Button
+    lateinit var sharedPref: SharedPreferences
+    lateinit var searchHistory: SearchHistory
+
+    lateinit var historyList: LinearLayout
+
+    var historyTracks  = ArrayList<Track>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
         val trackRecyclerView = findViewById<RecyclerView>(R.id.trackRecyclerView)
-       trackRecyclerView.layoutManager = LinearLayoutManager(this)
+        trackRecyclerView.layoutManager = LinearLayoutManager(this)
+
+        val historyRecyclerView = findViewById<RecyclerView>(R.id.recyclerViewHistory)
+        historyRecyclerView.layoutManager = LinearLayoutManager(this)
 
         val homeButton = findViewById<Button>(R.id.settings_toolbar)
         homeButton.setOnClickListener {
@@ -59,6 +74,19 @@ class SearchActivity : AppCompatActivity() {
         placeholderNothingWasFound = findViewById(R.id.placeholderNothingWasFound)
         placeholderCommunicationsProblem = findViewById(R.id.placeholderCommunicationsProblem)
         buttonReturn = findViewById(R.id.button_return)
+
+        historyList = findViewById(R.id.history_list)
+
+        buttonClear = findViewById(R.id.clearHistoryButton)
+
+        //Shared Preferences
+        sharedPref = getSharedPreferences(HISTORY_TRACKS_SHARED_PREF, MODE_PRIVATE)
+
+        //Объект класса для работы с историей поиске
+        searchHistory = SearchHistory(sharedPref)
+
+        //Присвоить значение из сохраненного поиска треков
+        historyTracks = searchHistory.tracksHistoryFromJson() as ArrayList<Track>
 
 
         // Если поисковый запрос пустой, то кнопка не отображается
@@ -76,7 +104,7 @@ class SearchActivity : AppCompatActivity() {
         })
 
 
-        //нажаие кнопки "ввод" для поиска
+        //нажатие кнопки "ввод" для поиска
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val searchText = searchEditText.text.toString()
@@ -84,6 +112,21 @@ class SearchActivity : AppCompatActivity() {
                 true
             }
             false
+        }
+
+        //Очистка истории поиска
+        buttonClear.setOnClickListener(){
+            searchHistory.clearHistory()
+            historyTracks = searchHistory.tracksHistoryFromJson() as ArrayList<Track>
+            trackAdapter.updateTracksHistory(emptyList())
+            trackAdapter.notifyDataSetChanged()
+            historyList.visibility = View.INVISIBLE
+        }
+
+        trackAdapter.itemClickListener = { position, track ->
+            searchHistory.addTrack(track, position)
+            historyTracks = searchHistory.tracksHistoryFromJson() as ArrayList<Track>
+            historyTracks.addAll(historyTracks)
         }
 
 
@@ -109,6 +152,14 @@ class SearchActivity : AppCompatActivity() {
             clearButton.visibility = View.INVISIBLE
             placeholderNothingWasFound.visibility = View.INVISIBLE
             placeholderCommunicationsProblem.visibility = View.INVISIBLE
+
+            //Показать историю поисков
+            historyList.visibility = View.VISIBLE
+            historyTracks = searchHistory.tracksHistoryFromJson() as ArrayList<Track>
+            trackAdapter.tracksHistory =  historyTracks
+            trackAdapter.notifyDataSetChanged()
+
+
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(searchEditText.windowToken, 0)
         }
