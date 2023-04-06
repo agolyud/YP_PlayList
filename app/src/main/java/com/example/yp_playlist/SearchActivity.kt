@@ -1,7 +1,6 @@
 package com.example.yp_playlist
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -80,11 +79,11 @@ class SearchActivity : AppCompatActivity() {
 
 
         //Объект класса для работы с историей поиске
-        searchHistory = SearchHistory(getSharedPreferences(HISTORY_TRACKS_SHARED_PREF, Context.MODE_PRIVATE))
+        searchHistory =
+            SearchHistory(getSharedPreferences(HISTORY_TRACKS_SHARED_PREF, Context.MODE_PRIVATE))
         historyTracks = searchHistory.tracksHistoryFromJson() as ArrayList<Track>
         if (historyTracks.isNotEmpty()) {
             historyList.visibility = View.VISIBLE
-            tracksHistoryAdapter.updateTracks(historyTracks)
         }
 
 
@@ -113,16 +112,8 @@ class SearchActivity : AppCompatActivity() {
             false
         }
 
-        searchEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                historyList.visibility = View.VISIBLE
-            } else {
-                historyList.visibility = View.INVISIBLE
-            }
-        }
 
         //Очистка истории поиска
-
         buttonClear.setOnClickListener {
             searchHistory.clearHistory()
             historyTracks = searchHistory.tracksHistoryFromJson() as ArrayList<Track>
@@ -130,11 +121,10 @@ class SearchActivity : AppCompatActivity() {
             historyList.visibility = View.INVISIBLE
         }
 
-
-        trackAdapter.itemClickListener =  { position, track ->
+        // Наблюдатель за нажатием треков
+        trackAdapter.itemClickListener = { position, track ->
             searchHistory.addTrack(track, position)
         }
-
 
 
         // Нажатие на поле ввода
@@ -142,12 +132,16 @@ class SearchActivity : AppCompatActivity() {
             if (hasFocus) {
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT)
+                historyList.visibility = View.GONE
             }
+        }
 
+        searchEditText.setOnClickListener { // скрыть блок с историей при нажатии на ввод
+            historyList.visibility = View.GONE
         }
 
         //Повторить предыдущий запрос после нажатия на кнопку "Обновить"
-        buttonReturn.setOnClickListener(){
+        buttonReturn.setOnClickListener() {
             placeholderCommunicationsProblem.visibility = View.INVISIBLE
             val searchText = searchEditText.text.toString()
             searchTracks(searchText)
@@ -162,21 +156,21 @@ class SearchActivity : AppCompatActivity() {
             placeholderCommunicationsProblem.visibility = View.INVISIBLE
 
             //Показать историю поисков
-
-
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(searchEditText.windowToken, 0)
 
             //Показать историю поисков
-            historyList.visibility = View.VISIBLE
             historyTracks = searchHistory.tracksHistoryFromJson() as ArrayList<Track>
             tracksHistoryAdapter.tracksHistory = historyTracks
             tracksHistoryAdapter.notifyDataSetChanged()
+            if (historyTracks.isEmpty()) {
+                historyList.visibility = View.INVISIBLE
+            } else {
+                historyList.visibility = View.VISIBLE
+            }
+
         }
     }
-
-
-
 
     private fun searchTracks(searchText: String) {
 

@@ -10,14 +10,6 @@ class TrackAdapter : RecyclerView.Adapter<TrackViewHolder>() {
     private var tracks = mutableListOf<Track>()
     var itemClickListener: ((Int, Track) -> Unit)? = null
 
-    fun updateTracksHistory(newTracksHistory: List<Track>) {
-        tracksHistory.clear()
-        if (!newTracksHistory.isNullOrEmpty()) {
-            tracksHistory.addAll(newTracksHistory)
-        }
-        notifyDataSetChanged()
-    }
-
     fun updateTracks(newTracks: List<Track>) {
         tracks.clear()
         if (!newTracks.isNullOrEmpty()) {
