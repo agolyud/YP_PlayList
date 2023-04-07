@@ -22,7 +22,7 @@ class SearchHistory(private val sharedPref: SharedPreferences) {
         val historyTracks = Gson().fromJson<ArrayList<Track>>(jsonHistoryTracks, typeTokenArrayList)
 
         // Проверяем, есть ли трек в истории
-        val existingTrackIndex = historyTracks.indexOfFirst { it.trackName == track.trackName }
+        val existingTrackIndex = historyTracks.indexOfFirst { it.trackId == track.trackId }
 
         // Если трек уже есть в истории, удаляем его и добавляем на первое место
         if (existingTrackIndex != -1) {

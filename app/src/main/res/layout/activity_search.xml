@@ -128,7 +128,7 @@
             android:visibility="invisible">
 
             <TextView
-                android:text="Вы искали"
+                android:text="@string/search_history_message"
                 style="@style/you_search"/>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -136,7 +136,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="48dp"
-                android:paddingHorizontal="@dimen/small_text_size"
                 android:paddingTop="@dimen/padding_24"/>
 
             <Button

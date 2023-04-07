@@ -36,17 +36,16 @@ class SearchActivity : AppCompatActivity() {
     private val tracksApi = retrofit.create(iTunesApi::class.java)
     private var trackAdapter = TrackAdapter ()
     private var tracksHistoryAdapter = TrackAdapter()
-    lateinit var placeholderNothingWasFound: LinearLayout
-    lateinit var placeholderCommunicationsProblem: LinearLayout
-    lateinit var buttonReturn: Button
+    private lateinit var placeholderNothingWasFound: LinearLayout
+    private lateinit var placeholderCommunicationsProblem: LinearLayout
+    private lateinit var buttonReturn: Button
     private lateinit var searchEditText: EditText
     private lateinit var clearButton: ImageView
-
-
-    lateinit var buttonClear: Button
-    lateinit var searchHistory: SearchHistory
-    lateinit var historyList: LinearLayout
+    private lateinit var buttonClear: Button
+    private lateinit var searchHistory: SearchHistory
+    private lateinit var historyList: LinearLayout
     var historyTracks  = ArrayList<Track>()
+    private lateinit var searchResultsList: RecyclerView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,6 +54,7 @@ class SearchActivity : AppCompatActivity() {
 
         val trackRecyclerView = findViewById<RecyclerView>(R.id.trackRecyclerView)
         trackRecyclerView.layoutManager = LinearLayoutManager(this)
+        searchResultsList = findViewById(R.id.trackRecyclerView)
 
 
         val historyRecyclerView = findViewById<RecyclerView>(R.id.recyclerViewHistory)
@@ -87,22 +87,31 @@ class SearchActivity : AppCompatActivity() {
         }
 
 
-        // Если поисковый запрос пустой, то кнопка не отображается
-        searchEditText.addTextChangedListener(object : TextWatcher {
+            // Если поисковый запрос пустой, то кнопка не отображается и показывается история
+        val shouldShowHistory = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s.isNullOrBlank()) {
-                    clearButton.visibility = View.INVISIBLE
+                clearButton.visibility = clearButtonVisibility(s)
+                val searchText = s?.toString() ?: ""
+                if (searchText.isEmpty()) {
+                    trackAdapter.updateTracks(emptyList())
+                    placeholderNothingWasFound.visibility = View.INVISIBLE
+                    searchResultsList.visibility = View.GONE
+                    historyList.visibility =
+                        if (searchEditText.hasFocus() && s?.isEmpty() == true && historyTracks.isNotEmpty()) View.VISIBLE else View.GONE
+                    tracksHistoryAdapter.updateTracks(historyTracks)
                 } else {
-                    clearButton.visibility = View.VISIBLE
+                    placeholderNothingWasFound.visibility = View.GONE
+                    searchResultsList.visibility = View.VISIBLE
+                    historyList.visibility = View.GONE
                 }
             }
-
             override fun afterTextChanged(s: Editable?) {}
-        })
+        }
 
 
         //нажатие кнопки "ввод" для поиска
+        searchEditText.addTextChangedListener(shouldShowHistory)
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val searchText = searchEditText.text.toString()
@@ -115,30 +124,17 @@ class SearchActivity : AppCompatActivity() {
 
         //Очистка истории поиска
         buttonClear.setOnClickListener {
+            historyTracks.clear()
             searchHistory.clearHistory()
-            historyTracks = searchHistory.tracksHistoryFromJson() as ArrayList<Track>
-            tracksHistoryAdapter.updateTracks(historyTracks)
-            historyList.visibility = View.INVISIBLE
+            historyList.visibility = View.GONE
         }
+
 
         // Наблюдатель за нажатием треков
         trackAdapter.itemClickListener = { position, track ->
             searchHistory.addTrack(track, position)
         }
 
-
-        // Нажатие на поле ввода
-        searchEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT)
-                historyList.visibility = View.GONE
-            }
-        }
-
-        searchEditText.setOnClickListener { // скрыть блок с историей при нажатии на ввод
-            historyList.visibility = View.GONE
-        }
 
         //Повторить предыдущий запрос после нажатия на кнопку "Обновить"
         buttonReturn.setOnClickListener() {
@@ -169,6 +165,14 @@ class SearchActivity : AppCompatActivity() {
                 historyList.visibility = View.VISIBLE
             }
 
+        }
+    }
+
+    private fun clearButtonVisibility(s: CharSequence?): Int {
+        return if (s.isNullOrEmpty()) {
+            View.GONE
+        } else {
+            View.VISIBLE
         }
     }
 
