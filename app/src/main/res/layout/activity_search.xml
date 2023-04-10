@@ -75,49 +75,74 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/trackRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingHorizontal="@dimen/small_text_size"
-        android:paddingTop="@dimen/padding_24" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/trackRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="@dimen/small_text_size"
+            android:paddingTop="@dimen/padding_24" />
 
-    <LinearLayout
-        android:id="@+id/placeholderNothingWasFound"
-        style="@style/search_plaseholder">
+        <LinearLayout
+            android:id="@+id/placeholderNothingWasFound"
+            style="@style/search_plaseholder">
 
-        <ImageView
-            style="@style/search_image"
-            android:src="@drawable/error_no_data" />
+            <ImageView
+                style="@style/search_image"
+                android:src="@drawable/error_no_data" />
 
-        <TextView
-            style="@style/search_textview"
-            android:text="@string/no_data" />
-    </LinearLayout>
+            <TextView
+                style="@style/search_textview"
+                android:text="@string/no_data" />
+        </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/placeholderCommunicationsProblem"
-        style="@style/search_plaseholder">
+        <LinearLayout
+            android:id="@+id/placeholderCommunicationsProblem"
+            style="@style/search_plaseholder">
 
-        <ImageView
-            style="@style/search_image"
-            android:src="@drawable/error_no_connection" />
+            <ImageView
+                style="@style/search_image"
+                android:src="@drawable/error_no_connection" />
 
-        <TextView
-            style="@style/search_textview"
-            android:text="@string/no_connection" />
+            <TextView
+                style="@style/search_textview"
+                android:text="@string/no_connection" />
 
 
-        <Button
-            android:id="@+id/button_return"
-            style="@style/search_button_refresh"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:fontFamily="@font/ys_display_medium"
-            android:inputType="textCapSentences"
-            android:text="@string/refresh_button"
-            android:textSize="@dimen/text_size_14" />
-    </LinearLayout>
+            <Button
+                android:id="@+id/button_return"
+                style="@style/search_button_refresh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/ys_display_medium"
+                android:inputType="textCapSentences"
+                android:text="@string/refresh_button"
+                android:textSize="@dimen/text_size_14" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/history_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="invisible">
+
+            <TextView
+                android:text="@string/search_history_message"
+                style="@style/you_search"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewHistory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="48dp"
+                android:paddingTop="@dimen/padding_24"/>
+
+            <Button
+                android:id="@+id/clearHistoryButton"
+                style="@style/button_refresh"
+                android:layout_marginTop="-48dp"
+                android:text="@string/clear_history" />
+        </LinearLayout>
     </FrameLayout>
 </LinearLayout>

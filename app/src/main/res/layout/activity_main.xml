@@ -33,6 +33,9 @@
             style="@style/MainButton"
             android:text="@string/find_button"
             app:icon="@drawable/search"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             />
 
         <Button
@@ -40,6 +43,9 @@
             style="@style/MainButton"
             android:text="@string/media_button"
             app:icon="@drawable/media"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             />
 
         <Button
@@ -47,6 +53,9 @@
             style="@style/MainButton"
             android:text="@string/settings_button"
             app:icon="@drawable/setings"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             />
 
     </LinearLayout>
