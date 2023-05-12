@@ -20,4 +20,10 @@
     <string name="refresh_button">Обновить</string>
     <string name="search_history_message">Вы искали</string>
     <string name="clear_history">Очистить историю</string>
+    <string name="country">Страна</string>
+    <string name="genre">Жанр</string>
+    <string name="year">Год</string>
+    <string name="album">Альбом</string>
+    <string name="duration">Длительность</string>
+    <string name="track_time">0:00</string>
 </resources>

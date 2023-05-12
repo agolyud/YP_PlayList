@@ -11,6 +11,7 @@
     <dimen name="settings_text_margin">21dp</dimen>
     <dimen name="page_button">30dp</dimen>
     <dimen name="padding_24">24dp</dimen>
+    <dimen name="padding_4">4dp</dimen>
     <dimen name="layout_width_45">45dp</dimen>
     <dimen name="layout_height_45">45dp</dimen>
     <dimen name="marginTextTrack">1dp</dimen>
@@ -18,4 +19,10 @@
     <dimen name="textSize2">5dp</dimen>
     <dimen name="text_size_14">14dp</dimen>
     <dimen name="corner_radius">2dp</dimen>
+    <dimen name="size28">28dp</dimen>
+    <dimen name="size30">30dp</dimen>
+    <dimen name="size17">17dp</dimen>
+    <dimen name="size12">12dp</dimen>
+    <dimen name="text_size22sp">22sp</dimen>
+    <dimen name="text_size14sp">14sp</dimen>
 </resources>

@@ -61,4 +61,18 @@
         <item name="android:layout_marginBottom">20dp</item>
     </style>
 
+
+
+    <style name="panel_header_toolbar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">@dimen/padding_4</item>
+        <item name="android:layout_marginBottom">@dimen/padding_24</item>
+        <item name="android:background">?attr/settingsPageBackground</item>
+        <item name="navigationIcon">@drawable/back</item>
+        <item name="contentInsetStart">0dp</item>
+        <item name="contentInsetStartWithNavigation">0dp</item>
+        <item name="titleMarginStart">0dp</item>
+    </style>
+
 </resources>

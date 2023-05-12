@@ -1,6 +1,8 @@
 package com.example.yp_playlist
 
 import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,6 +14,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
@@ -34,7 +37,7 @@ class SearchActivity : AppCompatActivity() {
         .build()
 
     private val tracksApi = retrofit.create(iTunesApi::class.java)
-    private var trackAdapter = TrackAdapter ()
+    private var trackAdapter = TrackAdapter()
     private var tracksHistoryAdapter = TrackAdapter()
     private lateinit var placeholderNothingWasFound: LinearLayout
     private lateinit var placeholderCommunicationsProblem: LinearLayout
@@ -44,7 +47,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var buttonClear: Button
     private lateinit var searchHistory: SearchHistory
     private lateinit var historyList: LinearLayout
-    var historyTracks  = ArrayList<Track>()
+    var historyTracks = ArrayList<Track>()
     private lateinit var searchResultsList: RecyclerView
 
 
@@ -78,6 +81,7 @@ class SearchActivity : AppCompatActivity() {
         buttonClear = findViewById(R.id.clearHistoryButton)
 
 
+
         //Объект класса для работы с историей поиске
         searchHistory =
             SearchHistory(getSharedPreferences(HISTORY_TRACKS_SHARED_PREF, Context.MODE_PRIVATE))
@@ -87,7 +91,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
 
-            // Если поисковый запрос пустой, то кнопка не отображается и показывается история
+        // Если поисковый запрос пустой, то кнопка не отображается и показывается история
         val shouldShowHistory = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -100,12 +104,14 @@ class SearchActivity : AppCompatActivity() {
                     historyList.visibility =
                         if (searchEditText.hasFocus() && s?.isEmpty() == true && historyTracks.isNotEmpty()) View.VISIBLE else View.GONE
                     tracksHistoryAdapter.updateTracks(historyTracks)
+
                 } else {
                     placeholderNothingWasFound.visibility = View.GONE
                     searchResultsList.visibility = View.VISIBLE
                     historyList.visibility = View.GONE
                 }
             }
+
             override fun afterTextChanged(s: Editable?) {}
         }
 
@@ -130,9 +136,21 @@ class SearchActivity : AppCompatActivity() {
         }
 
 
-        // Наблюдатель за нажатием треков
+        // Наблюдатель за нажатием треков в поиске
         trackAdapter.itemClickListener = { position, track ->
             searchHistory.addTrack(track, position)
+            val searchIntent = Intent(this, MediaActivity::class.java).apply {
+                putExtra("track", track)
+            }
+            startActivity(searchIntent)
+        }
+
+        // Наблюдатель за нажатием треков в истории
+        tracksHistoryAdapter.itemClickListener = { position, track ->
+            val searchIntent = Intent(this, MediaActivity::class.java).apply {
+                putExtra("track", track)
+            }
+            startActivity(searchIntent)
         }
 
 
@@ -151,21 +169,18 @@ class SearchActivity : AppCompatActivity() {
             placeholderNothingWasFound.visibility = View.INVISIBLE
             placeholderCommunicationsProblem.visibility = View.INVISIBLE
 
-            //Показать историю поисков
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(searchEditText.windowToken, 0)
+            //Скрыть клавиатуру
+            hideKeyboard()
 
             //Показать историю поисков
             historyTracks = searchHistory.tracksHistoryFromJson() as ArrayList<Track>
-            tracksHistoryAdapter.tracksHistory = historyTracks
-            tracksHistoryAdapter.notifyDataSetChanged()
-            if (historyTracks.isEmpty()) {
-                historyList.visibility = View.INVISIBLE
-            } else {
-                historyList.visibility = View.VISIBLE
-            }
-
+            tracksHistoryAdapter.updateTracks(historyTracks)
+            historyList.isVisible = historyTracks.isNotEmpty()
         }
+    }
+    private fun hideKeyboard() {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(searchEditText.windowToken, 0)
     }
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
@@ -219,7 +234,8 @@ class SearchActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         historyTracks = searchHistory.tracksHistoryFromJson() as ArrayList<Track>
-        tracksHistoryAdapter.tracksHistory = historyTracks
-        tracksHistoryAdapter.notifyDataSetChanged()
+        tracksHistoryAdapter.updateTracks(historyTracks)
     }
+
+
 }
