@@ -104,6 +104,18 @@
             app:layout_constraintTop_toBottomOf="@+id/artistName"
             tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
 
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:indeterminateTint="@color/progress_bar"
+            app:layout_constraintBottom_toBottomOf="@+id/playButton"
+            app:layout_constraintEnd_toEndOf="@+id/playButton"
+            app:layout_constraintStart_toStartOf="@+id/playButton"
+            app:layout_constraintTop_toTopOf="@+id/playButton"
+            android:visibility="invisible"
+            />
+
         <ImageView
             android:id="@+id/likeButton"
             android:layout_width="wrap_content"
