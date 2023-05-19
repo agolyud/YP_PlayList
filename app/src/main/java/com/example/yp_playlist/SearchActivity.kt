@@ -2,7 +2,6 @@ package com.example.yp_playlist
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -22,6 +21,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import android.os.Handler
+import android.os.Looper
 
 const val HISTORY_TRACKS_SHARED_PREF = "history_tracks_shared_pref"
 
@@ -49,6 +50,9 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var historyList: LinearLayout
     var historyTracks = ArrayList<Track>()
     private lateinit var searchResultsList: RecyclerView
+    private val handler = Handler(Looper.getMainLooper())
+    private val searchRunnable = Runnable { performSearch() }
+    private var isPlayerOpening = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -104,11 +108,14 @@ class SearchActivity : AppCompatActivity() {
                     historyList.visibility =
                         if (searchEditText.hasFocus() && s?.isEmpty() == true && historyTracks.isNotEmpty()) View.VISIBLE else View.GONE
                     tracksHistoryAdapter.updateTracks(historyTracks)
-
                 } else {
                     placeholderNothingWasFound.visibility = View.GONE
                     searchResultsList.visibility = View.VISIBLE
                     historyList.visibility = View.GONE
+
+                    // Отменить предыдущий запланированный поиск и запланировать новый
+                    handler.removeCallbacks(searchRunnable)
+                    handler.postDelayed(searchRunnable, 2000) // Запустить поиск через 2 секунды
                 }
             }
 
@@ -120,11 +127,15 @@ class SearchActivity : AppCompatActivity() {
         searchEditText.addTextChangedListener(shouldShowHistory)
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
+                // Отменить предыдущий запланированный поиск, если есть
+                handler.removeCallbacks(searchRunnable)
+
                 val searchText = searchEditText.text.toString()
                 searchTracks(searchText)
                 true
+            } else {
+                false
             }
-            false
         }
 
 
@@ -138,21 +149,27 @@ class SearchActivity : AppCompatActivity() {
 
         // Наблюдатель за нажатием треков в поиске
         trackAdapter.itemClickListener = { position, track ->
-            searchHistory.addTrack(track, position)
-            val searchIntent = Intent(this, MediaActivity::class.java).apply {
-                putExtra("track", track)
+            if (!isPlayerOpening) {
+                isPlayerOpening = true // Установить флаг блокировки перед открытием плеера
+
+                searchHistory.addTrack(track, position)
+                val searchIntent = Intent(this, MediaActivity::class.java).apply {
+                    putExtra("track", track)
+                }
+                startActivity(searchIntent)
             }
-            startActivity(searchIntent)
         }
 
         // Наблюдатель за нажатием треков в истории
         tracksHistoryAdapter.itemClickListener = { position, track ->
-            val searchIntent = Intent(this, MediaActivity::class.java).apply {
-                putExtra("track", track)
+            if (!isPlayerOpening) {
+                isPlayerOpening = true
+                val searchIntent = Intent(this, MediaActivity::class.java).apply {
+                    putExtra("track", track)
+                }
+                startActivity(searchIntent)
             }
-            startActivity(searchIntent)
         }
-
 
         //Повторить предыдущий запрос после нажатия на кнопку "Обновить"
         buttonReturn.setOnClickListener() {
@@ -177,6 +194,11 @@ class SearchActivity : AppCompatActivity() {
             tracksHistoryAdapter.updateTracks(historyTracks)
             historyList.isVisible = historyTracks.isNotEmpty()
         }
+    }
+
+    private fun performSearch() {
+        val searchText = searchEditText.text.toString()
+        searchTracks(searchText)
     }
     private fun hideKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -235,7 +257,10 @@ class SearchActivity : AppCompatActivity() {
         super.onResume()
         historyTracks = searchHistory.tracksHistoryFromJson() as ArrayList<Track>
         tracksHistoryAdapter.updateTracks(historyTracks)
+
+        isPlayerOpening = false // Сбросить флаг блокировки при возобновлении активности
     }
+
 
 
 }
