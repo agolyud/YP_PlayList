@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:theme="@style/Theme.YP_PlayList.Main"
     android:background="?attr/mainPageBackground"
-    tools:context=".MainActivity">
+    tools:context=".presentation.MainActivity">
 
     <TextView
         android:layout_width="wrap_content"

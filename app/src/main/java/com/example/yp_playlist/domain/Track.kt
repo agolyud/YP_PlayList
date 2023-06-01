@@ -1,4 +1,4 @@
-package com.example.yp_playlist
+package com.example.yp_playlist.domain
 data class Track(
     val trackId: Int,
     val trackName: String,

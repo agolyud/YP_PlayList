@@ -1,8 +1,10 @@
-package com.example.yp_playlist
+package com.example.yp_playlist.presentation.search
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.yp_playlist.R
+import com.example.yp_playlist.domain.Track
 
 class TrackAdapter : RecyclerView.Adapter<TrackViewHolder>() {
 

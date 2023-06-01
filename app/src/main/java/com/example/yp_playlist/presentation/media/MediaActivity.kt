@@ -1,4 +1,4 @@
-package com.example.yp_playlist
+package com.example.yp_playlist.presentation.media
 
 import android.content.SharedPreferences
 import android.media.MediaPlayer
@@ -12,6 +12,8 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.yp_playlist.R
+import com.example.yp_playlist.domain.Track
 import java.text.SimpleDateFormat
 import java.util.*
 
