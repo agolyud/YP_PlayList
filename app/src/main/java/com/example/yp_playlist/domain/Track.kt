@@ -1,4 +1,7 @@
-package com.example.yp_playlist
+package com.example.yp_playlist.domain
+
+import java.io.Serializable
+
 data class Track(
     val trackId: Int,
     val trackName: String,
@@ -10,4 +13,4 @@ data class Track(
     val primaryGenreName: String,
     val country: String,
     val previewUrl: String,
-):java.io.Serializable
+) : Serializable

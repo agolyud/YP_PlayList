@@ -1,17 +1,18 @@
-package com.example.yp_playlist
+package com.example.yp_playlist.data.storage
 
 import android.content.SharedPreferences
+import com.example.yp_playlist.domain.Track
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 const val HISTORY_TRACKS_KEY = "history_tracks_key"
 const val MAX_HISTORY_SIZE = 10
 
-class SearchHistory(private val sharedPref: SharedPreferences) {
+class SearchHistoryImpl(private val sharedPref: SharedPreferences) : SearchHistory {
 
     private val typeTokenArrayList = object : TypeToken<ArrayList<Track>>() {}.type
 
-    fun addTrack(track: Track, position: Int) {
+    override fun addTrack(track: Track, position: Int) {
         val jsonHistoryTracks = sharedPref.getString(HISTORY_TRACKS_KEY, null)
 
         if (jsonHistoryTracks == null) {
@@ -38,12 +39,13 @@ class SearchHistory(private val sharedPref: SharedPreferences) {
         saveTrackForHistory(historyTracks)
     }
 
-    fun tracksHistoryFromJson(): List<Track> {
-        val jsonHistoryTracks = sharedPref.getString(HISTORY_TRACKS_KEY, null) ?: return ArrayList<Track>()
+    override fun tracksHistoryFromJson(): List<Track> {
+        val jsonHistoryTracks =
+            sharedPref.getString(HISTORY_TRACKS_KEY, null) ?: return ArrayList<Track>()
         return Gson().fromJson<ArrayList<Track>>(jsonHistoryTracks, typeTokenArrayList)
     }
 
-    fun clearHistory() {
+    override fun clearHistory() {
         sharedPref.edit().remove(HISTORY_TRACKS_KEY).apply()
     }
 
