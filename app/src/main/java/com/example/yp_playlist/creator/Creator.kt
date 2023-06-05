@@ -5,8 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.yp_playlist.data.date.DateManager
 import com.example.yp_playlist.data.date.DateManagerImpl
 import com.example.yp_playlist.data.network.NetworkClientImpl
-import com.example.yp_playlist.data.storage.SearchHistory
-import com.example.yp_playlist.data.storage.SearchHistoryImpl
+import com.example.yp_playlist.domain.storage.SearchHistory
+import com.example.yp_playlist.domain.storage.SearchHistoryImpl
 import com.example.yp_playlist.domain.interactor.TracksInteractorImpl
 import com.example.yp_playlist.domain.repository.TracksRepositoryImpl
 import com.example.yp_playlist.presentation.media.MediaPresenter

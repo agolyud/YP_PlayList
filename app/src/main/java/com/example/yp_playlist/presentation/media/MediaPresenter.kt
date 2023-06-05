@@ -1,7 +1,7 @@
 package com.example.yp_playlist.presentation.media
 
 import com.example.yp_playlist.data.date.DateManager
-import com.example.yp_playlist.data.storage.SearchHistory
+import com.example.yp_playlist.domain.storage.SearchHistory
 
 
 class MediaPresenter(

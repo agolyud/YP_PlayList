@@ -1,4 +1,4 @@
-package com.example.yp_playlist.data.storage
+package com.example.yp_playlist.domain.storage
 
 import android.content.SharedPreferences
 import com.example.yp_playlist.domain.Track
