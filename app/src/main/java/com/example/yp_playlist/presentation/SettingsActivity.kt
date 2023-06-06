@@ -1,6 +1,5 @@
-package com.example.yp_playlist
+package com.example.yp_playlist.presentation
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -9,7 +8,7 @@ import android.widget.LinearLayout
 import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.widget.Toolbar
+import com.example.yp_playlist.R
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,9 +1,12 @@
-package com.example.yp_playlist
+package com.example.yp_playlist.presentation
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import com.example.yp_playlist.R
+import com.example.yp_playlist.presentation.media.MediaActivity
+import com.example.yp_playlist.presentation.search.SearchActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -14,15 +17,15 @@ class MainActivity : AppCompatActivity() {
         val settingsButton = findViewById<Button>(R.id.setting_button)
 
         searchButton.setOnClickListener{
-            val searchIntent = Intent(this,SearchActivity::class.java)
+            val searchIntent = Intent(this, SearchActivity::class.java)
             startActivity(searchIntent)
         }
         mediaButton.setOnClickListener{
-            val mediaIntent = Intent(this,MediaActivity::class.java)
+            val mediaIntent = Intent(this, MediaActivity::class.java)
             startActivity(mediaIntent)
         }
         settingsButton.setOnClickListener{
-            val settingsIntent = Intent(this,SettingsActivity::class.java)
+            val settingsIntent = Intent(this, SettingsActivity::class.java)
             startActivity(settingsIntent)
         }
     }

@@ -1,6 +1,5 @@
-package com.example.yp_playlist
+package com.example.yp_playlist.presentation.media
 
-import android.content.SharedPreferences
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,15 +11,18 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import java.text.SimpleDateFormat
-import java.util.*
+import com.example.yp_playlist.R
+import com.example.yp_playlist.creator.Creator
+import com.example.yp_playlist.domain.Track
+import com.example.yp_playlist.presentation.search.HISTORY_TRACKS_SHARED_PREF
+import com.example.yp_playlist.presentation.search.TRACK_ID
 
-class MediaActivity : AppCompatActivity() {
+class MediaActivity : AppCompatActivity(), MediaView {
+
+    private lateinit var mediaPresenter: MediaPresenter
 
     //Переменные
     lateinit var buttonArrowBackSettings: androidx.appcompat.widget.Toolbar
-    lateinit var track: Track
-    lateinit var sharedPrefDataTrack: SharedPreferences
     lateinit var artworkUrl100: ImageView
     lateinit var trackName: TextView
     lateinit var artistName: TextView
@@ -36,12 +38,15 @@ class MediaActivity : AppCompatActivity() {
 
     var handler = Handler(Looper.getMainLooper())
 
-
     companion object {
         private const val STATE_DEFAULT = 0
         private const val STATE_PREPARED = 1
         private const val STATE_PLAYING = 2
         private const val STATE_PAUSED = 3
+
+        private const val DEFAULT_TIME = "00:00"
+        private const val START_TIME = "0:00"
+
     }
 
     private var playerState = STATE_DEFAULT
@@ -64,7 +69,10 @@ class MediaActivity : AppCompatActivity() {
         buttonPlay = findViewById(R.id.playButton)
         progressBar = findViewById(R.id.progressBar)
 
-
+        mediaPresenter = Creator.provideMediaPresenter(
+            view = this,
+            sharedPref = getSharedPreferences(HISTORY_TRACKS_SHARED_PREF, MODE_PRIVATE)
+        )
 
         buttonArrowBackSettings.setOnClickListener {
             finish()
@@ -73,9 +81,8 @@ class MediaActivity : AppCompatActivity() {
         buttonPlay.setOnClickListener {
             playbackControl()
         }
-
-
-        showDataTrack()
+        val trackId = intent.extras?.getInt(TRACK_ID) as Int
+        mediaPresenter.getTrack(trackId)
         preparePlayer()
         playbackControl()
 
@@ -90,7 +97,7 @@ class MediaActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacksAndMessages(null)
-        time.text = "0:00"
+        time.text = START_TIME
         mediaPlayer.release()
     }
 
@@ -106,7 +113,7 @@ class MediaActivity : AppCompatActivity() {
         mediaPlayer.setOnCompletionListener {
             handler.removeCallbacksAndMessages(null)
             buttonPlay.setImageResource(R.drawable.play_media)
-            time.text = "00:00"
+            time.text = DEFAULT_TIME
             playerState = STATE_PREPARED
         }
     }
@@ -128,48 +135,42 @@ class MediaActivity : AppCompatActivity() {
     }
 
     private fun playbackControl() {
-        when(playerState) {
+        when (playerState) {
             STATE_PLAYING -> {
                 pausePlayer()
             }
+
             STATE_PREPARED, STATE_PAUSED -> {
                 startPlayer()
             }
         }
     }
 
-    private fun timerTrack(): Runnable{
-        return object : Runnable{
+    private fun timerTrack(): Runnable {
+        return object : Runnable {
             override fun run() {
-                time.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
+                time.text = mediaPresenter.getTime(mediaPlayer.currentPosition)
                 handler.postDelayed(this, 300)
             }
         }
     }
 
-    private fun startTimer(){
+    private fun startTimer() {
         handler.post(timerTrack())
     }
 
     //Отображение данных трека
-    private fun showDataTrack(){
+    override fun showInfo(track: Track) {
 
-        track = intent.getSerializableExtra("track") as Track
         previewUrl = track.previewUrl
         trackName.text = track.trackName
         artistName.text = track.artistName
-        trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis.toInt())
+        trackTime.text = mediaPresenter.getTime(track.trackTimeMillis.toInt())
         collectionName.text = track.collectionName
-
-        val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(track.releaseDate)
-        if (date != null) {
-            val formattedDatesString = SimpleDateFormat("yyyy", Locale.getDefault()).format(date)
-            releaseDate.text = formattedDatesString
-        }
-
+        releaseDate.text = mediaPresenter.getDate(track.releaseDate)
         primaryGenreName.text = track.primaryGenreName
         country.text = track.country
-        time.text = "0:00"
+        time.text = START_TIME
 
 
         Glide.with(this)
