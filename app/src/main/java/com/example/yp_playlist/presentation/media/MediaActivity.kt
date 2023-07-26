@@ -71,13 +71,8 @@ class MediaActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
 
 
-
-
-
         viewModel = ViewModelProvider(this, MediaViewModel.getViewModelFactory(this,getSharedPreferences(
             HISTORY_TRACKS_SHARED_PREF, MODE_PRIVATE)))[MediaViewModel::class.java]
-
-
 
         buttonArrowBackSettings.setOnClickListener {
             finish()
@@ -88,9 +83,12 @@ class MediaActivity : AppCompatActivity() {
         }
         val trackId = intent.extras?.getInt(TRACK_ID) as Int
         viewModel.getTrack(trackId)
-        preparePlayer()
         playbackControl()
 
+        viewModel.trackInfo.observe(this) { track ->
+            showInfo(track)
+            preparePlayer()
+        }
     }
 
     override fun onPause() {
