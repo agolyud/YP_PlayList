@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.yp_playlist.App
-import com.example.yp_playlist.creator.Creator
 import com.example.yp_playlist.domain.Track
 import com.example.yp_playlist.data.TrackResponse
 import com.example.yp_playlist.data.network.NetworkClientImpl
@@ -17,8 +16,6 @@ import com.example.yp_playlist.domain.interactor.TracksInteractor
 import com.example.yp_playlist.domain.interactor.TracksInteractorImpl
 import com.example.yp_playlist.domain.repository.TracksRepositoryImpl
 import com.example.yp_playlist.domain.storage.SearchHistoryImpl
-import com.example.yp_playlist.settings.domain.models.ThemeSettings
-import com.example.yp_playlist.settings.ui.SettingsViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
