@@ -91,7 +91,7 @@ class SearchViewModel(
                     val application =
                         this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as App
                     SearchViewModel(
-                          TracksInteractorImpl(
+                        TracksInteractorImpl(
                             TracksRepositoryImpl(
                                 NetworkClientImpl(),
                                 SearchHistoryImpl(sharedPref)

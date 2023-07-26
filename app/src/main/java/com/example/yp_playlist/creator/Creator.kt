@@ -3,13 +3,10 @@ package com.example.yp_playlist.creator
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.yp_playlist.data.date.DateManagerImpl
-import com.example.yp_playlist.data.network.NetworkClientImpl
+import com.example.yp_playlist.domain.storage.SearchHistory
 import com.example.yp_playlist.domain.storage.SearchHistoryImpl
-import com.example.yp_playlist.domain.interactor.TracksInteractorImpl
-import com.example.yp_playlist.domain.repository.TracksRepositoryImpl
-import com.example.yp_playlist.presentation.media.MediaPresenter
 import com.example.yp_playlist.presentation.media.MediaView
-import com.example.yp_playlist.presentation.search.SearchViewModel
+import com.example.yp_playlist.presentation.media.MediaViewModel
 import com.example.yp_playlist.settings.data.impl.SettingsRepositoryImpl
 import com.example.yp_playlist.settings.data.storage.SharedPrefsThemeStorage
 import com.example.yp_playlist.settings.domain.SettingsInteractor
@@ -33,16 +30,6 @@ object Creator {
     }
 
 
-    fun provideMediaPresenter(
-        view: MediaView,
-        sharedPref: SharedPreferences
-    ): MediaPresenter {
-        return MediaPresenter(
-            view = view,
-            dateManager = DateManagerImpl(),
-            searchHistory = SearchHistoryImpl(sharedPref)
-        )
-    }
 }
 
 
