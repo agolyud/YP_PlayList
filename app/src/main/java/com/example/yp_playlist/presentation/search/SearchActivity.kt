@@ -18,17 +18,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.os.Handler
 import android.os.Looper
+import androidx.lifecycle.ViewModelProvider
 import com.example.yp_playlist.R
-import com.example.yp_playlist.creator.Creator
 import com.example.yp_playlist.domain.Track
 import com.example.yp_playlist.presentation.media.MediaActivity
 
 const val HISTORY_TRACKS_SHARED_PREF = "history_tracks_shared_pref"
 const val TRACK_ID = "track_position"
 
-class SearchActivity : AppCompatActivity(), SearchView {
-
-    private lateinit var searchPresenter: SearchPresenter
+class SearchActivity : AppCompatActivity() {
 
     private var trackAdapter = TrackAdapter()
     private var tracksHistoryAdapter = TrackAdapter()
@@ -46,10 +44,43 @@ class SearchActivity : AppCompatActivity(), SearchView {
     private val searchRunnable = Runnable { performSearch() }
     private var isPlayerOpening = false
 
+    private lateinit var viewModel: SearchViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+
+        viewModel = ViewModelProvider(this, SearchViewModel.getViewModelFactory(this,getSharedPreferences(HISTORY_TRACKS_SHARED_PREF, MODE_PRIVATE)))[SearchViewModel::class.java]
+
+        viewModel.searchState.observe(this) {
+            trackAdapter.updateTracks(it)
+        }
+
+       viewModel.fragmentState.observe(this) {
+           when (it) {
+
+               SearchViewModel.SearchState.SUCCESS -> {
+                   searchResultsList.isVisible = true
+                   placeholderCommunicationsProblem.isVisible = false
+               }
+               SearchViewModel.SearchState.EMPTY -> {
+                   searchResultsList.isVisible = false
+                   placeholderNothingWasFound.isVisible = true
+               }
+               SearchViewModel.SearchState.LOADING -> {
+                   searchResultsList.isVisible = false
+                   placeholderNothingWasFound.isVisible = false
+               }
+
+               else -> {
+                   searchResultsList.isVisible = false
+                   placeholderCommunicationsProblem.isVisible = true
+               }
+           }
+       }
+
+
 
         val trackRecyclerView = findViewById<RecyclerView>(R.id.trackRecyclerView)
         trackRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -76,13 +107,11 @@ class SearchActivity : AppCompatActivity(), SearchView {
         historyList = findViewById(R.id.history_list)
         buttonClear = findViewById(R.id.clearHistoryButton)
 
-        searchPresenter = Creator.provideSearchPresenter(
-            view = this,
-            sharedPref = getSharedPreferences(HISTORY_TRACKS_SHARED_PREF, MODE_PRIVATE)
-        )
+
 
         //Объект класса для работы с историей поиске
-        historyTracks = searchPresenter.tracksHistoryFromJson() as ArrayList<Track>
+        historyTracks = viewModel.tracksHistoryFromJson() as ArrayList<Track>
+
         if (historyTracks.isNotEmpty()) {
             historyList.visibility = View.VISIBLE
         }
@@ -135,7 +164,9 @@ class SearchActivity : AppCompatActivity(), SearchView {
         //Очистка истории поиска
         buttonClear.setOnClickListener {
             historyTracks.clear()
-            searchPresenter.clearHistory()
+       //     searchPresenter.clearHistory()
+            viewModel.clearHistory()
+
             historyList.visibility = View.GONE
         }
 
@@ -145,7 +176,9 @@ class SearchActivity : AppCompatActivity(), SearchView {
             if (!isPlayerOpening) {
                 isPlayerOpening = true // Установить флаг блокировки перед открытием плеера
 
-                searchPresenter.addTrack(track, position)
+              //  searchPresenter.addTrack(track, position)
+                viewModel.addTrack(track, position)
+
                 val searchIntent = Intent(this, MediaActivity::class.java).apply {
                     putExtra(TRACK_ID, track.trackId)
                 }
@@ -183,11 +216,15 @@ class SearchActivity : AppCompatActivity(), SearchView {
             hideKeyboard()
 
             //Показать историю поисков
-            historyTracks = searchPresenter.tracksHistoryFromJson() as ArrayList<Track>
+         //   historyTracks = searchPresenter.tracksHistoryFromJson() as ArrayList<Track>
+            historyTracks = viewModel.tracksHistoryFromJson() as ArrayList<Track>
+
             tracksHistoryAdapter.updateTracks(historyTracks)
             historyList.isVisible = historyTracks.isNotEmpty()
         }
     }
+
+
 
     private fun performSearch() {
         val searchText = searchEditText.text.toString()
@@ -208,30 +245,8 @@ class SearchActivity : AppCompatActivity(), SearchView {
     }
 
     private fun searchTracks(searchText: String) {
-        searchPresenter.searchTrack(searchText)
-    }
+        viewModel.searchTrack(searchText)
 
-    override fun updateTracks() {
-        trackAdapter.updateTracks(emptyList())
-    }
-
-    override fun nothingWasFound() {
-        placeholderNothingWasFound.visibility = View.VISIBLE
-        placeholderCommunicationsProblem.visibility = View.INVISIBLE
-    }
-
-    override fun showTracks() {
-        placeholderNothingWasFound.visibility = View.INVISIBLE
-        placeholderCommunicationsProblem.visibility = View.INVISIBLE
-    }
-
-    override fun updateTracks(tracks: List<Track>) {
-        trackAdapter.updateTracks(tracks)
-    }
-
-    override fun error() {
-        placeholderCommunicationsProblem.visibility = View.VISIBLE
-        placeholderNothingWasFound.visibility = View.INVISIBLE
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -248,7 +263,9 @@ class SearchActivity : AppCompatActivity(), SearchView {
 
     override fun onResume() {
         super.onResume()
-        historyTracks = searchPresenter.tracksHistoryFromJson() as ArrayList<Track>
+       // historyTracks = searchPresenter.tracksHistoryFromJson() as ArrayList<Track>
+        historyTracks = viewModel.tracksHistoryFromJson() as ArrayList<Track>
+
         tracksHistoryAdapter.updateTracks(historyTracks)
 
         isPlayerOpening = false // Сбросить флаг блокировки при возобновлении активности
