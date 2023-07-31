@@ -6,6 +6,7 @@ xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
 <application
+    android:name="com.example.yp_playlist.App"
     android:allowBackup="true"
     android:dataExtractionRules="@xml/data_extraction_rules"
     android:fullBackupContent="@xml/backup_rules"
@@ -23,7 +24,7 @@ xmlns:tools="http://schemas.android.com/tools">
             android:value="" />
     </activity>
     <activity
-        android:name=".presentation.SettingsActivity"
+        android:name=".settings.ui.SettingsActivity"
         android:exported="false">
         <meta-data
             android:name="android.app.lib_name"

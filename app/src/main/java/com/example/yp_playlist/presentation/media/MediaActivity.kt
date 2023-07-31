@@ -9,17 +9,18 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.yp_playlist.R
-import com.example.yp_playlist.creator.Creator
 import com.example.yp_playlist.domain.Track
 import com.example.yp_playlist.presentation.search.HISTORY_TRACKS_SHARED_PREF
+import com.example.yp_playlist.presentation.search.SearchViewModel
 import com.example.yp_playlist.presentation.search.TRACK_ID
 
-class MediaActivity : AppCompatActivity(), MediaView {
+class MediaActivity : AppCompatActivity() {
 
-    private lateinit var mediaPresenter: MediaPresenter
+    private lateinit var viewModel: MediaViewModel
 
     //Переменные
     lateinit var buttonArrowBackSettings: androidx.appcompat.widget.Toolbar
@@ -69,10 +70,9 @@ class MediaActivity : AppCompatActivity(), MediaView {
         buttonPlay = findViewById(R.id.playButton)
         progressBar = findViewById(R.id.progressBar)
 
-        mediaPresenter = Creator.provideMediaPresenter(
-            view = this,
-            sharedPref = getSharedPreferences(HISTORY_TRACKS_SHARED_PREF, MODE_PRIVATE)
-        )
+
+        viewModel = ViewModelProvider(this, MediaViewModel.getViewModelFactory(this,getSharedPreferences(
+            HISTORY_TRACKS_SHARED_PREF, MODE_PRIVATE)))[MediaViewModel::class.java]
 
         buttonArrowBackSettings.setOnClickListener {
             finish()
@@ -82,10 +82,13 @@ class MediaActivity : AppCompatActivity(), MediaView {
             playbackControl()
         }
         val trackId = intent.extras?.getInt(TRACK_ID) as Int
-        mediaPresenter.getTrack(trackId)
-        preparePlayer()
+        viewModel.getTrack(trackId)
         playbackControl()
 
+        viewModel.trackInfo.observe(this) { track ->
+            showInfo(track)
+            preparePlayer()
+        }
     }
 
     override fun onPause() {
@@ -149,7 +152,7 @@ class MediaActivity : AppCompatActivity(), MediaView {
     private fun timerTrack(): Runnable {
         return object : Runnable {
             override fun run() {
-                time.text = mediaPresenter.getTime(mediaPlayer.currentPosition)
+                time.text = viewModel.getTime(mediaPlayer.currentPosition)
                 handler.postDelayed(this, 300)
             }
         }
@@ -160,14 +163,14 @@ class MediaActivity : AppCompatActivity(), MediaView {
     }
 
     //Отображение данных трека
-    override fun showInfo(track: Track) {
+    private fun showInfo(track: Track) {
 
         previewUrl = track.previewUrl
         trackName.text = track.trackName
         artistName.text = track.artistName
-        trackTime.text = mediaPresenter.getTime(track.trackTimeMillis.toInt())
+        trackTime.text = viewModel.getTime(track.trackTimeMillis.toInt())
         collectionName.text = track.collectionName
-        releaseDate.text = mediaPresenter.getDate(track.releaseDate)
+        releaseDate.text = viewModel.getDate(track.releaseDate)
         primaryGenreName.text = track.primaryGenreName
         country.text = track.country
         time.text = START_TIME
