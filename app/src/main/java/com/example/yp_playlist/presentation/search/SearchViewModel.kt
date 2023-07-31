@@ -15,7 +15,7 @@ import com.example.yp_playlist.data.network.NetworkClientImpl
 import com.example.yp_playlist.domain.interactor.TracksInteractor
 import com.example.yp_playlist.domain.interactor.TracksInteractorImpl
 import com.example.yp_playlist.domain.repository.TracksRepositoryImpl
-import com.example.yp_playlist.domain.storage.SearchHistoryImpl
+import com.example.yp_playlist.data.date.SearchHistoryImpl
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

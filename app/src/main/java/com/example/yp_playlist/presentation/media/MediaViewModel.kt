@@ -13,8 +13,8 @@ import com.example.yp_playlist.data.date.DateManager
 import com.example.yp_playlist.data.date.DateManagerImpl
 
 import com.example.yp_playlist.domain.Track
-import com.example.yp_playlist.domain.storage.SearchHistory
-import com.example.yp_playlist.domain.storage.SearchHistoryImpl
+import com.example.yp_playlist.data.date.SearchHistory
+import com.example.yp_playlist.data.date.SearchHistoryImpl
 
 
 class MediaViewModel(
