@@ -2,7 +2,7 @@ package com.example.yp_playlist.domain.repository
 
 import com.example.yp_playlist.domain.Track
 import com.example.yp_playlist.data.network.NetworkClient
-import com.example.yp_playlist.domain.storage.SearchHistory
+import com.example.yp_playlist.data.date.SearchHistory
 
 class TracksRepositoryImpl(
     private val networkClient: NetworkClient,
