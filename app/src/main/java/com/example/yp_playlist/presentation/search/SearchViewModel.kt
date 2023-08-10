@@ -1,21 +1,12 @@
 package com.example.yp_playlist.presentation.search
 
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.yp_playlist.App
 import com.example.yp_playlist.domain.Track
 import com.example.yp_playlist.data.TrackResponse
-import com.example.yp_playlist.data.network.NetworkClientImpl
 import com.example.yp_playlist.domain.interactor.TracksInteractor
-import com.example.yp_playlist.domain.interactor.TracksInteractorImpl
-import com.example.yp_playlist.domain.repository.TracksRepositoryImpl
-import com.example.yp_playlist.data.date.SearchHistoryImpl
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -78,25 +69,6 @@ class SearchViewModel(
 
     fun clearHistory() {
         tracksInteractor.clearHistory()
-    }
-
-    companion object {
-
-        fun getViewModelFactory(context: Context, sharedPref: SharedPreferences): ViewModelProvider.Factory =
-            viewModelFactory {
-                initializer {
-                    val application =
-                        this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as App
-                    SearchViewModel(
-                        TracksInteractorImpl(
-                            TracksRepositoryImpl(
-                                NetworkClientImpl(),
-                                SearchHistoryImpl(sharedPref)
-                            )
-                        ), application
-                    )
-                }
-            }
     }
 
 }

@@ -7,32 +7,34 @@ import com.example.yp_playlist.R
 import com.example.yp_playlist.sharing.data.ExternalNavigator
 import com.example.yp_playlist.sharing.domain.models.EmailData
 
-class ExternalNavigatorImpl (private val context: Context) : ExternalNavigator {
+class ExternalNavigatorImpl(private val context: Context) : ExternalNavigator {
 
     val emailSubject = context.getString(R.string.mailSubject)
     val emailText = context.getString(R.string.supportMessage)
 
     override fun shareLink(shareAppLink: String) {
-        Intent().apply {
-            action = Intent.ACTION_SEND
+        Intent(Intent.ACTION_SEND).apply {
             putExtra(Intent.EXTRA_TEXT, shareAppLink)
             type = "text/plain"
-            context.startActivity(Intent.createChooser(this, null))
+            val chooserIntent = Intent.createChooser(this, null)
+            chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(chooserIntent)
         }
     }
 
     override fun openLink(termsLink: String) {
         val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(termsLink))
+        browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(browserIntent)
     }
 
     override fun openEmail(supportEmailData: EmailData) {
-        Intent().apply {
-            action = Intent.ACTION_SENDTO
+        Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:")
             putExtra(Intent.EXTRA_EMAIL, arrayOf(supportEmailData.mail))
             putExtra(Intent.EXTRA_SUBJECT, emailSubject)
             putExtra(Intent.EXTRA_TEXT, emailText)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(this)
         }
     }

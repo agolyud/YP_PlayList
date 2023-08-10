@@ -1,20 +1,11 @@
 package com.example.yp_playlist.presentation.media
 
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.yp_playlist.App
 import com.example.yp_playlist.data.date.DateManager
-import com.example.yp_playlist.data.date.DateManagerImpl
-
 import com.example.yp_playlist.domain.Track
 import com.example.yp_playlist.data.date.SearchHistory
-import com.example.yp_playlist.data.date.SearchHistoryImpl
 
 
 class MediaViewModel(
@@ -39,22 +30,8 @@ class MediaViewModel(
             it.trackId == trackId
         }
         if (track != null) {
-            _trackInfo.value = track
+            _trackInfo.value = track!!
         }
     }
 
-    companion object {
-
-        fun getViewModelFactory(context: Context, sharedPref: SharedPreferences): ViewModelProvider.Factory =
-            viewModelFactory {
-                initializer {
-                    val application =
-                        this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as App
-                    MediaViewModel(
-                        dateManager = DateManagerImpl(),
-                        searchHistory = SearchHistoryImpl(sharedPref),
-                    )
-                }
-            }
-    }
 }

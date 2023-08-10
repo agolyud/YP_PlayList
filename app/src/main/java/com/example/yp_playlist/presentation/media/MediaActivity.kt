@@ -17,10 +17,12 @@ import com.example.yp_playlist.domain.Track
 import com.example.yp_playlist.presentation.search.HISTORY_TRACKS_SHARED_PREF
 import com.example.yp_playlist.presentation.search.SearchViewModel
 import com.example.yp_playlist.presentation.search.TRACK_ID
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MediaActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: MediaViewModel
+
+    private val viewModel by viewModel<MediaViewModel>()
 
     //Переменные
     lateinit var buttonArrowBackSettings: androidx.appcompat.widget.Toolbar
@@ -70,9 +72,6 @@ class MediaActivity : AppCompatActivity() {
         buttonPlay = findViewById(R.id.playButton)
         progressBar = findViewById(R.id.progressBar)
 
-
-        viewModel = ViewModelProvider(this, MediaViewModel.getViewModelFactory(this,getSharedPreferences(
-            HISTORY_TRACKS_SHARED_PREF, MODE_PRIVATE)))[MediaViewModel::class.java]
 
         buttonArrowBackSettings.setOnClickListener {
             finish()
