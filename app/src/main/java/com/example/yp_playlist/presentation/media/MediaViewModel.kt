@@ -30,7 +30,7 @@ class MediaViewModel(
             it.trackId == trackId
         }
         if (track != null) {
-            _trackInfo.value = track!!
+            track?.let { _trackInfo.value =  it }
         }
     }
 

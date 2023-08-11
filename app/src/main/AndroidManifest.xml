@@ -24,6 +24,13 @@ xmlns:tools="http://schemas.android.com/tools">
             android:value="" />
     </activity>
     <activity
+        android:name=".media_library.MediaLibraryActivity"
+        android:exported="false">
+        <meta-data
+            android:name="android.app.lib_name"
+            android:value="" />
+    </activity>
+    <activity
         android:name=".settings.ui.SettingsActivity"
         android:exported="false">
         <meta-data
