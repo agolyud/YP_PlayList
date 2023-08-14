@@ -1,4 +1,4 @@
-package com.example.yp_playlist.data.date
+package com.example.yp_playlist.data.history
 
 import android.content.SharedPreferences
 import com.example.yp_playlist.domain.Track
@@ -8,7 +8,10 @@ import com.google.gson.reflect.TypeToken
 const val HISTORY_TRACKS_KEY = "history_tracks_key"
 const val MAX_HISTORY_SIZE = 10
 
-class SearchHistoryImpl(private val sharedPref: SharedPreferences) : SearchHistory {
+class SearchHistoryImpl(
+    private val sharedPref: SharedPreferences,
+    private val gson: Gson
+) : SearchHistory {
 
     private val typeTokenArrayList = object : TypeToken<ArrayList<Track>>() {}.type
 
@@ -16,11 +19,11 @@ class SearchHistoryImpl(private val sharedPref: SharedPreferences) : SearchHisto
         val jsonHistoryTracks = sharedPref.getString(HISTORY_TRACKS_KEY, null)
 
         if (jsonHistoryTracks == null) {
-            sharedPref.edit().putString(HISTORY_TRACKS_KEY, Gson().toJson(listOf(track))).apply()
+            sharedPref.edit().putString(HISTORY_TRACKS_KEY, gson.toJson(listOf(track))).apply()
             return
         }
 
-        val historyTracks = Gson().fromJson<ArrayList<Track>>(jsonHistoryTracks, typeTokenArrayList)
+        val historyTracks = gson.fromJson<ArrayList<Track>>(jsonHistoryTracks, typeTokenArrayList)
 
         // Проверяем, есть ли трек в истории
         val existingTrackIndex = historyTracks.indexOfFirst { it.trackId == track.trackId }
@@ -42,7 +45,7 @@ class SearchHistoryImpl(private val sharedPref: SharedPreferences) : SearchHisto
     override fun tracksHistoryFromJson(): List<Track> {
         val jsonHistoryTracks =
             sharedPref.getString(HISTORY_TRACKS_KEY, null) ?: return ArrayList<Track>()
-        return Gson().fromJson<ArrayList<Track>>(jsonHistoryTracks, typeTokenArrayList)
+        return gson.fromJson<ArrayList<Track>>(jsonHistoryTracks, typeTokenArrayList)
     }
 
     override fun clearHistory() {
@@ -50,6 +53,6 @@ class SearchHistoryImpl(private val sharedPref: SharedPreferences) : SearchHisto
     }
 
     private fun saveTrackForHistory(historyTracks: ArrayList<Track>) {
-        sharedPref.edit().putString(HISTORY_TRACKS_KEY, Gson().toJson(historyTracks)).apply()
+        sharedPref.edit().putString(HISTORY_TRACKS_KEY, gson.toJson(historyTracks)).apply()
     }
 }

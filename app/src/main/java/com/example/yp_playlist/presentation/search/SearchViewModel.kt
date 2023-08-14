@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.yp_playlist.App
 import com.example.yp_playlist.domain.Track
 import com.example.yp_playlist.data.TrackResponse
-import com.example.yp_playlist.domain.interactor.TracksInteractor
+import com.example.yp_playlist.domain.interactors.tracks.TracksInteractor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -14,7 +14,7 @@ import retrofit2.Response
 
 class SearchViewModel(
     private val tracksInteractor: TracksInteractor,
-    private val application: App,
+    application: App,
 ) : AndroidViewModel(application) {
 
     private val _searchState = MutableLiveData<List<Track>>()

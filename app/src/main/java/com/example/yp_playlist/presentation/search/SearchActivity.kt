@@ -18,13 +18,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.os.Handler
 import android.os.Looper
-import androidx.lifecycle.ViewModelProvider
 import com.example.yp_playlist.R
 import com.example.yp_playlist.domain.Track
 import com.example.yp_playlist.presentation.media.MediaActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-const val HISTORY_TRACKS_SHARED_PREF = "history_tracks_shared_pref"
+const val PLAYLIST_SHARED_PREFERENCES = "playlist_shared_preferences"
 const val TRACK_ID = "track_position"
 
 class SearchActivity : AppCompatActivity() {

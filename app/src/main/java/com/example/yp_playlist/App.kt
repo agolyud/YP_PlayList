@@ -11,10 +11,13 @@ import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 import com.example.yp_playlist.di.settingsModule
 import com.example.yp_playlist.di.sharingModule
+import com.example.yp_playlist.presentation.search.PLAYLIST_SHARED_PREFERENCES
+import com.example.yp_playlist.settings.data.storage.SharedPrefsThemeStorage
 
 
 class App : Application() {
-    var darkTheme = false
+
+    private var darkTheme = false
 
     override fun onCreate() {
         super.onCreate()
@@ -25,8 +28,8 @@ class App : Application() {
             modules(listOf(settingsModule, sharingModule, searchModule, mediaModule))
         }
 
-        val sharedPrefs = getSharedPreferences(PLAYLIST_MAKER_SHARED_PREFS, MODE_PRIVATE)
-        darkTheme = sharedPrefs.getBoolean(DARK_THEME_KEY, false)
+        val sharedPrefs = getSharedPreferences(PLAYLIST_SHARED_PREFERENCES, MODE_PRIVATE)
+        darkTheme = sharedPrefs.getBoolean(SharedPrefsThemeStorage.DARK_THEME, false)
         switchTheme(darkTheme)
     }
 
@@ -41,8 +44,4 @@ class App : Application() {
         )
     }
 
-    companion object {
-        const val PLAYLIST_MAKER_SHARED_PREFS = "playlist_maker_shared_prefs"
-        const val DARK_THEME_KEY = "dark_theme_key"
-    }
 }

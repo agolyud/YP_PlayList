@@ -2,11 +2,8 @@ package com.example.yp_playlist.settings.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 
 import com.example.yp_playlist.databinding.ActivitySettingsBinding
-import com.example.yp_playlist.presentation.search.HISTORY_TRACKS_SHARED_PREF
-import com.example.yp_playlist.presentation.search.SearchViewModel
 
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -14,7 +11,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var settingsBinding: ActivitySettingsBinding
-   // private lateinit var viewModel: SettingsViewModel
 
     private val viewModel by viewModel<SettingsViewModel>()
 
@@ -23,12 +19,7 @@ class SettingsActivity : AppCompatActivity() {
         settingsBinding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(settingsBinding.root)
 
-    //   viewModel = ViewModelProvider(this, SettingsViewModel.getViewModelFactory(this,getSharedPreferences(HISTORY_TRACKS_SHARED_PREF, MODE_PRIVATE)))[SettingsViewModel::class.java]
-
-
-
         settingsBinding.settingsToolbar.setOnClickListener {
-
             finish()
         }
 

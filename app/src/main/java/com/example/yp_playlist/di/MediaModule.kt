@@ -1,13 +1,13 @@
 package com.example.yp_playlist.di
 
-import com.example.yp_playlist.App
+import android.media.MediaPlayer
 import com.example.yp_playlist.data.date.DateManager
 import com.example.yp_playlist.data.date.DateManagerImpl
-import com.example.yp_playlist.data.date.SearchHistory
-import com.example.yp_playlist.data.date.SearchHistoryImpl
 import com.example.yp_playlist.presentation.media.MediaViewModel
-import com.example.yp_playlist.presentation.search.SearchViewModel
-import org.koin.android.ext.koin.androidApplication
+import com.example.yp_playlist.data.player.PlayerImpl
+import com.example.yp_playlist.domain.interactors.media.MediaInteractor
+import com.example.yp_playlist.domain.interactors.media.MediaInteractorImpl
+import com.example.yp_playlist.data.player.Player
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -16,8 +16,7 @@ val mediaModule = module {
 
     viewModel {
         MediaViewModel(
-            dateManager = get(),
-            searchHistory = get()
+            mediaInteractor = get()
         )
     }
 
@@ -25,9 +24,19 @@ val mediaModule = module {
         DateManagerImpl()
     }
 
-    single<SearchHistory> {
-        SearchHistoryImpl(get())
+    single<Player> {
+        PlayerImpl(get())
     }
 
+    single<MediaInteractor> {
+        MediaInteractorImpl(
+            mediaPlayer = get(),
+            dateManager = get(),
+            searchHistory = get(),
+        )
+    }
 
+    single {
+        MediaPlayer()
+    }
 }
