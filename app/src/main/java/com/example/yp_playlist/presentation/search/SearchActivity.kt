@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.os.Handler
 import android.os.Looper
+import android.widget.ProgressBar
 import com.example.yp_playlist.R
 import com.example.yp_playlist.domain.Track
 import com.example.yp_playlist.presentation.media.MediaActivity
@@ -43,6 +44,7 @@ class SearchActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { performSearch() }
     private var isPlayerOpening = false
+    private lateinit var progressBar: ProgressBar
 
 
 
@@ -52,6 +54,8 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+
+        progressBar = findViewById(R.id.progressBar)
 
 
         viewModel.searchState.observe(this) {
@@ -64,18 +68,22 @@ class SearchActivity : AppCompatActivity() {
                SearchViewModel.SearchState.SUCCESS -> {
                    searchResultsList.isVisible = true
                    placeholderCommunicationsProblem.isVisible = false
+                   progressBar.isVisible = false
                }
                SearchViewModel.SearchState.EMPTY -> {
                    searchResultsList.isVisible = false
                    placeholderNothingWasFound.isVisible = true
+                   progressBar.isVisible = false
                }
                SearchViewModel.SearchState.LOADING -> {
+                   progressBar.isVisible = true
                    searchResultsList.isVisible = false
                    placeholderNothingWasFound.isVisible = false
                }
 
                else -> {
                    searchResultsList.isVisible = false
+                   progressBar.isVisible = false
                    placeholderCommunicationsProblem.isVisible = true
                }
            }
@@ -248,6 +256,7 @@ class SearchActivity : AppCompatActivity() {
         viewModel.searchTrack(searchText)
 
     }
+
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
