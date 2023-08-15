@@ -3,15 +3,22 @@ package com.example.yp_playlist.sharing.data.impl
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import com.example.yp_playlist.R
 import com.example.yp_playlist.sharing.data.ExternalNavigator
 import com.example.yp_playlist.sharing.domain.models.EmailData
-import java.lang.Exception
 
 class ExternalNavigatorImpl(private val context: Context) : ExternalNavigator {
 
-    val emailSubject = context.getString(R.string.mailSubject)
-    val emailText = context.getString(R.string.supportMessage)
+    private val emailSubject = context.getString(R.string.mailSubject)
+    private val emailText = context.getString(R.string.supportMessage)
+    private val errorSharingLink = context.getString(R.string.errorSharingLink)
+    private val errorOpeningLink = context.getString(R.string.errorOpeningLink)
+    private val errorOpeningEmail = context.getString(R.string.errorOpeningEmail)
+
+    private fun showErrorToast(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
 
     override fun shareLink(shareAppLink: String) {
         try {
@@ -24,6 +31,7 @@ class ExternalNavigatorImpl(private val context: Context) : ExternalNavigator {
             }
         } catch (e: Exception) {
             e.printStackTrace()
+            showErrorToast(errorSharingLink)
         }
     }
 
@@ -34,6 +42,7 @@ class ExternalNavigatorImpl(private val context: Context) : ExternalNavigator {
             context.startActivity(browserIntent)
         } catch (e: Exception) {
             e.printStackTrace()
+            showErrorToast(errorOpeningLink)
         }
     }
 
@@ -49,6 +58,7 @@ class ExternalNavigatorImpl(private val context: Context) : ExternalNavigator {
             }
         } catch (e: Exception) {
             e.printStackTrace()
+            showErrorToast(errorOpeningEmail)
         }
     }
 }
