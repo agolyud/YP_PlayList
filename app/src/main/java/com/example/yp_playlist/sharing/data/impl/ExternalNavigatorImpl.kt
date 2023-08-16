@@ -3,37 +3,62 @@ package com.example.yp_playlist.sharing.data.impl
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import com.example.yp_playlist.R
 import com.example.yp_playlist.sharing.data.ExternalNavigator
 import com.example.yp_playlist.sharing.domain.models.EmailData
 
-class ExternalNavigatorImpl (private val context: Context) : ExternalNavigator {
+class ExternalNavigatorImpl(private val context: Context) : ExternalNavigator {
 
-    val emailSubject = context.getString(R.string.mailSubject)
-    val emailText = context.getString(R.string.supportMessage)
+    private val emailSubject = context.getString(R.string.mailSubject)
+    private val emailText = context.getString(R.string.supportMessage)
+    private val errorSharingLink = context.getString(R.string.errorSharingLink)
+    private val errorOpeningLink = context.getString(R.string.errorOpeningLink)
+    private val errorOpeningEmail = context.getString(R.string.errorOpeningEmail)
+
+    private fun showErrorToast(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
 
     override fun shareLink(shareAppLink: String) {
-        Intent().apply {
-            action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, shareAppLink)
-            type = "text/plain"
-            context.startActivity(Intent.createChooser(this, null))
+        try {
+            Intent(Intent.ACTION_SEND).apply {
+                putExtra(Intent.EXTRA_TEXT, shareAppLink)
+                type = "text/plain"
+                val chooserIntent = Intent.createChooser(this, null)
+                chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(chooserIntent)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            showErrorToast(errorSharingLink)
         }
     }
 
     override fun openLink(termsLink: String) {
-        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(termsLink))
-        context.startActivity(browserIntent)
+        try {
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(termsLink))
+            browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(browserIntent)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            showErrorToast(errorOpeningLink)
+        }
     }
 
     override fun openEmail(supportEmailData: EmailData) {
-        Intent().apply {
-            action = Intent.ACTION_SENDTO
-            data = Uri.parse("mailto:")
-            putExtra(Intent.EXTRA_EMAIL, arrayOf(supportEmailData.mail))
-            putExtra(Intent.EXTRA_SUBJECT, emailSubject)
-            putExtra(Intent.EXTRA_TEXT, emailText)
-            context.startActivity(this)
+        try {
+            Intent(Intent.ACTION_SENDTO).apply {
+                data = Uri.parse("mailto:")
+                putExtra(Intent.EXTRA_EMAIL, arrayOf(supportEmailData.mail))
+                putExtra(Intent.EXTRA_SUBJECT, emailSubject)
+                putExtra(Intent.EXTRA_TEXT, emailText)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(this)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            showErrorToast(errorOpeningEmail)
         }
     }
 }

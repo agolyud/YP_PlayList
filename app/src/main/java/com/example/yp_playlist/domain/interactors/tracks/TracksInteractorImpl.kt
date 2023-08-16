@@ -1,4 +1,4 @@
-package com.example.yp_playlist.domain.interactor
+package com.example.yp_playlist.domain.interactors.tracks
 
 import com.example.yp_playlist.data.TrackResponse
 import com.example.yp_playlist.domain.Track

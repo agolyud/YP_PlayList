@@ -18,12 +18,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.os.Handler
 import android.os.Looper
-import androidx.lifecycle.ViewModelProvider
+import android.widget.ProgressBar
 import com.example.yp_playlist.R
 import com.example.yp_playlist.domain.Track
 import com.example.yp_playlist.presentation.media.MediaActivity
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-const val HISTORY_TRACKS_SHARED_PREF = "history_tracks_shared_pref"
+const val PLAYLIST_SHARED_PREFERENCES = "playlist_shared_preferences"
 const val TRACK_ID = "track_position"
 
 class SearchActivity : AppCompatActivity() {
@@ -43,15 +44,19 @@ class SearchActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { performSearch() }
     private var isPlayerOpening = false
+    private lateinit var progressBar: ProgressBar
 
-    private lateinit var viewModel: SearchViewModel
+
+
+    private val viewModel by viewModel<SearchViewModel>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        viewModel = ViewModelProvider(this, SearchViewModel.getViewModelFactory(this,getSharedPreferences(HISTORY_TRACKS_SHARED_PREF, MODE_PRIVATE)))[SearchViewModel::class.java]
+        progressBar = findViewById(R.id.progressBar)
+
 
         viewModel.searchState.observe(this) {
             trackAdapter.updateTracks(it)
@@ -63,18 +68,22 @@ class SearchActivity : AppCompatActivity() {
                SearchViewModel.SearchState.SUCCESS -> {
                    searchResultsList.isVisible = true
                    placeholderCommunicationsProblem.isVisible = false
+                   progressBar.isVisible = false
                }
                SearchViewModel.SearchState.EMPTY -> {
                    searchResultsList.isVisible = false
                    placeholderNothingWasFound.isVisible = true
+                   progressBar.isVisible = false
                }
                SearchViewModel.SearchState.LOADING -> {
+                   progressBar.isVisible = true
                    searchResultsList.isVisible = false
                    placeholderNothingWasFound.isVisible = false
                }
 
                else -> {
                    searchResultsList.isVisible = false
+                   progressBar.isVisible = false
                    placeholderCommunicationsProblem.isVisible = true
                }
            }
@@ -176,7 +185,7 @@ class SearchActivity : AppCompatActivity() {
             if (!isPlayerOpening) {
                 isPlayerOpening = true // Установить флаг блокировки перед открытием плеера
 
-              //  searchPresenter.addTrack(track, position)
+
                 viewModel.addTrack(track, position)
 
                 val searchIntent = Intent(this, MediaActivity::class.java).apply {
@@ -216,7 +225,6 @@ class SearchActivity : AppCompatActivity() {
             hideKeyboard()
 
             //Показать историю поисков
-         //   historyTracks = searchPresenter.tracksHistoryFromJson() as ArrayList<Track>
             historyTracks = viewModel.tracksHistoryFromJson() as ArrayList<Track>
 
             tracksHistoryAdapter.updateTracks(historyTracks)
@@ -249,6 +257,7 @@ class SearchActivity : AppCompatActivity() {
 
     }
 
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         val searchText = searchEditText.text.toString()
@@ -263,7 +272,6 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-       // historyTracks = searchPresenter.tracksHistoryFromJson() as ArrayList<Track>
         historyTracks = viewModel.tracksHistoryFromJson() as ArrayList<Track>
 
         tracksHistoryAdapter.updateTracks(historyTracks)
