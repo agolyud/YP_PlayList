@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/settingsPageBackground"
+    android:orientation="vertical"
+    android:theme="@style/Theme.YP_PlayList.Settings">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center"
+        android:layout_marginTop="106dp"
+        android:src="@drawable/error_no_data"/>
+
+    <TextView
+        style="@style/tabText"
+        android:text="@string/your_media_isEmpty"/>
+</LinearLayout>

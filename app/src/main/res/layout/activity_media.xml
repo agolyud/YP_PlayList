@@ -1,18 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="?attr/settingsPageBackground"
     android:orientation="vertical"
-    android:background="@color/white_fon"
-    android:layout_marginStart="@dimen/standard_margin">
+    android:theme="@style/Theme.YP_PlayList.Settings">
 
-    <TextView
-        android:id="@+id/message"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/settings_toolbar"
+        app:title="@string/media_button"
+        style="@style/panel_header_toolbar"
+        android:layout_marginBottom="0dp"/>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        style="@style/tabLayout"
+        app:tabTextAppearance="@style/tabLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="Привет, Android разработка — это круто!" />
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:tabIndicatorFullWidth="true"/>
 
-
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>

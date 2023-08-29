@@ -29,4 +29,9 @@
     <string name="album">Альбом</string>
     <string name="duration">Длительность</string>
     <string name="track_time">0:00</string>
+    <string name="newPlaylist">Новый плейлист</string>
+    <string name="your_media_isEmpty">Ваша медиатека пуста</string>
+    <string name="not_create_Playlist">Вы не создали \n ни одного плейлиста</string>
+    <string name="favourite">Избранные треки</string>
+    <string name="playlist">Плейлисты</string>
 </resources>
