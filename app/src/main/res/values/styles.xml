@@ -190,7 +190,7 @@
     </style>
 
 
-    <style name="font_style" parent="@android:style/TextAppearance.Small">
+    <style name="tabText_style" parent="@android:style/TextAppearance.Small">
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textSize">@dimen/text_16sp</item>
     </style>

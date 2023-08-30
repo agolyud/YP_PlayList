@@ -22,7 +22,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         app:tabIndicatorFullWidth="true"
-        app:tabTextAppearance="@style/font_style" />
+        app:tabTextAppearance="@style/tabText_style" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
