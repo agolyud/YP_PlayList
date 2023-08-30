@@ -9,7 +9,6 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.example.yp_playlist.databinding.ActivityMediaBinding
 
 
-
 class MediaLibraryActivity : AppCompatActivity() {
 
     private lateinit var mediaBinding: ActivityMediaBinding
@@ -20,16 +19,18 @@ class MediaLibraryActivity : AppCompatActivity() {
         mediaBinding = ActivityMediaBinding.inflate(layoutInflater)
         setContentView(mediaBinding.root)
 
-        mediaBinding.viewPager.adapter = MediaLibraryViewPagerAdapter(supportFragmentManager, lifecycle)
+        mediaBinding.viewPager.adapter =
+            MediaLibraryViewPagerAdapter(supportFragmentManager, lifecycle)
 
         mediaBinding.settingsToolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
-        tabMediator = TabLayoutMediator(mediaBinding.tabLayout, mediaBinding.viewPager) { tab, position ->
-            when(position) {
-                0 -> tab.text = getString(R.string.favourite)
-                1 -> tab.text = getString(R.string.playlist)
+        tabMediator =
+            TabLayoutMediator(mediaBinding.tabLayout, mediaBinding.viewPager) { tab, position ->
+                when (position) {
+                    0 -> tab.text = getString(R.string.favourite)
+                    1 -> tab.text = getString(R.string.playlist)
+                }
             }
-        }
         tabMediator.attach()
     }
 
