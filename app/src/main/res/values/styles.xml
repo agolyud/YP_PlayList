@@ -173,8 +173,6 @@
         <item name="android:padding">@dimen/padding_4</item>
         <item name="android:layout_marginBottom">@dimen/padding_24</item>
         <item name="android:background">?attr/settingsPageBackground</item>
-        <item name="navigationIcon">@drawable/back</item>
-        <item name="contentInsetStart">0dp</item>
         <item name="contentInsetStartWithNavigation">0dp</item>
         <item name="titleMarginStart">0dp</item>
     </style>
@@ -214,6 +212,8 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@color/white</item>
+        <item name="itemIconTint">@drawable/navigation_color</item>
+        <item name="itemTextColor">@drawable/navigation_color</item>
         <item name="menu">@menu/navigation_menu</item>
     </style>
 
