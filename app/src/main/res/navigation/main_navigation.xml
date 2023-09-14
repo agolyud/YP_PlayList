@@ -7,8 +7,31 @@
 
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.example.yp_playlist.settings.ui.SettingsActivity"
+        android:name="com.example.yp_playlist.settings.ui.SettingsFragment"
         android:label="fragment_settings"
-        tools:layout="@layout/activity_settings" />
+        tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/mediaLibraryFragment"
+        android:name="com.example.yp_playlist.media_library.activity.MediaLibraryFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_media" />
+
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.example.yp_playlist.presentation.search.SearchFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_search">
+
+    <action
+        android:id="@+id/searchFragment_to_playerActivity"
+        app:destination="@id/playerActivity" />
+    </fragment>
+
+    <activity
+        android:id="@+id/playerActivity"
+        android:name="com.example.yp_playlist.presentation.media.MediaActivity"
+        android:label="activity_player"
+        tools:layout="@layout/activity_player" />
 
 </navigation>

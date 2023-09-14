@@ -12,14 +12,18 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.os.Handler
 import android.os.Looper
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import android.widget.ProgressBar
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.fragment.app.Fragment
 import com.example.yp_playlist.R
+import com.example.yp_playlist.databinding.FragmentSearchBinding
 import com.example.yp_playlist.domain.Track
 import com.example.yp_playlist.presentation.media.MediaActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -27,7 +31,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 const val PLAYLIST_SHARED_PREFERENCES = "playlist_shared_preferences"
 const val TRACK_ID = "track_position"
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
 
     private var trackAdapter = TrackAdapter()
     private var tracksHistoryAdapter = TrackAdapter()
@@ -49,73 +53,79 @@ class SearchActivity : AppCompatActivity() {
 
 
     private val viewModel by viewModel<SearchViewModel>()
+    private lateinit var searchBinding: FragmentSearchBinding
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        searchBinding = FragmentSearchBinding.inflate(inflater, container, false)
+        return searchBinding.root
+    }
 
-        progressBar = findViewById(R.id.progressBar)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        progressBar = searchBinding.progressBar
 
 
-        viewModel.searchState.observe(this) {
+
+        viewModel.searchState.observe(viewLifecycleOwner) {
             trackAdapter.updateTracks(it)
         }
 
-       viewModel.fragmentState.observe(this) {
-           when (it) {
 
-               SearchViewModel.SearchState.SUCCESS -> {
-                   searchResultsList.isVisible = true
-                   placeholderCommunicationsProblem.isVisible = false
-                   progressBar.isVisible = false
-               }
-               SearchViewModel.SearchState.EMPTY -> {
-                   searchResultsList.isVisible = false
-                   placeholderNothingWasFound.isVisible = true
-                   progressBar.isVisible = false
-               }
-               SearchViewModel.SearchState.LOADING -> {
-                   progressBar.isVisible = true
-                   searchResultsList.isVisible = false
-                   placeholderNothingWasFound.isVisible = false
-               }
+        viewModel.fragmentState.observe(viewLifecycleOwner) {
+            when (it) {
 
-               else -> {
-                   searchResultsList.isVisible = false
-                   progressBar.isVisible = false
-                   placeholderCommunicationsProblem.isVisible = true
-               }
-           }
-       }
+                SearchViewModel.SearchState.SUCCESS -> {
+                    searchResultsList.isVisible = true
+                    placeholderCommunicationsProblem.isVisible = false
+                    progressBar.isVisible = false
+                }
 
+                SearchViewModel.SearchState.EMPTY -> {
+                    searchResultsList.isVisible = false
+                    placeholderNothingWasFound.isVisible = true
+                    progressBar.isVisible = false
+                }
 
+                SearchViewModel.SearchState.LOADING -> {
+                    progressBar.isVisible = true
+                    searchResultsList.isVisible = false
+                    placeholderNothingWasFound.isVisible = false
+                }
 
-        val trackRecyclerView = findViewById<RecyclerView>(R.id.trackRecyclerView)
-        trackRecyclerView.layoutManager = LinearLayoutManager(this)
-        searchResultsList = findViewById(R.id.trackRecyclerView)
-
-
-        val historyRecyclerView = findViewById<RecyclerView>(R.id.recyclerViewHistory)
-        historyRecyclerView.layoutManager = LinearLayoutManager(this)
-        historyRecyclerView.adapter = tracksHistoryAdapter
-
-
-        val homeButton = findViewById<Button>(R.id.settings_toolbar)
-        homeButton.setOnClickListener {
-            finish()
+                else -> {
+                    searchResultsList.isVisible = false
+                    progressBar.isVisible = false
+                    placeholderCommunicationsProblem.isVisible = true
+                }
+            }
         }
 
 
-        searchEditText = findViewById(R.id.SearchForm)
-        clearButton = findViewById(R.id.clear)
-        trackRecyclerView.adapter = trackAdapter
-        placeholderNothingWasFound = findViewById(R.id.placeholderNothingWasFound)
-        placeholderCommunicationsProblem = findViewById(R.id.placeholderCommunicationsProblem)
-        buttonReturn = findViewById(R.id.button_return)
-        historyList = findViewById(R.id.history_list)
-        buttonClear = findViewById(R.id.clearHistoryButton)
+        val trackRecyclerView = searchBinding.trackRecyclerView
+        trackRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        searchResultsList = searchBinding.trackRecyclerView
 
+
+        val historyRecyclerView = searchBinding.recyclerViewHistory
+        historyRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        historyRecyclerView.adapter = tracksHistoryAdapter
+
+
+
+        searchEditText = searchBinding.SearchForm
+        clearButton = searchBinding.clear
+        trackRecyclerView.adapter = trackAdapter
+        placeholderNothingWasFound = searchBinding.placeholderNothingWasFound
+        placeholderCommunicationsProblem = searchBinding.placeholderCommunicationsProblem
+        buttonReturn = searchBinding.buttonReturn
+        historyList = searchBinding.historyList
+        buttonClear = searchBinding.clearHistoryButton
 
 
         //Объект класса для работы с историей поиске
@@ -163,6 +173,8 @@ class SearchActivity : AppCompatActivity() {
 
                 val searchText = searchEditText.text.toString()
                 searchTracks(searchText)
+                hideKeyboard()
+
                 true
             } else {
                 false
@@ -173,7 +185,7 @@ class SearchActivity : AppCompatActivity() {
         //Очистка истории поиска
         buttonClear.setOnClickListener {
             historyTracks.clear()
-       //     searchPresenter.clearHistory()
+            //     searchPresenter.clearHistory()
             viewModel.clearHistory()
 
             historyList.visibility = View.GONE
@@ -188,9 +200,8 @@ class SearchActivity : AppCompatActivity() {
 
                 viewModel.addTrack(track, position)
 
-                val searchIntent = Intent(this, MediaActivity::class.java).apply {
-                    putExtra(TRACK_ID, track.trackId)
-                }
+                val searchIntent = Intent(requireContext(), MediaActivity::class.java)
+                searchIntent.putExtra(TRACK_ID, track.trackId)
                 startActivity(searchIntent)
             }
         }
@@ -199,9 +210,8 @@ class SearchActivity : AppCompatActivity() {
         tracksHistoryAdapter.itemClickListener = { position, track ->
             if (!isPlayerOpening) {
                 isPlayerOpening = true
-                val searchIntent = Intent(this, MediaActivity::class.java).apply {
-                    putExtra(TRACK_ID, track.trackId)
-                }
+                val searchIntent = Intent(requireContext(), MediaActivity::class.java)
+                searchIntent.putExtra(TRACK_ID, track.trackId)
                 startActivity(searchIntent)
             }
         }
@@ -221,12 +231,11 @@ class SearchActivity : AppCompatActivity() {
             placeholderNothingWasFound.visibility = View.INVISIBLE
             placeholderCommunicationsProblem.visibility = View.INVISIBLE
 
-            //Скрыть клавиатуру
+            // Скрыть клавиатуру
             hideKeyboard()
 
-            //Показать историю поисков
+            // Показать историю поисков
             historyTracks = viewModel.tracksHistoryFromJson() as ArrayList<Track>
-
             tracksHistoryAdapter.updateTracks(historyTracks)
             historyList.isVisible = historyTracks.isNotEmpty()
         }
@@ -240,7 +249,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun hideKeyboard() {
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(searchEditText.windowToken, 0)
     }
 
@@ -258,16 +267,18 @@ class SearchActivity : AppCompatActivity() {
     }
 
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
+    override fun onSaveInstanceState(savedInstanceState: Bundle) {
+        super.onSaveInstanceState(savedInstanceState)
         val searchText = searchEditText.text.toString()
-        outState.putString("searchText", searchText)
+        savedInstanceState.putString("searchText", searchText)
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        val searchText = savedInstanceState.getString("searchText")
-        searchEditText.setText(searchText)
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        if (savedInstanceState != null) {
+            val searchText = savedInstanceState.getString("searchText")
+            searchEditText.setText(searchText)
+        }
     }
 
     override fun onResume() {
