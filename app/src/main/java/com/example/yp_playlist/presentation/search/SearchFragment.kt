@@ -136,7 +136,7 @@ class SearchFragment : Fragment() {
         }
 
 
-        // Если поисковый запрос пустой, то кнопка не отображается и показывается история
+        // Объект класса для работы с историей поиска
         val shouldShowHistory = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -154,9 +154,13 @@ class SearchFragment : Fragment() {
                     searchResultsList.visibility = View.VISIBLE
                     historyList.visibility = View.GONE
 
-                    // Отменить предыдущий запланированный поиск и запланировать новый
+                    // Отменить предыдущий запланированный поиск
                     handler.removeCallbacks(searchRunnable)
-                    handler.postDelayed(searchRunnable, 2000) // Запустить поиск через 2 секунды
+
+                    // Запланировать новый поиск только если поисковый запрос не пустой
+                    if (searchText.isNotEmpty()) {
+                        handler.postDelayed(searchRunnable, 2000) // Запустить поиск через 2 секунды
+                    }
                 }
             }
 
