@@ -15,7 +15,7 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbarInclude"
-            style="@style/panel_header_toolbar"
+            style="@style/panel_player_toolbar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/trackImage"/>
