@@ -3,28 +3,25 @@ package com.example.yp_playlist.presentation.search
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import android.os.Handler
-import android.os.Looper
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import android.widget.ProgressBar
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.fragment.app.Fragment
-import com.example.yp_playlist.R
 import com.example.yp_playlist.databinding.FragmentSearchBinding
-import com.example.yp_playlist.domain.Track
 import com.example.yp_playlist.presentation.media.MediaActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -41,20 +38,15 @@ class SearchFragment : Fragment() {
     private lateinit var searchEditText: EditText
     private lateinit var clearButton: ImageView
     private lateinit var buttonClear: Button
-
     private lateinit var historyList: LinearLayout
-    var historyTracks = ArrayList<Track>()
     private lateinit var searchResultsList: RecyclerView
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { performSearch() }
     private var isPlayerOpening = false
     private lateinit var progressBar: ProgressBar
 
-
-
     private val viewModel by viewModel<SearchViewModel>()
     private lateinit var searchBinding: FragmentSearchBinding
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,17 +61,12 @@ class SearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         progressBar = searchBinding.progressBar
-
-
-
         viewModel.searchState.observe(viewLifecycleOwner) {
             trackAdapter.updateTracks(it)
         }
 
-
         viewModel.fragmentState.observe(viewLifecycleOwner) {
             when (it) {
-
                 SearchViewModel.SearchState.SUCCESS -> {
                     searchResultsList.isVisible = true
                     placeholderCommunicationsProblem.isVisible = false
@@ -106,17 +93,13 @@ class SearchFragment : Fragment() {
             }
         }
 
-
         val trackRecyclerView = searchBinding.trackRecyclerView
         trackRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         searchResultsList = searchBinding.trackRecyclerView
 
-
         val historyRecyclerView = searchBinding.recyclerViewHistory
         historyRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         historyRecyclerView.adapter = tracksHistoryAdapter
-
-
 
         searchEditText = searchBinding.SearchForm
         clearButton = searchBinding.clear
@@ -127,49 +110,39 @@ class SearchFragment : Fragment() {
         historyList = searchBinding.historyList
         buttonClear = searchBinding.clearHistoryButton
 
-
         //Объект класса для работы с историей поиске
-        historyTracks = viewModel.tracksHistoryFromJson() as ArrayList<Track>
-
-        if (historyTracks.isNotEmpty()) {
-            historyList.visibility = View.VISIBLE
-        }
+        viewModel.updateHistoryTracks(viewModel.tracksHistoryFromJson())
 
 
-        // Объект класса для работы с историей поиска
-        val shouldShowHistory = object : TextWatcher {
+        searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearButton.visibility = clearButtonVisibility(s)
-                val searchText = s?.toString() ?: ""
-                if (searchText.isEmpty()) {
-                    trackAdapter.updateTracks(emptyList())
-                    placeholderNothingWasFound.visibility = View.INVISIBLE
-                    searchResultsList.visibility = View.GONE
-                    historyList.visibility =
-                        if (searchEditText.hasFocus() && s?.isEmpty() == true && historyTracks.isNotEmpty()) View.VISIBLE else View.GONE
-                    tracksHistoryAdapter.updateTracks(historyTracks)
-                } else {
-                    placeholderNothingWasFound.visibility = View.GONE
-                    searchResultsList.visibility = View.VISIBLE
-                    historyList.visibility = View.GONE
-
-                    // Отменить предыдущий запланированный поиск
-                    handler.removeCallbacks(searchRunnable)
-
-                    // Запланировать новый поиск только если поисковый запрос не пустой
-                    if (searchText.isNotEmpty()) {
-                        handler.postDelayed(searchRunnable, 2000) // Запустить поиск через 2 секунды
-                    }
-                }
+                viewModel.onSearchTextChanged(s)
             }
 
             override fun afterTextChanged(s: Editable?) {}
+        })
+
+        viewModel.clearButtonVisibility.observe(viewLifecycleOwner) {
+            clearButton.visibility = it
         }
 
+        viewModel.searchResultsVisibility.observe(viewLifecycleOwner) {
+            searchResultsList.visibility = it
+        }
 
-        //нажатие кнопки "ввод" для поиска
-        searchEditText.addTextChangedListener(shouldShowHistory)
+        viewModel.placeholderVisibility.observe(viewLifecycleOwner) {
+            placeholderNothingWasFound.visibility = it
+        }
+
+        viewModel.historyListVisibility.observe(viewLifecycleOwner) {
+            historyList.visibility = it
+        }
+
+        viewModel.tracksHistory.observe(viewLifecycleOwner) {
+            tracksHistoryAdapter.updateTracks(it)
+        }
+
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 // Отменить предыдущий запланированный поиск, если есть
@@ -178,29 +151,23 @@ class SearchFragment : Fragment() {
                 val searchText = searchEditText.text.toString()
                 searchTracks(searchText)
                 hideKeyboard()
-
                 true
             } else {
                 false
             }
         }
 
-
         //Очистка истории поиска
         buttonClear.setOnClickListener {
-            historyTracks.clear()
-            //     searchPresenter.clearHistory()
+            //  historyTracks.clear()
             viewModel.clearHistory()
-
             historyList.visibility = View.GONE
         }
-
 
         // Наблюдатель за нажатием треков в поиске
         trackAdapter.itemClickListener = { position, track ->
             if (!isPlayerOpening) {
                 isPlayerOpening = true // Установить флаг блокировки перед открытием плеера
-
 
                 viewModel.addTrack(track, position)
 
@@ -239,13 +206,11 @@ class SearchFragment : Fragment() {
             hideKeyboard()
 
             // Показать историю поисков
-            historyTracks = viewModel.tracksHistoryFromJson() as ArrayList<Track>
-            tracksHistoryAdapter.updateTracks(historyTracks)
-            historyList.isVisible = historyTracks.isNotEmpty()
+
+            viewModel.historyTracks.value = viewModel.tracksHistoryFromJson()
+            tracksHistoryAdapter.updateTracks(viewModel.historyTracks.value ?: listOf())
         }
     }
-
-
 
     private fun performSearch() {
         val searchText = searchEditText.text.toString()
@@ -253,23 +218,14 @@ class SearchFragment : Fragment() {
     }
 
     private fun hideKeyboard() {
-        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(searchEditText.windowToken, 0)
-    }
-
-    private fun clearButtonVisibility(s: CharSequence?): Int {
-        return if (s.isNullOrEmpty()) {
-            View.GONE
-        } else {
-            View.VISIBLE
-        }
     }
 
     private fun searchTracks(searchText: String) {
         viewModel.searchTrack(searchText)
-
     }
-
 
     override fun onSaveInstanceState(savedInstanceState: Bundle) {
         super.onSaveInstanceState(savedInstanceState)
@@ -287,12 +243,8 @@ class SearchFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        historyTracks = viewModel.tracksHistoryFromJson() as ArrayList<Track>
-
-        tracksHistoryAdapter.updateTracks(historyTracks)
-
+        viewModel.historyTracks.value = viewModel.tracksHistoryFromJson()
+        tracksHistoryAdapter.updateTracks(viewModel.historyTracks.value ?: listOf())
         isPlayerOpening = false // Сбросить флаг блокировки при возобновлении активности
     }
-
-
 }
