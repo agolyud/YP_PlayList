@@ -1,18 +1,18 @@
 package com.example.yp_playlist.presentation.search
 
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.yp_playlist.App
-import com.example.yp_playlist.domain.Track
 import com.example.yp_playlist.data.TrackResponse
+import com.example.yp_playlist.domain.Track
 import com.example.yp_playlist.domain.interactors.tracks.TracksInteractor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import android.os.Handler
-import android.os.Looper
 
 class SearchViewModel(
     private val tracksInteractor: TracksInteractor,
@@ -27,6 +27,9 @@ class SearchViewModel(
     private val _fragmentState = MutableLiveData<SearchState>()
     val fragmentState: LiveData<SearchState> = _fragmentState
 
+    private val _historyState = MutableLiveData<HistoryState>()
+    val historyState: LiveData<HistoryState> = _historyState
+
     private val handler = Handler(Looper.getMainLooper())
     val clearButtonVisibility = MutableLiveData<Int>()
     val searchResultsVisibility = MutableLiveData<Int>()
@@ -37,6 +40,7 @@ class SearchViewModel(
     init {
         _searchState.postValue(listOf())
         _fragmentState.postValue(SearchState.SUCCESS)
+       // _historyState.postValue(HistoryState.EMPTY)
     }
 
     enum class SearchState {
@@ -44,6 +48,13 @@ class SearchViewModel(
         ERROR,
         EMPTY,
         SUCCESS
+    }
+
+    enum class HistoryState {
+        HISTORY,
+        SEARCH,
+        EMPTY
+
     }
 
     fun updateHistoryTracks(tracks: List<Track>) {
@@ -59,19 +70,15 @@ class SearchViewModel(
             tracksHistory.postValue(historyTracks)
 
             if (historyTracks.isNotEmpty()) {
-                searchResultsVisibility.postValue(View.GONE)
-                placeholderVisibility.postValue(View.INVISIBLE)
-                historyListVisibility.postValue(View.VISIBLE)
+
+                _historyState.postValue(HistoryState.HISTORY)
+
             } else {
-                searchResultsVisibility.postValue(View.GONE)
-                placeholderVisibility.postValue(View.INVISIBLE)
-                historyListVisibility.postValue(View.GONE)
+                _historyState.postValue(HistoryState.EMPTY)
             }
 
         } else {
-            placeholderVisibility.postValue(View.GONE)
-            searchResultsVisibility.postValue(View.VISIBLE)
-            historyListVisibility.postValue(View.GONE)
+            _historyState.postValue(HistoryState.SEARCH)
 
             handler.removeCallbacksAndMessages(null)
 

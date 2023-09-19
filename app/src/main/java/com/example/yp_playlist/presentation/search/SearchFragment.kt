@@ -93,6 +93,35 @@ class SearchFragment : Fragment() {
             }
         }
 
+
+        viewModel.historyState.observe(viewLifecycleOwner) {
+            when (it) {
+
+                SearchViewModel.HistoryState.HISTORY -> {
+                    searchResultsList.isVisible = false
+                    placeholderCommunicationsProblem.isVisible = false
+                    historyList.isVisible = true
+                }
+
+                SearchViewModel.HistoryState.EMPTY -> {
+
+                    searchResultsList.isVisible = false
+                    placeholderCommunicationsProblem.isVisible = false
+                    historyList.isVisible = false
+
+                }
+
+                SearchViewModel.HistoryState.SEARCH -> {
+
+                    searchResultsList.isVisible = true
+                    placeholderCommunicationsProblem.isVisible = false
+                    historyList.isVisible = false
+
+                }
+            }
+        }
+
+
         val trackRecyclerView = searchBinding.trackRecyclerView
         trackRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         searchResultsList = searchBinding.trackRecyclerView
