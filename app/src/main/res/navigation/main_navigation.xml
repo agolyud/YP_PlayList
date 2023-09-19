@@ -14,7 +14,7 @@
 
     <fragment
         android:id="@+id/mediaLibraryFragment"
-        android:name="com.example.yp_playlist.media_library.activity.MediaLibraryFragment"
+        android:name="com.example.yp_playlist.medialibrary.activity.MediaLibraryFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_media" />
 

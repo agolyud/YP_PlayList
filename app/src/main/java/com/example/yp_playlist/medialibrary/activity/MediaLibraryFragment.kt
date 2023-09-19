@@ -1,17 +1,15 @@
-package com.example.yp_playlist.media_library.activity
+package com.example.yp_playlist.medialibrary.activity
 
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.yp_playlist.R
 import com.example.yp_playlist.databinding.FragmentMediaBinding
-import com.example.yp_playlist.media_library.adapter.MediaLibraryViewPagerAdapter
+import com.example.yp_playlist.medialibrary.adapter.MediaLibraryViewPagerAdapter
 import com.google.android.material.tabs.TabLayoutMediator
-
 
 
 class MediaLibraryFragment : Fragment() {

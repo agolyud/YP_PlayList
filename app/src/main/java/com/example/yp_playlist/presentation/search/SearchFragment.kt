@@ -206,7 +206,6 @@ class SearchFragment : Fragment() {
             hideKeyboard()
 
             // Показать историю поисков
-
             viewModel.historyTracks.value = viewModel.tracksHistoryFromJson()
             tracksHistoryAdapter.updateTracks(viewModel.historyTracks.value ?: listOf())
         }
