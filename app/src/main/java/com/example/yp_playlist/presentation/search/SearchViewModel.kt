@@ -19,61 +19,49 @@ class SearchViewModel(
     application: App,
 ) : AndroidViewModel(application) {
 
-    val historyTracks = MutableLiveData<List<Track>>(listOf())
+    private val _tracksHistory = MutableLiveData<List<Track>>(listOf())
+    val tracksHistory: LiveData<List<Track>> = _tracksHistory
 
     private val _searchState = MutableLiveData<List<Track>>()
     val searchState: LiveData<List<Track>> = _searchState
 
-    private val _fragmentState = MutableLiveData<SearchState>()
-    val fragmentState: LiveData<SearchState> = _fragmentState
+    private val _fragmentState = MutableLiveData<FragmentState>()
+    val fragmentState: LiveData<FragmentState> = _fragmentState
 
     private val handler = Handler(Looper.getMainLooper())
     val clearButtonVisibility = MutableLiveData<Int>()
-    val searchResultsVisibility = MutableLiveData<Int>()
-    val placeholderVisibility = MutableLiveData<Int>()
-    val historyListVisibility = MutableLiveData<Int>()
-    val tracksHistory = MutableLiveData<List<Track>>()
 
     init {
         _searchState.postValue(listOf())
-        _fragmentState.postValue(SearchState.SUCCESS)
+        _fragmentState.postValue(getDefaultState())
     }
 
-    enum class SearchState {
-        LOADING,
-        ERROR,
-        EMPTY,
-        SUCCESS
-    }
+    private fun getDefaultState() =
+        if (tracksHistoryFromJson().isEmpty()) FragmentState.HISTORY_EMPTY
+        else FragmentState.HISTORY
 
-    fun updateHistoryTracks(tracks: List<Track>) {
-        historyTracks.value = tracks
+
+    fun setHistory() {
+        val tracksHistory = tracksHistoryFromJson()
+        _tracksHistory.value = tracksHistory
     }
 
     fun onSearchTextChanged(s: CharSequence?) {
         clearButtonVisibility.postValue(clearButtonVisibility(s))
         val searchText = s?.toString() ?: ""
-
         if (searchText.isEmpty()) {
-            val historyTracks = tracksHistoryFromJson()
-            tracksHistory.postValue(historyTracks)
+            val tracksHistory = tracksHistoryFromJson()
+            _tracksHistory.value = tracksHistory
 
-            if (historyTracks.isNotEmpty()) {
-                searchResultsVisibility.postValue(View.GONE)
-                placeholderVisibility.postValue(View.INVISIBLE)
-                historyListVisibility.postValue(View.VISIBLE)
+            if (tracksHistory.isNotEmpty()) {
+                _fragmentState.postValue(FragmentState.HISTORY)
             } else {
-                searchResultsVisibility.postValue(View.GONE)
-                placeholderVisibility.postValue(View.INVISIBLE)
-                historyListVisibility.postValue(View.GONE)
+                _fragmentState.postValue(FragmentState.HISTORY_EMPTY)
             }
 
-        } else {
-            placeholderVisibility.postValue(View.GONE)
-            searchResultsVisibility.postValue(View.VISIBLE)
-            historyListVisibility.postValue(View.GONE)
-
             handler.removeCallbacksAndMessages(null)
+        } else {
+            _fragmentState.postValue(FragmentState.SEARCH)
 
             if (searchText.isNotEmpty()) {
                 handler.postDelayed({ searchTrack(searchText) }, 2000)
@@ -90,7 +78,7 @@ class SearchViewModel(
     }
 
     fun searchTrack(searchText: String) {
-        _fragmentState.postValue(SearchState.LOADING)
+        _fragmentState.postValue(FragmentState.LOADING)
         tracksInteractor.searchTrack(searchText)?.enqueue(object : Callback<TrackResponse> {
             override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
                 _searchState.value = emptyList()
@@ -98,17 +86,17 @@ class SearchViewModel(
                     val tracks = response.body()?.results ?: listOf()
                     if (tracks.isNotEmpty()) {
                         _searchState.postValue(tracks) // Обновление LiveData с треками
-                        _fragmentState.postValue(SearchState.SUCCESS)
+                        _fragmentState.postValue(FragmentState.SUCCESS)
                     } else {
-                        _fragmentState.postValue(SearchState.EMPTY)
+                        _fragmentState.postValue(FragmentState.EMPTY)
                     }
                 } else {
-                    _fragmentState.postValue(SearchState.EMPTY)
+                    _fragmentState.postValue(FragmentState.EMPTY)
                 }
             }
 
             override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                _fragmentState.postValue(SearchState.ERROR)
+                _fragmentState.postValue(FragmentState.ERROR)
             }
         })
     }
@@ -119,8 +107,19 @@ class SearchViewModel(
 
     fun tracksHistoryFromJson() = tracksInteractor.tracksHistoryFromJson()
 
+
     fun clearHistory() {
         tracksInteractor.clearHistory()
+    }
+
+    enum class FragmentState {
+        LOADING,
+        ERROR,
+        EMPTY,
+        HISTORY,
+        SEARCH,
+        HISTORY_EMPTY,
+        SUCCESS
     }
 
 }

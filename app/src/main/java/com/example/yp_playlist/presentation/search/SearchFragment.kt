@@ -42,7 +42,6 @@ class SearchFragment : Fragment() {
     private lateinit var searchResultsList: RecyclerView
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { performSearch() }
-    private var isPlayerOpening = false
     private lateinit var progressBar: ProgressBar
 
     private val viewModel by viewModel<SearchViewModel>()
@@ -60,39 +59,8 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.setHistory()
         progressBar = searchBinding.progressBar
-        viewModel.searchState.observe(viewLifecycleOwner) {
-            trackAdapter.updateTracks(it)
-        }
-
-        viewModel.fragmentState.observe(viewLifecycleOwner) {
-            when (it) {
-                SearchViewModel.SearchState.SUCCESS -> {
-                    searchResultsList.isVisible = true
-                    placeholderCommunicationsProblem.isVisible = false
-                    progressBar.isVisible = false
-                }
-
-                SearchViewModel.SearchState.EMPTY -> {
-                    searchResultsList.isVisible = false
-                    placeholderNothingWasFound.isVisible = true
-                    progressBar.isVisible = false
-                }
-
-                SearchViewModel.SearchState.LOADING -> {
-                    progressBar.isVisible = true
-                    searchResultsList.isVisible = false
-                    placeholderNothingWasFound.isVisible = false
-                }
-
-                else -> {
-                    searchResultsList.isVisible = false
-                    progressBar.isVisible = false
-                    placeholderCommunicationsProblem.isVisible = true
-                }
-            }
-        }
-
         val trackRecyclerView = searchBinding.trackRecyclerView
         trackRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         searchResultsList = searchBinding.trackRecyclerView
@@ -110,81 +78,113 @@ class SearchFragment : Fragment() {
         historyList = searchBinding.historyList
         buttonClear = searchBinding.clearHistoryButton
 
-        //Объект класса для работы с историей поиске
-        viewModel.updateHistoryTracks(viewModel.tracksHistoryFromJson())
 
+        bindClicks()
+        observeData()
+        bindListeners()
+    }
 
-        searchEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                viewModel.onSearchTextChanged(s)
-            }
+    private fun observeData() {
+        observeTracksHistory()
+        observeClearButton()
+        observeSearchState()
+        observeFragmentState()
+    }
 
-            override fun afterTextChanged(s: Editable?) {}
-        })
+    private fun observeTracksHistory() {
+        viewModel.tracksHistory.observe(viewLifecycleOwner) { list ->
+            tracksHistoryAdapter.updateTracks(list ?: listOf())
+        }
+    }
 
+    private fun observeClearButton() {
         viewModel.clearButtonVisibility.observe(viewLifecycleOwner) {
             clearButton.visibility = it
         }
+    }
 
-        viewModel.searchResultsVisibility.observe(viewLifecycleOwner) {
-            searchResultsList.visibility = it
+    private fun observeSearchState() {
+        viewModel.searchState.observe(viewLifecycleOwner) {
+            trackAdapter.updateTracks(it)
         }
+    }
 
-        viewModel.placeholderVisibility.observe(viewLifecycleOwner) {
-            placeholderNothingWasFound.visibility = it
-        }
+    private fun observeFragmentState() {
+        viewModel.fragmentState.observe(viewLifecycleOwner) {
+            when (it) {
+                SearchViewModel.FragmentState.SUCCESS -> {
+                    searchResultsList.isVisible = true
+                    placeholderCommunicationsProblem.isVisible = false
+                    progressBar.isVisible = false
+                    clearButton.isEnabled = true
+                }
 
-        viewModel.historyListVisibility.observe(viewLifecycleOwner) {
-            historyList.visibility = it
-        }
+                SearchViewModel.FragmentState.HISTORY -> {
+                    searchResultsList.isVisible = false
+                    placeholderCommunicationsProblem.isVisible = false
+                    historyList.isVisible = true
+                    clearButton.isEnabled = false
+                }
 
-        viewModel.tracksHistory.observe(viewLifecycleOwner) {
-            tracksHistoryAdapter.updateTracks(it)
-        }
+                SearchViewModel.FragmentState.HISTORY_EMPTY -> {
+                    searchResultsList.isVisible = false
+                    placeholderCommunicationsProblem.isVisible = false
+                    historyList.isVisible = false
+                    clearButton.isEnabled = true
+                }
 
-        searchEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                // Отменить предыдущий запланированный поиск, если есть
-                handler.removeCallbacks(searchRunnable)
+                SearchViewModel.FragmentState.SEARCH -> {
+                    searchResultsList.isVisible = true
+                    placeholderCommunicationsProblem.isVisible = false
+                    historyList.isVisible = false
+                    clearButton.isEnabled = true
+                }
 
-                val searchText = searchEditText.text.toString()
-                searchTracks(searchText)
-                hideKeyboard()
-                true
-            } else {
-                false
+                SearchViewModel.FragmentState.EMPTY -> {
+                    searchResultsList.isVisible = false
+                    placeholderNothingWasFound.isVisible = true
+                    progressBar.isVisible = false
+                    clearButton.isEnabled = true
+                }
+
+                SearchViewModel.FragmentState.LOADING -> {
+                    progressBar.isVisible = true
+                    searchResultsList.isVisible = false
+                    placeholderNothingWasFound.isVisible = false
+                    clearButton.isEnabled = false
+                }
+
+                else -> {
+                    searchResultsList.isVisible = false
+                    progressBar.isVisible = false
+                    placeholderCommunicationsProblem.isVisible = true
+                    clearButton.isEnabled = true
+                }
             }
         }
+    }
 
+    private fun bindClicks() {
         //Очистка истории поиска
         buttonClear.setOnClickListener {
-            //  historyTracks.clear()
             viewModel.clearHistory()
             historyList.visibility = View.GONE
         }
 
         // Наблюдатель за нажатием треков в поиске
         trackAdapter.itemClickListener = { position, track ->
-            if (!isPlayerOpening) {
-                isPlayerOpening = true // Установить флаг блокировки перед открытием плеера
-
-                viewModel.addTrack(track, position)
-
-                val searchIntent = Intent(requireContext(), MediaActivity::class.java)
-                searchIntent.putExtra(TRACK_ID, track.trackId)
-                startActivity(searchIntent)
-            }
+            viewModel.addTrack(track, position)
+            val searchIntent = Intent(requireContext(), MediaActivity::class.java)
+            searchIntent.putExtra(TRACK_ID, track.trackId)
+            startActivity(searchIntent)
         }
 
         // Наблюдатель за нажатием треков в истории
         tracksHistoryAdapter.itemClickListener = { position, track ->
-            if (!isPlayerOpening) {
-                isPlayerOpening = true
-                val searchIntent = Intent(requireContext(), MediaActivity::class.java)
-                searchIntent.putExtra(TRACK_ID, track.trackId)
-                startActivity(searchIntent)
-            }
+            val searchIntent = Intent(requireContext(), MediaActivity::class.java)
+            searchIntent.putExtra(TRACK_ID, track.trackId)
+            startActivity(searchIntent)
+
         }
 
         //Повторить предыдущий запрос после нажатия на кнопку "Обновить"
@@ -201,13 +201,34 @@ class SearchFragment : Fragment() {
             clearButton.visibility = View.INVISIBLE
             placeholderNothingWasFound.visibility = View.INVISIBLE
             placeholderCommunicationsProblem.visibility = View.INVISIBLE
-
-            // Скрыть клавиатуру
             hideKeyboard()
 
-            // Показать историю поисков
-            viewModel.historyTracks.value = viewModel.tracksHistoryFromJson()
-            tracksHistoryAdapter.updateTracks(viewModel.historyTracks.value ?: listOf())
+        }
+    }
+
+    private fun bindListeners() {
+
+        searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                viewModel.onSearchTextChanged(s)
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        searchEditText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                // Отменить предыдущий запланированный поиск, если есть
+                handler.removeCallbacks(searchRunnable)
+
+                val searchText = searchEditText.text.toString()
+                searchTracks(searchText)
+                hideKeyboard()
+                true
+            } else {
+                false
+            }
         }
     }
 
@@ -240,10 +261,4 @@ class SearchFragment : Fragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.historyTracks.value = viewModel.tracksHistoryFromJson()
-        tracksHistoryAdapter.updateTracks(viewModel.historyTracks.value ?: listOf())
-        isPlayerOpening = false // Сбросить флаг блокировки при возобновлении активности
-    }
 }
