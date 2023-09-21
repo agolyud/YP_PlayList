@@ -68,12 +68,27 @@
         <item name="android:padding">@dimen/padding_4</item>
         <item name="android:layout_marginBottom">@dimen/padding_24</item>
         <item name="android:background">?attr/settingsPageBackground</item>
+        <item name="contentInsetStartWithNavigation">0dp</item>
+        <item name="titleMarginStart">@dimen/standard_margin</item>
+    </style>
+
+
+
+
+
+
+
+    <style name="panel_player_toolbar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">@dimen/padding_4</item>
         <item name="navigationIcon">@drawable/back</item>
         <item name="contentInsetStart">0dp</item>
+        <item name="android:layout_marginBottom">@dimen/padding_24</item>
+        <item name="android:background">?attr/settingsPageBackground</item>
         <item name="contentInsetStartWithNavigation">0dp</item>
         <item name="titleMarginStart">0dp</item>
     </style>
-
 
     <style name="tabLayout">
         <item name="android:background">?attr/settingsPageBackground</item>
@@ -103,6 +118,16 @@
     <style name="tabText_style" parent="@android:style/TextAppearance.Small">
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textSize">@dimen/text_16sp</item>
+    </style>
+
+
+    <style name="NavigationViewStyle" >
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/button_text</item>
+        <item name="itemIconTint">@drawable/navigation_color</item>
+        <item name="itemTextColor">@drawable/navigation_color</item>
+        <item name="menu">@menu/navigation_menu</item>
     </style>
 
 

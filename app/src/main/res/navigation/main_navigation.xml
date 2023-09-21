@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_navigation_graph"
+    android:theme="@style/Theme.YP_PlayList.Settings"
+    app:startDestination="@id/mediaLibraryFragment">
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.yp_playlist.settings.ui.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/mediaLibraryFragment"
+        android:name="com.example.yp_playlist.medialibrary.activity.MediaLibraryFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_media" />
+
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.example.yp_playlist.presentation.search.SearchFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_search">
+
+    <action
+        android:id="@+id/searchFragment_to_playerActivity"
+        app:destination="@id/playerActivity" />
+    </fragment>
+
+    <activity
+        android:id="@+id/playerActivity"
+        android:name="com.example.yp_playlist.presentation.media.MediaActivity"
+        android:label="activity_player"
+        tools:layout="@layout/activity_player" />
+
+</navigation>

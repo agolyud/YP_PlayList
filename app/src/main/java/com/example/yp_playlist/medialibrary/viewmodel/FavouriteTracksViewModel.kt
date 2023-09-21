@@ -1,4 +1,4 @@
-package com.example.yp_playlist.media_library.viewmodel
+package com.example.yp_playlist.medialibrary.viewmodel
 
 import androidx.lifecycle.ViewModel
 
