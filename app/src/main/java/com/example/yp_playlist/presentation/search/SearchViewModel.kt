@@ -8,11 +8,15 @@ import com.example.yp_playlist.App
 import com.example.yp_playlist.domain.Track
 import com.example.yp_playlist.data.TrackResponse
 import com.example.yp_playlist.domain.interactors.tracks.TracksInteractor
+import com.example.yp_playlist.util.Constants.CLICK_DELAY
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import android.os.Handler
-import android.os.Looper
 
 class SearchViewModel(
     private val tracksInteractor: TracksInteractor,
@@ -28,7 +32,7 @@ class SearchViewModel(
     private val _fragmentState = MutableLiveData<FragmentState>()
     val fragmentState: LiveData<FragmentState> = _fragmentState
 
-    private val handler = Handler(Looper.getMainLooper())
+    private var searchJob: Job? = null
     val clearButtonVisibility = MutableLiveData<Int>()
 
     init {
@@ -59,12 +63,13 @@ class SearchViewModel(
                 _fragmentState.postValue(FragmentState.HISTORY_EMPTY)
             }
 
-            handler.removeCallbacksAndMessages(null)
+            searchJob?.cancel()
         } else {
             _fragmentState.postValue(FragmentState.SEARCH)
-
-            if (searchText.isNotEmpty()) {
-                handler.postDelayed({ searchTrack(searchText) }, 2000)
+            searchJob?.cancel()
+            searchJob = CoroutineScope(Dispatchers.Main).launch {
+                delay(CLICK_DELAY)
+                searchTrack(searchText)
             }
         }
     }

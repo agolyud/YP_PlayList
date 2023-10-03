@@ -3,8 +3,6 @@ package com.example.yp_playlist.presentation.search
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -40,8 +38,6 @@ class SearchFragment : Fragment() {
     private lateinit var buttonClear: Button
     private lateinit var historyList: LinearLayout
     private lateinit var searchResultsList: RecyclerView
-    private val handler = Handler(Looper.getMainLooper())
-    private val searchRunnable = Runnable { performSearch() }
     private lateinit var progressBar: ProgressBar
 
     private val viewModel by viewModel<SearchViewModel>()
@@ -207,7 +203,6 @@ class SearchFragment : Fragment() {
     }
 
     private fun bindListeners() {
-
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -219,9 +214,6 @@ class SearchFragment : Fragment() {
 
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                // Отменить предыдущий запланированный поиск, если есть
-                handler.removeCallbacks(searchRunnable)
-
                 val searchText = searchEditText.text.toString()
                 searchTracks(searchText)
                 hideKeyboard()
@@ -230,11 +222,6 @@ class SearchFragment : Fragment() {
                 false
             }
         }
-    }
-
-    private fun performSearch() {
-        val searchText = searchEditText.text.toString()
-        searchTracks(searchText)
     }
 
     private fun hideKeyboard() {
