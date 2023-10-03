@@ -2,11 +2,11 @@ package com.example.yp_playlist.data.history
 
 import android.content.SharedPreferences
 import com.example.yp_playlist.domain.Track
+import com.example.yp_playlist.util.Constants.HISTORY_TRACKS_KEY
+import com.example.yp_playlist.util.Constants.MAX_HISTORY_SIZE
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-const val HISTORY_TRACKS_KEY = "history_tracks_key"
-const val MAX_HISTORY_SIZE = 10
 
 class SearchHistoryImpl(
     private val sharedPref: SharedPreferences,

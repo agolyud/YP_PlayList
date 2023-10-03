@@ -1,30 +1,32 @@
 package com.example.yp_playlist.presentation.media
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.yp_playlist.domain.Track
 import com.example.yp_playlist.domain.interactors.media.MediaInteractor
+import com.example.yp_playlist.util.Constants.DEFAULT_TIME
+import com.example.yp_playlist.util.Constants.DELAY_TIME_MILLIS
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 
 class MediaViewModel(
     private val mediaInteractor: MediaInteractor
 ) : ViewModel() {
-    companion object {
-        private const val DEFAULT_TIME = "00:00"
-    }
+
 
     private val _trackInfo = MutableLiveData<Track>()
     private val _mediaState = MutableLiveData<State>()
     private val _time = MutableLiveData(DEFAULT_TIME)
+    private var timerJob: Job? = null
 
     val trackInfo: LiveData<Track> = _trackInfo
     val time: LiveData<String> = _time
     val mediaState: LiveData<State> = _mediaState
-
-    var handler = Handler(Looper.getMainLooper())
 
     fun getTime(trackTime: Int): String {
         return mediaInteractor.getTime(trackTime)
@@ -87,18 +89,15 @@ class MediaViewModel(
         _mediaState.postValue(State.DEFAULT)
     }
 
-    private fun startTimer() {
-        handler.post(timerTrack())
-    }
-
-    private fun timerTrack(): Runnable {
-        return object : Runnable {
-            override fun run() {
-                handler.postDelayed(this, 300)
+    private fun startTimer () {
+        timerJob = viewModelScope.launch {
+            while (isActive) {
+                delay(DELAY_TIME_MILLIS)
                 _time.postValue(getPlayerPosition())
             }
         }
     }
+
 
     private fun getPlayerPosition() = mediaInteractor.getTime(mediaInteractor.getPosition())
 

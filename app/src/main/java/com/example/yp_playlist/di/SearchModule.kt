@@ -5,7 +5,6 @@ import com.example.yp_playlist.App
 import com.example.yp_playlist.data.history.SearchHistory
 import com.example.yp_playlist.data.history.SearchHistoryImpl
 import com.example.yp_playlist.data.network.ITunesApi
-import com.example.yp_playlist.data.network.ITUNES_BASE_URL
 import com.example.yp_playlist.data.network.NetworkClient
 import com.example.yp_playlist.data.network.NetworkClientImpl
 import com.example.yp_playlist.domain.interactors.tracks.TracksInteractor
@@ -14,6 +13,7 @@ import com.example.yp_playlist.domain.repository.TracksRepository
 import com.example.yp_playlist.domain.repository.TracksRepositoryImpl
 import com.example.yp_playlist.presentation.search.PLAYLIST_SHARED_PREFERENCES
 import com.example.yp_playlist.presentation.search.SearchViewModel
+import com.example.yp_playlist.util.Constants.ITUNES_BASE_URL
 import com.google.gson.GsonBuilder
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
