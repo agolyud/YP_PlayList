@@ -100,8 +100,10 @@ class SearchFragment : Fragment() {
     }
 
     private fun observeSearchState() {
-        viewModel.searchState.observe(viewLifecycleOwner) {
-            trackAdapter.updateTracks(it)
+        viewModel.searchState.observe(viewLifecycleOwner) { list ->
+            list?.let {
+                trackAdapter.updateTracks(it)
+            }
         }
     }
 
