@@ -61,7 +61,7 @@ class SearchViewModel(
         } else {
             _fragmentState.postValue(FragmentState.SEARCH)
             searchJob?.cancel()
-            searchJob = CoroutineScope(Dispatchers.Main).launch {
+            searchJob = CoroutineScope(Dispatchers.IO).launch {
                 delay(CLICK_DELAY)
                 searchTrack(searchText)
             }
