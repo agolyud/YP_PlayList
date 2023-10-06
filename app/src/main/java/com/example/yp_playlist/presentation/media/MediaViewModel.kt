@@ -64,6 +64,8 @@ class MediaViewModel(
                 },
                 onCompletion = {
                     _mediaState.postValue(State.PREPARED)
+                    timerJob?.cancel()
+                    _time.postValue(DEFAULT_TIME)
                 }
             )
         }

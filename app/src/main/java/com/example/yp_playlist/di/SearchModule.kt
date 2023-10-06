@@ -40,7 +40,7 @@ val searchModule = module {
     }
 
     single<NetworkClient> {
-        NetworkClientImpl(get())
+        NetworkClientImpl(get(), androidContext())
     }
 
     factory<SearchHistory> {
