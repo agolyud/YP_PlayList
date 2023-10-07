@@ -3,8 +3,6 @@ package com.example.yp_playlist.presentation.search
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -19,10 +17,14 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.yp_playlist.databinding.FragmentSearchBinding
 import com.example.yp_playlist.presentation.media.MediaActivity
+import com.example.yp_playlist.util.Constants.DELAY_TIME_MILLIS
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 const val PLAYLIST_SHARED_PREFERENCES = "playlist_shared_preferences"
@@ -40,8 +42,6 @@ class SearchFragment : Fragment() {
     private lateinit var buttonClear: Button
     private lateinit var historyList: LinearLayout
     private lateinit var searchResultsList: RecyclerView
-    private val handler = Handler(Looper.getMainLooper())
-    private val searchRunnable = Runnable { performSearch() }
     private lateinit var progressBar: ProgressBar
 
     private val viewModel by viewModel<SearchViewModel>()
@@ -104,8 +104,10 @@ class SearchFragment : Fragment() {
     }
 
     private fun observeSearchState() {
-        viewModel.searchState.observe(viewLifecycleOwner) {
-            trackAdapter.updateTracks(it)
+        viewModel.searchState.observe(viewLifecycleOwner) { list ->
+            list?.let {
+                trackAdapter.updateTracks(it)
+            }
         }
     }
 
@@ -173,18 +175,24 @@ class SearchFragment : Fragment() {
 
         // Наблюдатель за нажатием треков в поиске
         trackAdapter.itemClickListener = { position, track ->
-            viewModel.addTrack(track, position)
-            val searchIntent = Intent(requireContext(), MediaActivity::class.java)
-            searchIntent.putExtra(TRACK_ID, track.trackId)
-            startActivity(searchIntent)
+          lifecycleScope.launch {
+              delay(DELAY_TIME_MILLIS)
+              viewModel.addTrack(track, position)
+              val searchIntent = Intent(requireContext(), MediaActivity::class.java)
+              searchIntent.putExtra(TRACK_ID, track.trackId)
+              startActivity(searchIntent)
+          }
+
         }
 
         // Наблюдатель за нажатием треков в истории
         tracksHistoryAdapter.itemClickListener = { position, track ->
+            lifecycleScope.launch {
+                delay(DELAY_TIME_MILLIS)
             val searchIntent = Intent(requireContext(), MediaActivity::class.java)
             searchIntent.putExtra(TRACK_ID, track.trackId)
             startActivity(searchIntent)
-
+            }
         }
 
         //Повторить предыдущий запрос после нажатия на кнопку "Обновить"
@@ -207,7 +215,6 @@ class SearchFragment : Fragment() {
     }
 
     private fun bindListeners() {
-
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -219,9 +226,6 @@ class SearchFragment : Fragment() {
 
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                // Отменить предыдущий запланированный поиск, если есть
-                handler.removeCallbacks(searchRunnable)
-
                 val searchText = searchEditText.text.toString()
                 searchTracks(searchText)
                 hideKeyboard()
@@ -230,11 +234,6 @@ class SearchFragment : Fragment() {
                 false
             }
         }
-    }
-
-    private fun performSearch() {
-        val searchText = searchEditText.text.toString()
-        searchTracks(searchText)
     }
 
     private fun hideKeyboard() {
