@@ -1,4 +1,4 @@
-package com.example.yp_playlist.medialibrary.adapter
+package com.example.yp_playlist.medialibrary.ui.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager

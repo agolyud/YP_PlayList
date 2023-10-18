@@ -9,7 +9,7 @@ import com.example.yp_playlist.domain.Track
 class TrackAdapter : RecyclerView.Adapter<TrackViewHolder>() {
 
 
-    private var tracks = mutableListOf<Track>()
+    var tracks = mutableListOf<Track>()
     var itemClickListener: ((Int, Track) -> Unit)? = null
 
     fun updateTracks(newTracks: List<Track>) {

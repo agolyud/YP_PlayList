@@ -29,6 +29,7 @@ class MediaActivity : AppCompatActivity() {
     lateinit var time: TextView
     lateinit var previewUrl: String
     lateinit var buttonPlay: ImageView
+    lateinit var likeButton: ImageView
     private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,6 +48,8 @@ class MediaActivity : AppCompatActivity() {
         time = findViewById(R.id.time)
         buttonPlay = findViewById(R.id.playButton)
         progressBar = findViewById(R.id.progressBar)
+        likeButton = findViewById(R.id.likeButton)
+
 
 
         val trackId = intent.extras?.getInt(TRACK_ID) as Int
@@ -56,6 +59,23 @@ class MediaActivity : AppCompatActivity() {
         observeState()
         observeTime()
         observeInfo()
+
+
+        viewModel.checkIsFavourite(trackId)
+
+
+        viewModel.observeIsFavourite().observe(this) {
+                isFavorite ->
+            likeButton.setImageResource(
+                if (isFavorite) R.drawable.ic_like_button_favourite else R.drawable.like_button
+            )
+        }
+
+
+        likeButton.setOnClickListener {
+            viewModel.onFavouriteClicked(track = viewModel.trackInfo.value!!)
+        }
+
     }
 
     private fun bindClicks() {
@@ -93,6 +113,7 @@ class MediaActivity : AppCompatActivity() {
         }
     }
 
+
     override fun onPause() {
         super.onPause()
         viewModel.pausePlayer()
@@ -106,12 +127,12 @@ class MediaActivity : AppCompatActivity() {
     //Отображение данных трека
     private fun showInfo(track: Track) {
 
-        previewUrl = track.previewUrl
+        previewUrl = track.previewUrl.toString()
         trackName.text = track.trackName
         artistName.text = track.artistName
         trackTime.text = viewModel.getTime(track.trackTimeMillis.toInt())
         collectionName.text = track.collectionName
-        releaseDate.text = viewModel.getDate(track.releaseDate)
+        releaseDate.text = track.releaseDate?.let { viewModel.getDate(it) }
         primaryGenreName.text = track.primaryGenreName
         country.text = track.country
 

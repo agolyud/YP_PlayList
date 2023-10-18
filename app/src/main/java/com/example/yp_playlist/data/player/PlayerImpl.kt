@@ -4,7 +4,7 @@ import android.media.MediaPlayer
 
 class PlayerImpl(private val mediaPlayer: MediaPlayer) : Player {
 
-    override fun prepare(url: String, onPrepared: () -> Unit, onCompletion: () -> Unit) {
+    override fun prepare(url: String?, onPrepared: () -> Unit, onCompletion: () -> Unit) {
         mediaPlayer.reset()
         mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()

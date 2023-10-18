@@ -3,6 +3,8 @@ package com.example.yp_playlist
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.yp_playlist.di.dbModule
+import com.example.yp_playlist.di.mediaLibraryModule
 import com.example.yp_playlist.di.mediaModule
 import com.example.yp_playlist.di.searchModule
 import org.koin.android.ext.koin.androidContext
@@ -25,7 +27,7 @@ class App : Application() {
         startKoin {
             androidLogger(Level.DEBUG)
             androidContext(this@App)
-            modules(listOf(settingsModule, sharingModule, searchModule, mediaModule))
+            modules(listOf(settingsModule, sharingModule, searchModule, mediaModule, mediaLibraryModule, dbModule))
         }
 
         val sharedPrefs = getSharedPreferences(PLAYLIST_SHARED_PREFERENCES, MODE_PRIVATE)
