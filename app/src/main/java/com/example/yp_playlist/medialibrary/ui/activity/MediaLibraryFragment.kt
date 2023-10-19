@@ -1,4 +1,4 @@
-package com.example.yp_playlist.medialibrary.activity
+package com.example.yp_playlist.medialibrary.ui.activity
 
 
 import android.os.Bundle
@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.yp_playlist.R
 import com.example.yp_playlist.databinding.FragmentMediaBinding
-import com.example.yp_playlist.medialibrary.adapter.MediaLibraryViewPagerAdapter
+import com.example.yp_playlist.medialibrary.ui.adapter.MediaLibraryViewPagerAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 
 

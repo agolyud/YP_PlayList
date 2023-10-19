@@ -14,9 +14,13 @@
 
     <fragment
         android:id="@+id/mediaLibraryFragment"
-        android:name="com.example.yp_playlist.medialibrary.activity.MediaLibraryFragment"
-        android:label="fragment_settings"
-        tools:layout="@layout/fragment_media" />
+        android:name="com.example.yp_playlist.medialibrary.ui.activity.MediaLibraryFragment"
+        android:label="fragment_media_library"
+        tools:layout="@layout/fragment_media" >
+        <action
+            android:id="@+id/action_mediaLibraryFragment_to_playerActivity"
+            app:destination="@id/playerActivity" />
+    </fragment>
 
     <fragment
         android:id="@+id/searchFragment"

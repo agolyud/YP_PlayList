@@ -11,7 +11,7 @@ class MediaInteractorImpl(
     private val searchHistory: SearchHistory
 ) : MediaInteractor {
 
-    override fun prepare(url: String, onPrepared: () -> Unit, onCompletion: () -> Unit) {
+    override fun prepare(url: String?, onPrepared: () -> Unit, onCompletion: () -> Unit) {
         mediaPlayer.prepare(url, onPrepared, onCompletion)
     }
 

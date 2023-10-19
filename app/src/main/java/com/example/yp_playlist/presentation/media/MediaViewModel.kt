@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.yp_playlist.domain.Track
 import com.example.yp_playlist.domain.interactors.media.MediaInteractor
+import com.example.yp_playlist.medialibrary.domain.api.FavouriteTracksInteractor
 import com.example.yp_playlist.util.Constants.DEFAULT_TIME
 import com.example.yp_playlist.util.Constants.DELAY_TIME_MILLIS
 import kotlinx.coroutines.Job
@@ -15,18 +16,22 @@ import kotlinx.coroutines.launch
 
 
 class MediaViewModel(
-    private val mediaInteractor: MediaInteractor
+    private val mediaInteractor: MediaInteractor,
+    private val favouriteTracksInteractor: FavouriteTracksInteractor
 ) : ViewModel() {
 
 
+    private val isFavouriteLiveData = MutableLiveData<Boolean>()
     private val _trackInfo = MutableLiveData<Track>()
     private val _mediaState = MutableLiveData<State>()
     private val _time = MutableLiveData(DEFAULT_TIME)
     private var timerJob: Job? = null
+    private var isFavourite = false
 
     val trackInfo: LiveData<Track> = _trackInfo
     val time: LiveData<String> = _time
     val mediaState: LiveData<State> = _mediaState
+    fun observeIsFavourite(): LiveData<Boolean> = isFavouriteLiveData
 
     fun getTime(trackTime: Int): String {
         return mediaInteractor.getTime(trackTime)
@@ -52,6 +57,31 @@ class MediaViewModel(
         }
     }
 
+    fun checkIsFavourite(trackId: Int) {
+        viewModelScope.launch {
+            favouriteTracksInteractor
+                .isFavoriteTrack(trackId)
+                .collect { isFavorite ->
+                    isFavourite = isFavorite
+                    isFavouriteLiveData.postValue(isFavourite)
+                }
+        }
+    }
+
+    fun onFavouriteClicked(track: Track) {
+        viewModelScope.launch {
+            isFavourite = if (isFavourite) {
+                favouriteTracksInteractor.deleteFromFavorites(track.trackId)
+                isFavouriteLiveData.postValue(false)
+                false
+            } else {
+                favouriteTracksInteractor.addToFavorites(track)
+                isFavouriteLiveData.postValue(true)
+                true
+            }
+        }
+    }
+
     fun preparePlayer(trackId: Int) {
         val track = getTrack(trackId)
         track?.let {
@@ -61,13 +91,12 @@ class MediaViewModel(
                 url = track.previewUrl,
                 onPrepared = {
                     _mediaState.postValue(State.PREPARED)
-                },
-                onCompletion = {
-                    _mediaState.postValue(State.PREPARED)
-                    timerJob?.cancel()
-                    _time.postValue(DEFAULT_TIME)
                 }
-            )
+            ) {
+                _mediaState.postValue(State.PREPARED)
+                timerJob?.cancel()
+                _time.postValue(DEFAULT_TIME)
+            }
         }
     }
 

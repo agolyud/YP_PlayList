@@ -5,7 +5,7 @@ import com.example.yp_playlist.domain.Track
 interface MediaInteractor {
 
     fun prepare(
-        url: String,
+        url: String?,
         onPrepared: () -> Unit,
         onCompletion: () -> Unit
     )

@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.yp_playlist.medialibrary.viewmodel.FavouriteTracksViewModel
+import com.example.yp_playlist.medialibrary.ui.viewmodel.FavouriteTracksViewModel
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import com.example.yp_playlist.databinding.FragmentPlaylistBinding
 
