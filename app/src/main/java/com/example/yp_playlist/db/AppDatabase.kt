@@ -12,5 +12,5 @@ import com.example.yp_playlist.db.entity.TrackEntity
     ]
 )
 abstract class AppDatabase: RoomDatabase() {
-    abstract fun TrackDao(): TrackDao
+    abstract fun trackDao(): TrackDao
 }
