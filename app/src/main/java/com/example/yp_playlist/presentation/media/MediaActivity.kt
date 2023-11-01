@@ -34,7 +34,7 @@ class MediaActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_player)
+        setContentView(R.layout.fragment_player)
 
         buttonArrowBackSettings = findViewById(R.id.toolbarInclude)
         artworkUrl100 = findViewById(R.id.trackImage)

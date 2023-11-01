@@ -34,4 +34,9 @@
     <string name="not_create_Playlist">Вы не создали \n ни одного плейлиста</string>
     <string name="favourite">Избранные треки</string>
     <string name="playlist">Плейлисты</string>
+    <string name="add_image">Добавить картинку</string>
+    <string name="playlist_name">Название*</string>
+    <string name="playlist_description">Описание</string>
+    <string name="button_create">Создать</string>
+    <string name="addPlaylist">Добавить плейлист</string>
 </resources>

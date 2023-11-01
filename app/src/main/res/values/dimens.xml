@@ -23,7 +23,10 @@
     <dimen name="size30">30dp</dimen>
     <dimen name="size17">17dp</dimen>
     <dimen name="size12">12dp</dimen>
+    <dimen name="size32">32dp</dimen>
+    <dimen name="text_size20sp">20sp</dimen>
     <dimen name="text_size22sp">22sp</dimen>
     <dimen name="text_size14sp">14sp</dimen>
     <dimen name="text_size120dp">120dp</dimen>
+    <dimen name="size26">26dp</dimen>
 </resources>

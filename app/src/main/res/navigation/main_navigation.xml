@@ -37,6 +37,6 @@
         android:id="@+id/playerActivity"
         android:name="com.example.yp_playlist.presentation.media.MediaActivity"
         android:label="activity_player"
-        tools:layout="@layout/activity_player" />
+        tools:layout="@layout/fragment_player" />
 
 </navigation>
