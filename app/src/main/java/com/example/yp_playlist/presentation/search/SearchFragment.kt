@@ -15,20 +15,22 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.yp_playlist.R
 import com.example.yp_playlist.databinding.FragmentSearchBinding
-import com.example.yp_playlist.presentation.media.MediaActivity
+import com.example.yp_playlist.domain.Track
+import com.example.yp_playlist.presentation.media.MediaFragment
 import com.example.yp_playlist.util.Constants.DELAY_TIME_MILLIS
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-const val PLAYLIST_SHARED_PREFERENCES = "playlist_shared_preferences"
-const val TRACK_ID = "track_position"
 
 class SearchFragment : Fragment() {
 
@@ -175,13 +177,16 @@ class SearchFragment : Fragment() {
 
         // Наблюдатель за нажатием треков в поиске
         trackAdapter.itemClickListener = { position, track ->
-          lifecycleScope.launch {
-              delay(DELAY_TIME_MILLIS)
-              viewModel.addTrack(track, position)
-              val searchIntent = Intent(requireContext(), MediaActivity::class.java)
-              searchIntent.putExtra(TRACK_ID, track.trackId)
-              startActivity(searchIntent)
-          }
+            lifecycleScope.launch {
+                delay(DELAY_TIME_MILLIS)
+                viewModel.addTrack(track, position)
+                /* val searchIntent = Intent(requireContext(), MediaFragment::class.java)
+                 searchIntent.putExtra(TRACK_ID, track.trackId)
+                 startActivity(searchIntent)*/
+
+                sendToPlayer(track)
+
+            }
 
         }
 
@@ -189,9 +194,10 @@ class SearchFragment : Fragment() {
         tracksHistoryAdapter.itemClickListener = { position, track ->
             lifecycleScope.launch {
                 delay(DELAY_TIME_MILLIS)
-            val searchIntent = Intent(requireContext(), MediaActivity::class.java)
-            searchIntent.putExtra(TRACK_ID, track.trackId)
-            startActivity(searchIntent)
+                /*    val searchIntent = Intent(requireContext(), MediaFragment::class.java)
+                    searchIntent.putExtra(TRACK_ID, track.trackId)
+                    startActivity(searchIntent)*/
+                sendToPlayer(track)
             }
         }
 
@@ -213,6 +219,14 @@ class SearchFragment : Fragment() {
 
         }
     }
+
+    private fun sendToPlayer(track: Track) {
+        findNavController().navigate(
+            R.id.searchFragment_to_playerFragment,
+            MediaFragment.createArgs(track.trackId)
+        )
+    }
+
 
     private fun bindListeners() {
         searchEditText.addTextChangedListener(object : TextWatcher {
