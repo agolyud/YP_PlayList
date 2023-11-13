@@ -19,7 +19,7 @@ class PlaylistsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(model: Playlist){
         title.text = model.title
         val quantityTracks = model.size
-        size.text =  quantityTracks.toString() + " " + getWordTrack(quantityTracks, itemView)
+        size.text = itemView.resources.getQuantityString(R.plurals.tracks, quantityTracks, quantityTracks)
 
         Glide.with(itemView.context)
             .load(model.imageUri)
@@ -28,19 +28,4 @@ class PlaylistsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.button_margins)))
             .into(image)
     }
-
-
-
-    private fun getWordTrack(count: Int, view: View): String {
-            count % 100
-            if (count in 5..20) return view.context.getString(R.string.tracks)
-            count % 10
-            when (count) {
-                1 -> return view.context.getString(R.string.track)
-                in 2..4 -> return view.context.getString(R.string.track2_4)
-                else -> return view.context.getString(R.string.tracks)
-            }
-        }
-
-
 }

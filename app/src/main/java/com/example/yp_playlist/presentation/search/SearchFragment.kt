@@ -180,10 +180,6 @@ class SearchFragment : Fragment() {
             lifecycleScope.launch {
                 delay(DELAY_TIME_MILLIS)
                 viewModel.addTrack(track, position)
-                /* val searchIntent = Intent(requireContext(), MediaFragment::class.java)
-                 searchIntent.putExtra(TRACK_ID, track.trackId)
-                 startActivity(searchIntent)*/
-
                 sendToPlayer(track)
 
             }

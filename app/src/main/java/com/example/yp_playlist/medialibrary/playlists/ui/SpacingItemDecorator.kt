@@ -5,7 +5,7 @@ import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class ItemDecorator(
+class SpacingItemDecorator(
     spacing: Int,
     private val margin: Int
 ) : RecyclerView.ItemDecoration() {

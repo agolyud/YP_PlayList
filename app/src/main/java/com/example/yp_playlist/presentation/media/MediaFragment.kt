@@ -25,7 +25,10 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class MediaFragment : Fragment() {
 
     private val viewModel by viewModel<MediaViewModel>()
-    private lateinit var mediaBinding: FragmentPlayerBinding
+
+    private var _mediaBinding: FragmentPlayerBinding? = null
+    private val mediaBinding get() = _mediaBinding!!
+
 
     private val bottomPlaylistsAdapter =
         ViewObjects.PlaylistsAdapter(viewObject = ViewObjects.Vertical)
@@ -47,7 +50,7 @@ class MediaFragment : Fragment() {
     private lateinit var progressBar: ProgressBar
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        mediaBinding = FragmentPlayerBinding.inflate(inflater, container, false)
+        _mediaBinding = FragmentPlayerBinding.inflate(inflater, container, false)
         return mediaBinding.root
     }
 
@@ -63,6 +66,7 @@ class MediaFragment : Fragment() {
         initListeners()
         setupAdapter()
         observePlaylistChanges()
+        bottomSheetBehavior()
     }
 
     private fun setMediaValues() {
@@ -79,6 +83,33 @@ class MediaFragment : Fragment() {
         buttonPlay = mediaBinding.playButton
         progressBar = mediaBinding.progressBar
         likeButton = mediaBinding.likeButton
+
+    }
+
+    private  fun bottomSheetBehavior (){
+
+        val bottomSheetBehavior =
+            BottomSheetBehavior.from(mediaBinding.bottomSheetLinear).apply {
+                state = BottomSheetBehavior.STATE_HIDDEN
+            }
+
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        mediaBinding.overlay.visibility = View.GONE
+                    }
+                    else -> {
+                        mediaBinding.overlay.visibility = View.VISIBLE
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+
+            }
+        })
 
     }
 
@@ -191,6 +222,7 @@ class MediaFragment : Fragment() {
         super.onDestroyView()
         viewModel.pausePlayer()
         viewModel.releasePlayer()
+        _mediaBinding = null
     }
 
 

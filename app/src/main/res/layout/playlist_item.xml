@@ -37,6 +37,7 @@
             android:id="@+id/playlist_title"
             style="@style/track_view"
             android:textColor="?attr/settingsPageTitleText"
+            android:layout_marginTop="4dp"
             android:textSize="@dimen/text_size12sp"
             android:maxLines="1"
             android:ellipsize="end"
@@ -51,6 +52,7 @@
             <TextView
                 android:id="@+id/playlist_size"
                 style="@style/track_view"
+                android:layout_marginTop="4dp"
                 android:textColor="?attr/settingsPageTitleText"
                 android:textSize="@dimen/text_size12sp"
                 android:maxLines="1"

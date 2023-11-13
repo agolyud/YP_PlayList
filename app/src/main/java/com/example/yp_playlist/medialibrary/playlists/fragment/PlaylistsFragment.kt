@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.yp_playlist.R
 import com.example.yp_playlist.databinding.FragmentPlaylistBinding
 import com.example.yp_playlist.medialibrary.playlists.domain.models.Playlist
-import com.example.yp_playlist.medialibrary.playlists.ui.ItemDecorator
+import com.example.yp_playlist.medialibrary.playlists.ui.SpacingItemDecorator
 import com.example.yp_playlist.medialibrary.playlists.ui.adapter.ViewObjects
 import com.example.yp_playlist.medialibrary.playlists.ui.models.PlaylistsScreenState
 import com.example.yp_playlist.medialibrary.playlists.ui.viewmodel.PlaylistsViewModel
@@ -47,7 +47,7 @@ class PlaylistFragment : Fragment() {
 
         binding.playlistsGrid.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.playlistsGrid.setHasFixedSize(true)
-        binding.playlistsGrid.addItemDecoration(ItemDecorator(40, 0))
+        binding.playlistsGrid.addItemDecoration(SpacingItemDecorator(40, 0))
 
         viewModel.stateLiveData.observe(viewLifecycleOwner) {
             render()
