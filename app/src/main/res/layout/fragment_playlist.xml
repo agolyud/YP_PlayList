@@ -15,16 +15,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|center"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="46dp"/>
+        android:layout_marginTop="24dp"/>
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|center"
-        android:src="@drawable/error_no_data"/>
 
     <TextView
+        android:id="@+id/nothingFound"
+        style="@style/tabText"
         android:text="@string/not_create_Playlist"
-        style="@style/tabText"/>
+        android:visibility="gone"
+        app:drawableTopCompat="@drawable/error_no_data" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/playlists_grid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="@dimen/standard_margin"
+        android:paddingTop="@dimen/standard_margin"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager" />
+
 </LinearLayout>

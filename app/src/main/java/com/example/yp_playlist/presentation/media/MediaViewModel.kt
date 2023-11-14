@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.yp_playlist.domain.Track
 import com.example.yp_playlist.domain.interactors.media.MediaInteractor
-import com.example.yp_playlist.medialibrary.domain.api.FavouriteTracksInteractor
+import com.example.yp_playlist.medialibrary.favourite.domain.api.FavouriteTracksInteractor
+import com.example.yp_playlist.medialibrary.playlists.domain.api.PlaylistInteractor
+import com.example.yp_playlist.medialibrary.playlists.domain.models.Playlist
 import com.example.yp_playlist.util.Constants.DEFAULT_TIME
 import com.example.yp_playlist.util.Constants.DELAY_TIME_MILLIS
 import kotlinx.coroutines.Job
@@ -17,7 +19,8 @@ import kotlinx.coroutines.launch
 
 class MediaViewModel(
     private val mediaInteractor: MediaInteractor,
-    private val favouriteTracksInteractor: FavouriteTracksInteractor
+    private val favouriteTracksInteractor: FavouriteTracksInteractor,
+    private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
 
 
@@ -27,6 +30,12 @@ class MediaViewModel(
     private val _time = MutableLiveData(DEFAULT_TIME)
     private var timerJob: Job? = null
     private var isFavourite = false
+
+    private val _playlists = MutableLiveData<List<Playlist>>()
+    val playlists: LiveData<List<Playlist>> = _playlists
+
+    private val _isAlreadyInPlaylist = MutableLiveData<Pair<String, Boolean>>()
+    val isAlreadyInPlaylist: LiveData<Pair<String, Boolean>> = _isAlreadyInPlaylist
 
     val trackInfo: LiveData<Track> = _trackInfo
     val time: LiveData<String> = _time
@@ -56,6 +65,23 @@ class MediaViewModel(
             else -> {}
         }
     }
+
+    fun fillData() {
+        viewModelScope.launch {
+            playlistInteractor.getPlaylists().collect {
+                _playlists.postValue(it)
+            }
+        }
+    }
+
+    fun addTrackToPlayList(track: Track, playlist: Playlist) {
+        viewModelScope.launch {
+            playlistInteractor.addTrackToPlayList(track, playlist).collect {
+                _isAlreadyInPlaylist.postValue(Pair(playlist.title, it))
+            }
+        }
+    }
+
 
     fun checkIsFavourite(trackId: Int) {
         viewModelScope.launch {

@@ -13,8 +13,8 @@ import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 import com.example.yp_playlist.di.settingsModule
 import com.example.yp_playlist.di.sharingModule
-import com.example.yp_playlist.presentation.search.PLAYLIST_SHARED_PREFERENCES
 import com.example.yp_playlist.settings.data.storage.SharedPrefsThemeStorage
+import com.example.yp_playlist.util.Constants.PLAYLIST_SHARED_PREFERENCES
 
 
 class App : Application() {

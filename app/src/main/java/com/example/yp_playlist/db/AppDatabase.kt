@@ -2,15 +2,18 @@ package com.example.yp_playlist.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.example.yp_playlist.db.dao.PlaylistDao
 import com.example.yp_playlist.db.dao.TrackDao
+import com.example.yp_playlist.db.entity.PlaylistEntity
 import com.example.yp_playlist.db.entity.TrackEntity
 
 @Database(
-    version = 1,
+    version = 2,
     entities = [
-        TrackEntity::class
+        TrackEntity::class, PlaylistEntity::class
     ]
 )
 abstract class AppDatabase: RoomDatabase() {
     abstract fun trackDao(): TrackDao
+    abstract fun PlaylistDao(): PlaylistDao
 }
