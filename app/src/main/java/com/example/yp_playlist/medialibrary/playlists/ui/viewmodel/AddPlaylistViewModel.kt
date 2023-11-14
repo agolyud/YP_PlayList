@@ -10,9 +10,9 @@ import kotlinx.coroutines.launch
 
 class AddPlaylistViewModel(private val playlistInteractor: PlaylistInteractor) : ViewModel() {
 
-    fun savePlaylist(playlist: Playlist) {
+    fun savePlaylist(title : String, description: String, imageUri: Uri?) {
         viewModelScope.launch {
-            playlistInteractor.addPlaylist(playlist)
+            playlistInteractor.addPlaylist(title, description, imageUri)
         }
     }
 

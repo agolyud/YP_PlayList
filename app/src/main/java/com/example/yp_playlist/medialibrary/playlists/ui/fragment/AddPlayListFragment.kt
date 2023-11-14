@@ -45,21 +45,19 @@ class AddPlayListFragment : Fragment() {
 
     private fun initListeners() {
         binding.buttonCreatePlaylist.setOnClickListener {
-            val playlist = Playlist(
-                title = binding.textNamePlaylist.text?.toString() ?: "",
-                description = binding.textDescriptionPlaylist.text?.toString() ?: "",
-                imageUri = imageUri,
-                trackList = "",
-                size = 0
-            )
 
-            viewModel.savePlaylist(playlist)
+             val   title = binding.textNamePlaylist.text?.toString() ?: ""
+              val  description = binding.textDescriptionPlaylist.text?.toString() ?: ""
+              val  imageUri = imageUri
 
+
+
+            viewModel.savePlaylist(title, description, imageUri)
             imageUri?.let { viewModel.saveToLocalStorage(uri = it) }
 
             Toast.makeText(
                 requireContext(),
-                getString(R.string.createPlaylist, playlist.title),
+                getString(R.string.createPlaylist, title),
                 Toast.LENGTH_SHORT
             ).show()
 

@@ -19,7 +19,8 @@ class PlaylistsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(model: Playlist){
         title.text = model.title
         val quantityTracks = model.size
-        size.text = itemView.resources.getQuantityString(R.plurals.tracks, quantityTracks, quantityTracks)
+        size.text = itemView.resources.getQuantityString(R.plurals.tracks,
+            quantityTracks ?: 0, quantityTracks ?: 0)
 
         Glide.with(itemView.context)
             .load(model.imageUri)

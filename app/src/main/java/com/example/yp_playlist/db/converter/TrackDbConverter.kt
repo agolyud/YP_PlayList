@@ -45,7 +45,7 @@ class TrackDbConverter {
             id = from.id,
             title = from.title,
             description = from.description,
-            imageUri = from.imageUri.toUri(),
+            imageUri = from.imageUri?.toUri(),
             trackList = from.trackList,
             size = from.size
         )

@@ -11,9 +11,9 @@ data class PlaylistEntity(
     val id: Long = 0,
     val title: String,
     val description: String,
-    val imageUri: String,
-    val trackList: String,
-    val size: Int
+    val imageUri: String? = null,
+    val trackList: String? = null,
+    val size: Int? = null
 ) {
 
     companion object {

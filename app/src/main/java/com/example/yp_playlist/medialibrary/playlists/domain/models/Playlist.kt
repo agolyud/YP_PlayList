@@ -7,6 +7,6 @@ data class Playlist(
     val title: String,
     val description: String,
     val imageUri: Uri? = null,
-    var trackList: String,
-    var size: Int,
+    var trackList: String? = null,
+    var size: Int? = null
 )

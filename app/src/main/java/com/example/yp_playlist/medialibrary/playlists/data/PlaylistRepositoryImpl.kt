@@ -9,9 +9,10 @@ import com.example.yp_playlist.medialibrary.playlists.domain.api.PlaylistReposit
 import com.example.yp_playlist.medialibrary.playlists.domain.models.LocalStorage
 import com.example.yp_playlist.medialibrary.playlists.domain.models.Playlist
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.google.gson.JsonParseException
 import com.google.gson.reflect.TypeToken
+
+
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -20,15 +21,19 @@ class PlaylistRepositoryImpl(
     private val appDatabase: AppDatabase,
     private val trackDbConverter: TrackDbConverter,
     private val localStorage: LocalStorage,
+    private val gson: Gson
 ) : PlaylistRepository {
 
-    private val gson: Gson = GsonBuilder().create()
+    override suspend fun addPlaylist(title : String, description: String, imageUri: Uri?) {
+        val playlistEntity = PlaylistEntity(
+            title = title,
+            description = description,
+            imageUri = imageUri.toString()
+        )
 
-    override suspend fun addPlaylist(playlist: Playlist) {
-        appDatabase.PlaylistDao()
-            .addPlaylist(trackDbConverter.mapFromPlaylistToPlaylistEntity(playlist))
+        appDatabase.PlaylistDao().addPlaylist(playlistEntity)
     }
-
+    
     override suspend fun deletePlaylist(id: Int) {
         appDatabase.PlaylistDao().deletePlaylist(id)
     }
@@ -60,7 +65,7 @@ class PlaylistRepositoryImpl(
             }
 
             playlist.trackList = gson.toJson(updatedTracks)
-            playlist.size++
+            playlist.size = (playlist.size ?: 0) + 1
             updatePlaylists(playlist)
             emit(true)
         } else {
