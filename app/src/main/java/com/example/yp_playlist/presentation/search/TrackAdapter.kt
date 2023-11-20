@@ -11,6 +11,7 @@ class TrackAdapter : RecyclerView.Adapter<TrackViewHolder>() {
 
     var tracks = mutableListOf<Track>()
     var itemClickListener: ((Int, Track) -> Unit)? = null
+    var itemLongClickListener: ((Int, Track) -> Unit)? = null
 
     fun updateTracks(newTracks: List<Track>) {
         tracks.clear()
@@ -29,8 +30,13 @@ class TrackAdapter : RecyclerView.Adapter<TrackViewHolder>() {
         holder.itemView.setOnClickListener() {
             itemClickListener?.invoke(position, track)
         }
-    }
+        holder.itemView.setOnLongClickListener {
+            itemLongClickListener?.invoke(position, track)
+            true
+        }
 
+
+    }
 
     override fun getItemCount() = tracks.size
 }

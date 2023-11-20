@@ -1,6 +1,5 @@
 package com.example.yp_playlist.db.converter
 
-import androidx.core.net.toUri
 import com.example.yp_playlist.db.entity.PlaylistEntity
 import com.example.yp_playlist.db.entity.TrackEntity
 import com.example.yp_playlist.domain.Track
@@ -45,7 +44,7 @@ class TrackDbConverter {
             id = from.id,
             title = from.title,
             description = from.description,
-            imageUri = from.imageUri?.toUri(),
+            imageUri = from.imageUri.toString(),
             trackList = from.trackList,
             size = from.size
         )

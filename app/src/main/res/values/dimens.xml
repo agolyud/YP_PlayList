@@ -12,6 +12,7 @@
     <dimen name="page_button">30dp</dimen>
     <dimen name="padding_24">24dp</dimen>
     <dimen name="padding_4">4dp</dimen>
+    <dimen name="padding_5">5dp</dimen>
     <dimen name="layout_width_45">45dp</dimen>
     <dimen name="layout_height_45">45dp</dimen>
     <dimen name="marginTextTrack">1dp</dimen>
@@ -27,6 +28,8 @@
     <dimen name="size160">160dp</dimen>
     <dimen name="text_size20sp">20sp</dimen>
     <dimen name="text_size22sp">22sp</dimen>
+    <dimen name="text_size24sp">24sp</dimen>
+    <dimen name="text_size18sp">18sp</dimen>
     <dimen name="text_size14sp">14sp</dimen>
     <dimen name="text_size12sp">12sp</dimen>
     <dimen name="text_size120dp">120dp</dimen>

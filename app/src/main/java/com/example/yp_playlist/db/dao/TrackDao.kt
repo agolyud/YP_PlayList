@@ -13,7 +13,7 @@ interface TrackDao {
     suspend fun addToFavorites(track: TrackEntity)
 
     @Query("DELETE FROM ${TrackEntity.TABLE_NAME} WHERE trackId = :trackId")
-    suspend fun deleteFromFavorites(trackId: Int)
+    suspend fun deleteFromFavorites(trackId: kotlin.Int)
 
     @Query("SELECT * FROM ${TrackEntity.TABLE_NAME} ORDER BY favouriteAddedTimestamp DESC")
     suspend fun getTracks(): List<TrackEntity>

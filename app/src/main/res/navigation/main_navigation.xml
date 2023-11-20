@@ -21,9 +21,31 @@
             android:id="@+id/action_mediaLibraryFragment_to_newPlaylistFragment"
             app:destination="@id/newPlaylistFragment" />
         <action
+            android:id="@+id/action_mediaLibraryFragment_to_openPlaylistFragment"
+            app:destination="@id/OpenPlaylistFragment" />
+        <action
             android:id="@+id/action_mediaLibraryFragment_to_playerFragment"
             app:destination="@id/playerActivity" />
     </fragment>
+
+    <fragment
+        android:id="@+id/OpenPlaylistFragment"
+        android:name="com.example.yp_playlist.medialibrary.playlists.ui.fragment.OpenPlaylistFragment"
+        android:label="fragment_open_playlist"
+        tools:layout="@layout/fragment_open_playlist" >
+        <action
+            android:id="@+id/action_openPlaylistFragment_to_playerFragment"
+            app:destination="@id/playerActivity" />
+        <action
+            android:id="@+id/action_openPlaylistFragment_to_editPlaylistFragment"
+            app:destination="@id/editPlaylistFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editPlaylistFragment"
+        android:name="com.example.yp_playlist.medialibrary.playlists.ui.fragment.EditPlaylistFragment"
+        android:label="EditPlaylistFragment"
+        tools:layout="@layout/fragment_new_playlist"/>
 
     <fragment
         android:id="@+id/searchFragment"

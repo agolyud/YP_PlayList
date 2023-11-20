@@ -73,11 +73,6 @@
     </style>
 
 
-
-
-
-
-
     <style name="panel_player_toolbar">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>

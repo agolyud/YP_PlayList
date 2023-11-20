@@ -40,11 +40,13 @@ class PlaylistFragment : Fragment() {
             findNavController().navigate(R.id.newPlaylistFragment)
         }
 
+        playlistsAdapter.onPlayListClicked = { playlist ->
+            viewModel.saveCurrentPlaylistId(playlist.id)
+            findNavController().navigate(R.id.action_mediaLibraryFragment_to_openPlaylistFragment)
+        }
 
         viewModel.fillData()
-
         binding.playlistsGrid.adapter = playlistsAdapter
-
         binding.playlistsGrid.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.playlistsGrid.setHasFixedSize(true)
         binding.playlistsGrid.addItemDecoration(SpacingItemDecorator(40, 0))

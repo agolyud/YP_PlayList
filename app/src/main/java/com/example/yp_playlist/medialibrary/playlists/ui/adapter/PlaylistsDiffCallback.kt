@@ -13,13 +13,13 @@ class PlaylistsDiffCallback(
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         val oldTrack = oldList[oldItemPosition]
-        val newTrack = newList[oldItemPosition]
+        val newTrack = newList[newItemPosition]
         return oldTrack.id == newTrack.id
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         val oldTrack = oldList[oldItemPosition]
-        val newTrack = newList[oldItemPosition]
+        val newTrack = newList[newItemPosition]
         return oldTrack == newTrack
     }
 }

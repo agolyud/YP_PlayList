@@ -26,6 +26,12 @@ class PlaylistsViewModel(private val playlistInteractor: PlaylistInteractor): Vi
         }
     }
 
+    fun saveCurrentPlaylistId(id: Long) {
+        viewModelScope.launch {
+            playlistInteractor.saveCurrentPlaylistId(id)
+        }
+    }
+
     private fun processResult(playlists: List<Playlist>) {
         if (playlists.isEmpty()) {
             _stateLiveData.postValue(PlaylistsScreenState.Empty)

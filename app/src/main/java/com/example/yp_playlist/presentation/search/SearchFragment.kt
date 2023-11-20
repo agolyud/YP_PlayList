@@ -1,7 +1,6 @@
 package com.example.yp_playlist.presentation.search
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,7 +14,6 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -255,8 +253,10 @@ class SearchFragment : Fragment() {
 
     override fun onSaveInstanceState(savedInstanceState: Bundle) {
         super.onSaveInstanceState(savedInstanceState)
-        val searchText = searchEditText.text.toString()
-        savedInstanceState.putString("searchText", searchText)
+        if (::searchEditText.isInitialized) {
+            val searchText = searchEditText.text.toString()
+            savedInstanceState.putString("searchText", searchText)
+        }
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
