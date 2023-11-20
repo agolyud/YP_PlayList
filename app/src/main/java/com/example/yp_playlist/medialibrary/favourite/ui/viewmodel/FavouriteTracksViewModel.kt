@@ -33,17 +33,6 @@ class FavouriteTracksViewModel(
         }
     }
 
-    fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            viewModelScope.launch {
-                delay(CLICK_DELAY)
-                isClickAllowed = true
-            }
-        }
-        return current
-    }
-
     private fun renderState(state: FavouriteTracksState) {
         stateLiveData.postValue(state)
     }

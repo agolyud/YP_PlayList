@@ -89,6 +89,10 @@ class OpenPlaylistFragment : Fragment() {
         binding.toolbarOpenPlaylist.setOnClickListener {
             findNavController().popBackStack()
         }
+        binding.share.setOnClickListener {
+            sharingPlaylist()
+        }
+
         binding.playlistTracksRv.setOnClickListener {
             sharingPlaylist()
         }
