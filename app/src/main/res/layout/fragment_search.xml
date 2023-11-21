@@ -12,7 +12,6 @@
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:orientation="horizontal"
         android:id="@+id/settings_toolbar"
         style="@style/panel_header_toolbar"
@@ -69,7 +68,7 @@
             android:id="@+id/trackRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingHorizontal="@dimen/small_text_size"
+            android:paddingHorizontal="@dimen/standard_margin"
             android:paddingTop="@dimen/padding_24" />
 
         <LinearLayout

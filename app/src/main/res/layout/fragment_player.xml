@@ -6,8 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/settingsPageBackground"
-    android:theme="@style/Theme.YP_PlayList.Settings"
-    >
+    android:theme="@style/Theme.YP_PlayList.Settings">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -15,8 +14,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbarInclude"
@@ -43,7 +41,7 @@
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/rightBorder_16"
                 style="@style/constraintGuide_vertical"
-                app:layout_constraintGuide_end="@dimen/standard_margin" />
+                app:layout_constraintGuide_end="@dimen/standard_margin"/>
 
             <ImageView
                 android:id="@+id/trackImage"
@@ -249,7 +247,6 @@
         android:layout_height="match_parent"
         android:background="@drawable/bottom_sheet_background"
         android:orientation="vertical"
-        android:paddingHorizontal="@dimen/standard_margin"
         app:behavior_hideable="true"
         app:behavior_peekHeight="500dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">

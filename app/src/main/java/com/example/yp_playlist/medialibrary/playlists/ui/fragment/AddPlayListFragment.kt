@@ -118,10 +118,10 @@ open class AddPlayListFragment : Fragment() {
     }
 
     private fun showConfirmDialog() {
-        MaterialAlertDialogBuilder(requireContext())
+        MaterialAlertDialogBuilder(requireContext(), R.style.RoundedBottomSheetDialogTheme)
             .setTitle(R.string.stop_creating_playlist)
             .setMessage(R.string.unsaved_data_will_be_lost)
-            .setNeutralButton(R.string.cancel) { dialog, which ->
+            .setNegativeButton(R.string.cancel) { dialog, which ->
             }
             .setPositiveButton(R.string.finish) { dialog, which ->
                 findNavController().popBackStack()
