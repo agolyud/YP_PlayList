@@ -247,7 +247,7 @@
         android:id="@+id/bottom_sheet_linear"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/settingsPageBackground"
+        android:background="@drawable/bottom_sheet_background"
         android:orientation="vertical"
         android:paddingHorizontal="@dimen/standard_margin"
         app:behavior_hideable="true"

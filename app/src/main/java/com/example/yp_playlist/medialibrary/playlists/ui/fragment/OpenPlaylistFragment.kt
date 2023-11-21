@@ -33,7 +33,7 @@ class OpenPlaylistFragment : Fragment() {
     private val viewModel by viewModel<OpenPlaylistViewModel>()
     var playlist: Playlist? = null
 
-    private lateinit var confirmDialogDeleteTrack: MaterialAlertDialogBuilder
+
 
     private val tracksAdapter = TrackAdapter()
 
@@ -218,7 +218,7 @@ class OpenPlaylistFragment : Fragment() {
         binding.deletePlaylistTv.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             context?.let { context ->
-                MaterialAlertDialogBuilder(requireContext(), 0)
+                MaterialAlertDialogBuilder(requireContext(), R.style.RoundedBottomSheetDialogTheme)
                     .setMessage(requireContext().getString(R.string.delete_playlists))
                     .setNegativeButton(R.string.no) { dialog, which -> }
                     .setPositiveButton(R.string.yes) { dialog, which ->
@@ -231,19 +231,16 @@ class OpenPlaylistFragment : Fragment() {
         }
     }
 
-    private fun deleteTracks () {
+  private fun deleteTracks () {
         tracksAdapter.itemLongClickListener = { position, track ->
-            println("long click")
-
-            confirmDialogDeleteTrack = MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.delete_track)
-                .setMessage("")
+            MaterialAlertDialogBuilder(requireContext(), R.style.RoundedBottomSheetDialogTheme)
+                .setMessage(requireContext().getString(R.string.delete_track))
                 .setPositiveButton(R.string.yes) { dialog, which ->
                     if (track == null || playlist == null) return@setPositiveButton
                     viewModel.deleteTracks(track, playlist!!)
                 }
                 .setNegativeButton(R.string.no) { dialog, which -> }
-            confirmDialogDeleteTrack?.show()
+            ?.show()
         }
     }
 
