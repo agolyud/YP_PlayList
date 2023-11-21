@@ -5,23 +5,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/settingsPageBackground"
+    android:background="@color/grey_tint_search"
     android:orientation="vertical"
     android:theme="@style/Theme.YP_PlayList.Settings"
     tools:context=".medialibrary.playlists.ui.fragment.OpenPlaylistFragment">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
 
+        <ImageView
+                android:id="@+id/track_playlist_Image"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@drawable/placeholder" />
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarOpenPlaylist"
-        style="@style/panel_player_toolbar"
+        style="@style/playlist_toolbar"
+        app:navigationIcon="@drawable/backs"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -46,17 +56,7 @@
                 style="@style/constraintGuide_vertical"
                 app:layout_constraintGuide_end="@dimen/standard_margin" />
 
-         <ImageView
-                android:id="@+id/track_playlist_Image"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:scaleType="centerCrop"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@drawable/placeholder" />
+
 
             <TextView
                 android:id="@+id/name_playlist"
@@ -161,7 +161,7 @@
                     android:src="@drawable/more" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+
 
     <View
         android:id="@+id/overlay"
@@ -174,10 +174,10 @@
         android:id="@+id/bottom_sheet_linear"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/settingsPageBackground"
+        android:background="@drawable/bottom_sheet_background"
         android:orientation="vertical"
         app:behavior_hideable="true"
-        app:behavior_peekHeight="150dp"
+        app:behavior_peekHeight="210dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <View
@@ -214,7 +214,7 @@
         android:orientation="vertical"
         android:paddingHorizontal="@dimen/standard_margin"
         app:behavior_hideable="true"
-        app:behavior_peekHeight="300dp"
+        app:behavior_peekHeight="383dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <View
@@ -279,7 +279,8 @@
             android:layout_marginHorizontal="@dimen/button_margins"
             android:layout_marginTop="@dimen/button_margins"
             android:layout_marginBottom="@dimen/margin_settings_20"
-            android:text="@string/sharing" />
+            android:text="@string/sharing"
+            android:textColor="?attr/settingsPageButtonText"/>
 
         <TextView
             android:id="@+id/edit_information_tv"
@@ -288,7 +289,8 @@
             android:layout_marginHorizontal="@dimen/button_margins"
             android:layout_marginTop="@dimen/button_margins"
             android:layout_marginBottom="@dimen/margin_settings_20"
-            android:text="@string/edit_information" />
+            android:text="@string/edit_information"
+            android:textColor="?attr/settingsPageButtonText"/>
 
         <TextView
             android:id="@+id/delete_playlist_tv"
@@ -296,7 +298,8 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/button_margins"
             android:layout_marginTop="@dimen/margin_settings_20"
-            android:text="@string/delete_playlist" />
+            android:text="@string/delete_playlist"
+            android:textColor="?attr/settingsPageButtonText"/>
 
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
