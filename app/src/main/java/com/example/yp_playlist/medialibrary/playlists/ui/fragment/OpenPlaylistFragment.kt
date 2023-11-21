@@ -140,11 +140,12 @@ class OpenPlaylistFragment : Fragment() {
             playlist?.id?.let { playlistId -> viewModel.getTracks(playlistId) }
         }
         viewModel.tracks.observe(viewLifecycleOwner) { tracks ->
-            if (tracks.isEmpty()) {
+            val reversedTracks = tracks.reversed()
+            if (reversedTracks.isEmpty()) {
                 tracksAdapter.tracks = arrayListOf()
                 binding.textNotFound.isVisible = true
             } else {
-                tracksAdapter.tracks = tracks as ArrayList<Track>
+                tracksAdapter.tracks = reversedTracks as ArrayList<Track>
                 binding.totalTime.text = resources.getQuantityString(
                     R.plurals.minutes,
                     tracksAdapter.tracks.sumOf { it.trackTimeMillis }.formatAsMinutes().toInt(),

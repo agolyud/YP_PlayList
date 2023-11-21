@@ -56,8 +56,6 @@
                 style="@style/constraintGuide_vertical"
                 app:layout_constraintGuide_end="@dimen/standard_margin" />
 
-
-
             <TextView
                 android:id="@+id/name_playlist"
                 android:layout_width="0dp"
@@ -189,7 +187,8 @@
 
         <TextView
             android:id="@+id/textNotFound"
-            android:background="?attr/settingsPageBackground"
+            style="@style/TextViewStyle"
+            android:textColor="?attr/settingsPageButtonText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
