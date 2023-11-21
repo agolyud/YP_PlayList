@@ -177,6 +177,12 @@
         <item name="titleMarginStart">@dimen/standard_margin</item>
     </style>
 
+    <style name="Switcher_style">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
     <style name="panel_player_toolbar">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>

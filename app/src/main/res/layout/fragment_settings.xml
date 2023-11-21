@@ -40,7 +40,9 @@
             android:id="@+id/switch_compat"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_marginHorizontal="16dp"
             android:layout_gravity="center_vertical"
+            style="@style/Switcher_style"
             android:layout_weight="1"
             android:checked="false"
             tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml,VisualLintButtonSize" />

@@ -7,8 +7,7 @@
     android:orientation="horizontal"
     android:theme="@style/Theme.YP_PlayList.Settings"
     android:clickable="true"
-    android:focusable="true"
-    android:background="?android:attr/selectableItemBackground">
+    android:focusable="true">
 
     <ImageView
         android:id="@+id/trackImage"

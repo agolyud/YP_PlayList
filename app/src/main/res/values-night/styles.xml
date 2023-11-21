@@ -125,5 +125,14 @@
         <item name="menu">@menu/navigation_menu</item>
     </style>
 
+    <style name="Switcher_style">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:drawableTint">@color/white</item>
+        <item name="android:trackTint">@color/blue_fon</item>
+        <item name="android:thumbTint">@color/blue_fon</item>
+    </style>
+
 
 </resources>
