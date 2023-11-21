@@ -23,12 +23,6 @@
     <!-- Customize your theme here. -->
 </style>
 
-<style name="Theme.YP_PlayList.Main">
-    <item name="mainPageButtonText">@color/button_text</item>
-    <item name="mainPageButtonBackground">@color/white_fon</item>
-    <item name="mainPageBackground">@color/button_text</item>
-</style>
-
 <style name="Theme.YP_PlayList.Settings">
     <item name="settingsPageTitleText">@color/white</item>
     <item name="settingsPageButtonText">@color/white</item>

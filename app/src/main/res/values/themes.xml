@@ -23,17 +23,11 @@
                 <!-- Customize your theme here. -->
         </style>
 
-            <style name="Theme.YP_PlayList.Main">
-                <item name="mainPageButtonText">@color/button_text</item>
-                <item name="mainPageButtonBackground">@color/white_fon</item>
-                <item name="mainPageBackground">@color/blue_fon</item>
-            </style>
-
             <style name="Theme.YP_PlayList.Settings">
                 <item name="settingsPageTitleText">@color/button_text</item>
                 <item name="settingsPageButtonText">@color/black</item>
                 <item name="settingsPageIcoColor">@color/light_grey</item>
-                <item name="settingsPageBackground">@color/white_fon</item>
+                <item name="settingsPageBackground">@color/white</item>
             </style>
 
     <style name="textColor_Artist">

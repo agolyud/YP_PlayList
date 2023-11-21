@@ -31,7 +31,7 @@
             android:layout_marginTop="@dimen/settings_text_margin"
             android:layout_marginBottom="@dimen/settings_text_margin"
             android:layout_weight="7"
-            android:backgroundTint="@color/white_fon"
+            android:backgroundTint="@color/white"
             android:text="@string/black_theme"
             android:textColor="?attr/settingsPageTitleText"
             android:textSize="@dimen/text_16sp" />
@@ -59,7 +59,7 @@
             android:layout_marginTop="@dimen/settings_text_margin"
             android:layout_marginBottom="@dimen/settings_text_margin"
             android:layout_weight="8"
-            android:backgroundTint="@color/white_fon"
+            android:backgroundTint="@color/white"
             android:text="@string/share_application"
             android:textColor="?attr/settingsPageTitleText"
             android:textSize="@dimen/text_16sp"/>
@@ -85,7 +85,7 @@
             android:layout_marginTop="@dimen/settings_text_margin"
             android:layout_marginBottom="@dimen/settings_text_margin"
             android:layout_weight="8"
-            android:backgroundTint="@color/white_fon"
+            android:backgroundTint="@color/white"
             android:text="@string/write_to_support"
             android:textColor="?attr/settingsPageTitleText"
             android:textSize="@dimen/text_16sp"/>
@@ -110,7 +110,7 @@
             android:layout_marginTop="@dimen/settings_text_margin"
             android:layout_marginBottom="@dimen/settings_text_margin"
             android:layout_weight="8"
-            android:backgroundTint="@color/white_fon"
+            android:backgroundTint="@color/white"
             android:text="@string/license_agreement"
             android:textColor="?attr/settingsPageTitleText"
             android:textSize="@dimen/text_16sp" />
