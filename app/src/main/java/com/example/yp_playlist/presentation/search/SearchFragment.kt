@@ -248,7 +248,10 @@ class SearchFragment : Fragment() {
     }
 
     private fun searchTracks(searchText: String) {
-        viewModel.searchTrack(searchText)
+        if (searchText.isNotEmpty()) {
+            viewModel.searchTrack(searchText)
+        } else {
+        }
     }
 
     override fun onSaveInstanceState(savedInstanceState: Bundle) {
