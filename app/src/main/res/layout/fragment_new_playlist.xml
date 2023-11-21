@@ -79,7 +79,7 @@
             android:id="@+id/text_name_playlist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textCursorDrawable="@null"
+            android:textCursorDrawable="@drawable/custom_cursor"
             android:maxLines="1"
             android:inputType="text"
             android:imeOptions="actionDone"
@@ -108,11 +108,11 @@
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:inputType="text"
-            android:textCursorDrawable="@null"
             android:imeOptions="actionDone"
             android:singleLine="true"
             android:fontFamily="@font/ys_display_medium"
             android:textSize="@dimen/small_text_size"
+            android:textCursorDrawable="@drawable/custom_cursor"
             />
     </com.google.android.material.textfield.TextInputLayout>
 

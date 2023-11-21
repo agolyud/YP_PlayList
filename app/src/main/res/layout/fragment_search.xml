@@ -44,7 +44,7 @@
             android:singleLine="true"
             android:textColor="@color/black"
             android:textColorHint="@color/light_grey"
-            android:textCursorDrawable="@null" />
+            android:textCursorDrawable="@drawable/custom_cursor"/>
 
         <ImageView
             android:id="@+id/clear"
