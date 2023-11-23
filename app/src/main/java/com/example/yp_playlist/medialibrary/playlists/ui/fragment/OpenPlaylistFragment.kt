@@ -145,7 +145,7 @@ class OpenPlaylistFragment : Fragment() {
                 tracksAdapter.tracks = arrayListOf()
                 binding.textNotFound.isVisible = true
             } else {
-                tracksAdapter.tracks = reversedTracks as ArrayList<Track>
+                tracksAdapter.tracks = reversedTracks.toMutableList()
                 binding.totalTime.text = resources.getQuantityString(
                     R.plurals.minutes,
                     tracksAdapter.tracks.sumOf { it.trackTimeMillis }.formatAsMinutes().toInt(),
