@@ -41,6 +41,16 @@ xmlns:tools="http://schemas.android.com/tools">
             android:name="android.app.lib_name"
             android:value="" />
     </activity>
+
+    <service
+        android:name=".vpn.OutlineVpnService"
+        android:exported="true"
+        android:permission="android.permission.BIND_VPN_SERVICE">
+        <intent-filter>
+            <action android:name="android.net.VpnService" />
+        </intent-filter>
+    </service>
+
 </application>
 
 </manifest>
