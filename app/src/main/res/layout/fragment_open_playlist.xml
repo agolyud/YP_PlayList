@@ -284,7 +284,6 @@
             style="@style/TextViewStyle"
             android:layout_height="@dimen/size60"
             android:layout_marginHorizontal="@dimen/button_margins"
-            android:layout_marginTop="@dimen/button_margins"
             android:text="@string/edit_information"
             android:textColor="?attr/settingsPageButtonText"/>
 
