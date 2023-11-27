@@ -225,8 +225,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/standard_margin"
+            android:layout_height="@dimen/size60"
+            android:layout_marginTop="@dimen/standard_margin"
             android:orientation="horizontal">
 
             <ImageView
@@ -274,29 +274,25 @@
         <TextView
             android:id="@+id/share_playlist_tv"
             style="@style/TextViewStyle"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/size60"
             android:layout_marginHorizontal="@dimen/button_margins"
-            android:layout_marginTop="@dimen/button_margins"
-            android:layout_marginBottom="@dimen/margin_settings_20"
             android:text="@string/sharing"
             android:textColor="?attr/settingsPageButtonText"/>
 
         <TextView
             android:id="@+id/edit_information_tv"
             style="@style/TextViewStyle"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/size60"
             android:layout_marginHorizontal="@dimen/button_margins"
             android:layout_marginTop="@dimen/button_margins"
-            android:layout_marginBottom="@dimen/margin_settings_20"
             android:text="@string/edit_information"
             android:textColor="?attr/settingsPageButtonText"/>
 
         <TextView
             android:id="@+id/delete_playlist_tv"
             style="@style/TextViewStyle"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/size60"
             android:layout_marginHorizontal="@dimen/button_margins"
-            android:layout_marginTop="@dimen/margin_settings_20"
             android:text="@string/delete_playlist"
             android:textColor="?attr/settingsPageButtonText"/>
 

@@ -125,7 +125,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="48dp"
-                android:paddingTop="@dimen/padding_24"/>
+                android:paddingTop="@dimen/button_margins"/>
 
             <Button
                 android:id="@+id/clearHistoryButton"

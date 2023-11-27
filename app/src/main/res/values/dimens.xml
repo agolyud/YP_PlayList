@@ -25,6 +25,7 @@
     <dimen name="size17">17dp</dimen>
     <dimen name="size12">12dp</dimen>
     <dimen name="size32">32dp</dimen>
+    <dimen name="size60">60dp</dimen>
     <dimen name="size160">160dp</dimen>
     <dimen name="text_size20sp">20sp</dimen>
     <dimen name="text_size22sp">22sp</dimen>
