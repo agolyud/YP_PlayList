@@ -66,6 +66,6 @@
 
     <ImageView
         style="@style/ImageViewSettings"
-        android:layout_marginEnd="8dp"
+        android:layout_gravity="center"
         android:src="@drawable/arrow_forward"/>
 </LinearLayout>

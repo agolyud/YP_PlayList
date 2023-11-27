@@ -120,12 +120,15 @@
                 android:text="@string/search_history_message"
                 style="@style/you_search"/>
 
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewHistory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="48dp"
-                android:paddingTop="@dimen/button_margins"/>
+                android:paddingTop="@dimen/button_margins"
+                android:paddingHorizontal="@dimen/standard_margin"
+                />
 
             <Button
                 android:id="@+id/clearHistoryButton"
