@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.NavHostFragment
 import com.example.yp_playlist.R
 import com.example.yp_playlist.databinding.ActivityMainBinding
@@ -21,5 +22,25 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         mainBinding.bottomNavigationView.setupWithNavController(navController)
+
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.playerActivity,
+                R.id.newPlaylistFragment,
+                R.id.OpenPlaylistFragment,
+                R.id.editPlaylistFragment-> {
+                    mainBinding.bottomNavigationView.isVisible = false
+                    mainBinding.BottomNavBar.isVisible = false
+                }
+
+                else -> {
+                    mainBinding.bottomNavigationView.isVisible = true
+                    mainBinding.BottomNavBar.isVisible = true
+                }
+            }
+        }
+
+
     }
 }

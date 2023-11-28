@@ -13,7 +13,7 @@ import com.example.yp_playlist.db.entity.TrackEntity
         TrackEntity::class, PlaylistEntity::class
     ]
 )
-abstract class AppDatabase: RoomDatabase() {
+public abstract class AppDatabase: RoomDatabase() {
     abstract fun trackDao(): TrackDao
     abstract fun PlaylistDao(): PlaylistDao
 }

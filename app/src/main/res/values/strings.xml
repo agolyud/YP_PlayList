@@ -9,7 +9,6 @@
     <string name="share_application">Поделиться приложением</string>
     <string name="black_theme">Темная тема</string>
     <string name="playlist_maker">Playlist maker</string>
-
     <string name="supportMessage">«Спасибо разработчикам и разработчицам за крутое приложение!»</string>
     <string name="supportMail">support@yandex.ru</string>
     <string name="mailSubject">«Сообщение разработчикам и разработчицам приложения Playlist Maker»</string>
@@ -50,7 +49,27 @@
         <item quantity="one">%d трек</item>
         <item quantity="few">%d трека</item>
         <item quantity="many">%d треков</item>
-        <item quantity="other">%d треков</item>
+        <item quantity="other">%d трека</item>
     </plurals>
+
+    <plurals name="minutes">
+        <item quantity="one">%d минута</item>
+        <item quantity="few">%d минуты</item>
+        <item quantity="many">%d минут</item>
+        <item quantity="other">%d минут</item>
+    </plurals>
+
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="empty_playlist">Пустой плейлист</string>
+    <string name="sharingApp">Выберите приложение для отправки</string>
+    <string name="sharing">Поделиться</string>
+    <string name="edit_information">Редактировать информацию</string>
+    <string name="delete_playlist">Удалить плейлист</string>
+    <string name="delete_playlists">Хотите удалить плейлист?</string>
+    <string name="delete_track">Хотите удалить трек?</string>
+    <string name="no_tracks_in_playlist">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <string name="save">Сохранить</string>
+    <string name="editing">Редактировать</string>
 
 </resources>

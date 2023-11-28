@@ -17,10 +17,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:navGraph="@navigation/main_navigation" />
 
+    <View
+        android:id="@+id/BottomNavBar"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/light_grey"
+        app:layout_constraintTop_toBottomOf="@id/container_view"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"/>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         style="@style/NavigationViewStyle"
-
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

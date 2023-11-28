@@ -15,6 +15,7 @@ class ExternalNavigatorImpl(private val context: Context) : ExternalNavigator {
     private val errorSharingLink = context.getString(R.string.errorSharingLink)
     private val errorOpeningLink = context.getString(R.string.errorOpeningLink)
     private val errorOpeningEmail = context.getString(R.string.errorOpeningEmail)
+    private val sharingApp = context.getString(R.string.sharingApp)
 
     private fun showErrorToast(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
@@ -44,6 +45,17 @@ class ExternalNavigatorImpl(private val context: Context) : ExternalNavigator {
             e.printStackTrace()
             showErrorToast(errorOpeningLink)
         }
+    }
+
+    override fun sharePlaylist(playlist: String) {
+        val sendIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, playlist)
+            type = "text/plain"
+        }
+
+        val shareIntent = Intent.createChooser(sendIntent, sharingApp)
+        context.startActivity(shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
 
     override fun openEmail(supportEmailData: EmailData) {

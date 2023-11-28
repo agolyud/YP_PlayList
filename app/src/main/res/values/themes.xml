@@ -11,7 +11,7 @@
 
     <style name="Theme.YP_PlayList" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
                 <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimary">@color/blue_fon</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
                 <!-- Secondary brand color. -->
@@ -23,18 +23,13 @@
                 <!-- Customize your theme here. -->
         </style>
 
-            <style name="Theme.YP_PlayList.Main">
-                <item name="mainPageButtonText">@color/button_text</item>
-                <item name="mainPageButtonBackground">@color/white_fon</item>
-                <item name="mainPageBackground">@color/blue_fon</item>
-            </style>
-
             <style name="Theme.YP_PlayList.Settings">
                 <item name="settingsPageTitleText">@color/button_text</item>
                 <item name="settingsPageButtonText">@color/black</item>
                 <item name="settingsPageIcoColor">@color/light_grey</item>
-                <item name="settingsPageBackground">@color/white_fon</item>
+                <item name="settingsPageBackground">@color/white</item>
             </style>
+
 
     <style name="textColor_Artist">
         <item name="android:textColor">#AEAFB4</item>

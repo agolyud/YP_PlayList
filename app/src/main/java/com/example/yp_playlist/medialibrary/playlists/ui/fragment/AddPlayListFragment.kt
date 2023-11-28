@@ -1,7 +1,8 @@
 package com.example.yp_playlist.medialibrary.playlists.ui.fragment
 
-import android.net.Uri
+
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,18 +17,17 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.yp_playlist.R
 import com.example.yp_playlist.databinding.FragmentNewPlaylistBinding
-import com.example.yp_playlist.medialibrary.playlists.domain.models.Playlist
 import com.example.yp_playlist.medialibrary.playlists.ui.viewmodel.AddPlaylistViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class AddPlayListFragment : Fragment() {
+open class AddPlayListFragment : Fragment() {
 
-    private var _binding: FragmentNewPlaylistBinding? = null
-    private val binding get() = _binding!!
-    private var imageUri: Uri? = null
-    private val viewModel by viewModel<AddPlaylistViewModel>()
+    open var _binding: FragmentNewPlaylistBinding? = null
+    val binding get() = _binding!!
+    var imageUri: String? = null
+    val viewModel by viewModel<AddPlaylistViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -46,11 +46,9 @@ class AddPlayListFragment : Fragment() {
     private fun initListeners() {
         binding.buttonCreatePlaylist.setOnClickListener {
 
-             val   title = binding.textNamePlaylist.text?.toString() ?: ""
-              val  description = binding.textDescriptionPlaylist.text?.toString() ?: ""
-              val  imageUri = imageUri
-
-
+            val   title = binding.textNamePlaylist.text?.toString() ?: ""
+            val  description = binding.textDescriptionPlaylist.text?.toString() ?: ""
+            val  imageUri = imageUri
 
             viewModel.savePlaylist(title, description, imageUri)
             imageUri?.let { viewModel.saveToLocalStorage(uri = it) }
@@ -99,7 +97,7 @@ class AddPlayListFragment : Fragment() {
                 uri?.let {
                     binding.coverPlaylist.scaleType = ImageView.ScaleType.CENTER_CROP
                     binding.coverPlaylist.setImageURI(it)
-                    imageUri = it
+                    imageUri = it.toString()
                 }
             }
 
@@ -120,10 +118,10 @@ class AddPlayListFragment : Fragment() {
     }
 
     private fun showConfirmDialog() {
-        MaterialAlertDialogBuilder(requireContext())
+        MaterialAlertDialogBuilder(requireContext(), R.style.RoundedBottomSheetDialogTheme)
             .setTitle(R.string.stop_creating_playlist)
             .setMessage(R.string.unsaved_data_will_be_lost)
-            .setNeutralButton(R.string.cancel) { dialog, which ->
+            .setNegativeButton(R.string.cancel) { dialog, which ->
             }
             .setPositiveButton(R.string.finish) { dialog, which ->
                 findNavController().popBackStack()

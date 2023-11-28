@@ -37,4 +37,8 @@ class SharingInteractorImpl(
         const val SUPPORT_EMAIL = "support@yandex.ru"
         const val TERM_LINK = "https://yandex.ru/legal/practicum_offer"
     }
+
+    override fun sharePlaylist(playlist: String) {
+        externalNavigator.sharePlaylist(playlist)
+    }
 }

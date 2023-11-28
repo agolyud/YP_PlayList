@@ -7,8 +7,7 @@
     android:orientation="horizontal"
     android:theme="@style/Theme.YP_PlayList.Settings"
     android:clickable="true"
-    android:focusable="true"
-    android:background="?android:attr/selectableItemBackground">
+    android:focusable="true">
 
     <ImageView
         android:id="@+id/track_playlist_Image"
@@ -24,7 +23,8 @@
         android:layout_weight="1"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_gravity="center_vertical">
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="@dimen/button_margins">
 
         <TextView
             android:id="@+id/playlist_title"
@@ -35,20 +35,11 @@
             android:ellipsize="end"
             tools:text="Song title"/>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_margin="@dimen/marginTextTrack">
-
-            <TextView
-                android:id="@+id/playlist_size"
-                style="@style/track_view"
-                android:ellipsize="end"
-                android:lines="1"
-                android:layout_weight="1"
-                tools:text="98 tracks"/>
-
-        </LinearLayout>
+        <TextView
+            android:id="@+id/playlist_size"
+            style="@style/track_view"
+            android:ellipsize="end"
+            android:lines="1"
+            tools:text="98 tracks"/>
     </LinearLayout>
 </LinearLayout>

@@ -14,6 +14,7 @@ import com.example.yp_playlist.medialibrary.playlists.domain.impl.PlaylistIntera
 import com.example.yp_playlist.medialibrary.playlists.domain.models.LocalStorage
 import com.example.yp_playlist.medialibrary.playlists.ui.viewmodel.AddPlaylistViewModel
 import com.example.yp_playlist.medialibrary.favourite.ui.viewmodel.FavouriteTracksViewModel
+import com.example.yp_playlist.medialibrary.playlists.ui.viewmodel.OpenPlaylistViewModel
 import com.example.yp_playlist.medialibrary.playlists.ui.viewmodel.PlaylistsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -52,7 +53,11 @@ val mediaLibraryModule = module {
     }
 
     single<LocalStorage> {
-        LocalStorageImpl(context = get())
+        LocalStorageImpl(context = get(), sharedPreferences = get())
+    }
+
+    viewModel {
+        OpenPlaylistViewModel(playlistInteractor = get(), sharingInteractor = get())
     }
 
 }

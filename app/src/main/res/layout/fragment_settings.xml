@@ -12,7 +12,6 @@
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="40dp"
             android:orientation="horizontal"
             android:id="@+id/settings_toolbar"
             style="@style/panel_header_toolbar"
@@ -31,7 +30,7 @@
             android:layout_marginTop="@dimen/settings_text_margin"
             android:layout_marginBottom="@dimen/settings_text_margin"
             android:layout_weight="7"
-            android:backgroundTint="@color/white_fon"
+            android:backgroundTint="@color/white"
             android:text="@string/black_theme"
             android:textColor="?attr/settingsPageTitleText"
             android:textSize="@dimen/text_16sp" />
@@ -40,7 +39,9 @@
             android:id="@+id/switch_compat"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_marginHorizontal="16dp"
             android:layout_gravity="center_vertical"
+            style="@style/Switcher_style"
             android:layout_weight="1"
             android:checked="false"
             tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml,VisualLintButtonSize" />
@@ -59,7 +60,7 @@
             android:layout_marginTop="@dimen/settings_text_margin"
             android:layout_marginBottom="@dimen/settings_text_margin"
             android:layout_weight="8"
-            android:backgroundTint="@color/white_fon"
+            android:backgroundTint="@color/white"
             android:text="@string/share_application"
             android:textColor="?attr/settingsPageTitleText"
             android:textSize="@dimen/text_16sp"/>
@@ -85,7 +86,7 @@
             android:layout_marginTop="@dimen/settings_text_margin"
             android:layout_marginBottom="@dimen/settings_text_margin"
             android:layout_weight="8"
-            android:backgroundTint="@color/white_fon"
+            android:backgroundTint="@color/white"
             android:text="@string/write_to_support"
             android:textColor="?attr/settingsPageTitleText"
             android:textSize="@dimen/text_16sp"/>
@@ -110,7 +111,7 @@
             android:layout_marginTop="@dimen/settings_text_margin"
             android:layout_marginBottom="@dimen/settings_text_margin"
             android:layout_weight="8"
-            android:backgroundTint="@color/white_fon"
+            android:backgroundTint="@color/white"
             android:text="@string/license_agreement"
             android:textColor="?attr/settingsPageTitleText"
             android:textSize="@dimen/text_16sp" />

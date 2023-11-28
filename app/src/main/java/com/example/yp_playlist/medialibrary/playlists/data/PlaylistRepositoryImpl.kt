@@ -1,6 +1,5 @@
 package com.example.yp_playlist.medialibrary.playlists.data
 
-import android.net.Uri
 import com.example.yp_playlist.db.AppDatabase
 import com.example.yp_playlist.db.converter.TrackDbConverter
 import com.example.yp_playlist.db.entity.PlaylistEntity
@@ -9,6 +8,7 @@ import com.example.yp_playlist.medialibrary.playlists.domain.api.PlaylistReposit
 import com.example.yp_playlist.medialibrary.playlists.domain.models.LocalStorage
 import com.example.yp_playlist.medialibrary.playlists.domain.models.Playlist
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonParseException
 import com.google.gson.reflect.TypeToken
 
@@ -24,7 +24,7 @@ class PlaylistRepositoryImpl(
     private val gson: Gson
 ) : PlaylistRepository {
 
-    override suspend fun addPlaylist(title : String, description: String, imageUri: Uri?) {
+    override suspend fun addPlaylist(title: String, description: String, imageUri: String?) {
         val playlistEntity = PlaylistEntity(
             title = title,
             description = description,
@@ -34,7 +34,7 @@ class PlaylistRepositoryImpl(
         appDatabase.PlaylistDao().addPlaylist(playlistEntity)
     }
     
-    override suspend fun deletePlaylist(id: Int) {
+   override suspend fun deletePlaylist(id: Long) {
         appDatabase.PlaylistDao().deletePlaylist(id)
     }
 
@@ -72,14 +72,65 @@ class PlaylistRepositoryImpl(
             emit(false)
         }
     }
+    override suspend fun deleteTrackFromPlaylist(track: Track, playlist: Playlist): Flow<Boolean> = flow {
+        val gson = GsonBuilder().create()
+        val arrayTrackType = object : TypeToken<ArrayList<Track>>() {}.type
 
-    override suspend fun saveImageToPrivateStorage(uri: Uri) {
+        val playlistTracks =
+            gson.fromJson(playlist.trackList, arrayTrackType) ?: arrayListOf<Track>()
+
+        var isInPlaylist = false
+
+        playlistTracks.forEach {
+            if (it.trackId == track.trackId) {
+                isInPlaylist = true
+            }
+        }
+
+        if (isInPlaylist) {
+            playlistTracks.remove(track)
+            playlist.trackList = gson.toJson(playlistTracks)
+
+            playlist.size = (playlist.size ?: 0) - 1
+            updatePlaylists(playlist)
+
+            emit(true)
+        } else {
+            emit(false)
+        }
+    }
+
+    override suspend fun saveImageToPrivateStorage(uri: String) {
         localStorage.saveImageToPrivateStorage(uri)
     }
 
+    override suspend fun getPlaylistById(id: Long): Flow<Playlist> = flow {
+        emit(trackDbConverter.mapFromPlaylistEntityToPlaylist(appDatabase.PlaylistDao().getPlaylistById(id)))
+    }
+
+    override suspend fun getTracksFromPlaylist(id: Long): Flow<List<Track>> = flow {
+        val gson = GsonBuilder().create()
+        val listTrackType = object : TypeToken<MutableList<Track>>() {}.type
+
+        val tracksString = appDatabase.PlaylistDao().getTracksFromPlaylist(id)
+        val tracks = gson.fromJson(tracksString, listTrackType) ?: mutableListOf<Track>()
+
+        emit(tracks)
+    }
+
+    override suspend fun saveCurrentPlaylistId(id: Long) {
+        localStorage.saveCurrentPlaylistId(id)
+    }
+
+    override suspend fun getCurrentPlaylistId(): Long {
+        return localStorage.getCurrentPlaylistId()
+    }
+
     private fun convertFromPlaylistEntity(playlists: List<PlaylistEntity>): List<Playlist> {
-        return playlists.map { playlistEntity ->
-            trackDbConverter.mapFromPlaylistEntityToPlaylist(playlistEntity)
+        return playlists.map { playlists ->
+            trackDbConverter.mapFromPlaylistEntityToPlaylist(
+                playlists
+            )
         }
     }
 }

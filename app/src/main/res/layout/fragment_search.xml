@@ -12,7 +12,6 @@
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:orientation="horizontal"
         android:id="@+id/settings_toolbar"
         style="@style/panel_header_toolbar"
@@ -22,7 +21,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="8dp">
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
 
         <EditText
             android:id="@+id/SearchForm"
@@ -44,7 +46,7 @@
             android:singleLine="true"
             android:textColor="@color/black"
             android:textColorHint="@color/light_grey"
-            android:textCursorDrawable="@null" />
+            android:textCursorDrawable="@drawable/custom_cursor"/>
 
         <ImageView
             android:id="@+id/clear"
@@ -69,8 +71,8 @@
             android:id="@+id/trackRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingHorizontal="@dimen/small_text_size"
-            android:paddingTop="@dimen/padding_24" />
+            android:paddingHorizontal="@dimen/standard_margin"
+            />
 
         <LinearLayout
             android:id="@+id/placeholderNothingWasFound"
@@ -121,12 +123,15 @@
                 android:text="@string/search_history_message"
                 style="@style/you_search"/>
 
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewHistory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="48dp"
-                android:paddingTop="@dimen/padding_24"/>
+                android:paddingTop="@dimen/button_margins"
+                android:paddingHorizontal="@dimen/standard_margin"
+                />
 
             <Button
                 android:id="@+id/clearHistoryButton"

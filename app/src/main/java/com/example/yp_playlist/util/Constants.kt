@@ -12,7 +12,8 @@ object Constants {
     const val DEFAULT_TIME = "00:00"
     const val TRACK_ID = "track_position"
     const val PLAYLIST_SHARED_PREFERENCES = "playlist_shared_preferences"
-    const val QUALITY_IMAGE = 30
-    const val DIRECTORY = "playlist"
+    const val LAST_PLAYLIST_KEY = "last_playlist"
     const val IMAGE_NAME = "imageName"
+    const val DIRECTORY = "playlist"
+    const val QUALITY_IMAGE = 30
 }

@@ -7,15 +7,16 @@
     android:orientation="horizontal"
     android:theme="@style/Theme.YP_PlayList.Settings"
     android:clickable="true"
-    android:focusable="true"
-    android:background="?android:attr/selectableItemBackground">
+    android:focusable="true">
 
     <ImageView
         android:id="@+id/trackImage"
         android:layout_width="@dimen/layout_width_45"
         android:layout_height="@dimen/layout_height_45"
         android:src="@drawable/placeholder"
-        android:layout_margin="@dimen/button_margins"
+        android:layout_marginEnd="@dimen/button_margins"
+        android:layout_marginVertical="@dimen/button_margins"
+        android:scaleType="centerCrop"
         android:layout_gravity="center_vertical"/>
 
     <LinearLayout
@@ -65,6 +66,6 @@
 
     <ImageView
         style="@style/ImageViewSettings"
-        android:layout_marginEnd="24dp"
+        android:layout_gravity="center"
         android:src="@drawable/arrow_forward"/>
 </LinearLayout>
