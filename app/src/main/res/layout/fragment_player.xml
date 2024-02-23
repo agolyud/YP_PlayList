@@ -93,12 +93,13 @@
                 app:layout_constraintTop_toTopOf="@+id/playButton"
                 tools:ignore="ContentDescription,ImageContrastCheck,SpeakableTextPresentCheck" />
 
-            <ImageView
+            <com.example.yp_playlist.presentation.media.PlaybackButtonView
                 android:id="@+id/playButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_marginTop="@dimen/size30"
-                android:src="@drawable/play_media"
+                app:Play="@drawable/play_media"
+                app:Pause="@drawable/pause"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"
@@ -106,6 +107,8 @@
                 app:layout_constraintStart_toEndOf="@id/addButton"
                 app:layout_constraintTop_toBottomOf="@+id/artistName"
                 tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
+
+
 
             <ProgressBar
                 android:id="@+id/progressBar"

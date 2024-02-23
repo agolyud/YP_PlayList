@@ -25,29 +25,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class MediaFragment : Fragment() {
 
     private val viewModel by viewModel<MediaViewModel>()
-
     private var _mediaBinding: FragmentPlayerBinding? = null
     private val mediaBinding get() = _mediaBinding!!
-
-
-    private val bottomPlaylistsAdapter =
-        ViewObjects.PlaylistsAdapter(viewObject = ViewObjects.Vertical)
-
-
-    private lateinit var buttonArrowBackSettings: androidx.appcompat.widget.Toolbar
-    private lateinit var artworkUrl100: ImageView
-    private lateinit var trackName: TextView
-    private lateinit var artistName: TextView
-    private lateinit var trackTime: TextView
-    private lateinit var collectionName: TextView
-    private lateinit var releaseDate: TextView
-    private lateinit var primaryGenreName: TextView
-    private lateinit var country: TextView
-    private lateinit var time: TextView
-    private lateinit var previewUrl: String
-    private lateinit var buttonPlay: ImageView
-    private lateinit var likeButton: ImageView
-    private lateinit var progressBar: ProgressBar
+    private val bottomPlaylistsAdapter = ViewObjects.PlaylistsAdapter(viewObject = ViewObjects.Vertical)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _mediaBinding = FragmentPlayerBinding.inflate(inflater, container, false)
@@ -56,61 +36,15 @@ class MediaFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setMediaValues()
         initializeViews()
         setupPlayer()
         bindClicks()
-        observeState()
         observeTime()
         observeInfo()
         initListeners()
         setupAdapter()
         observePlaylistChanges()
         bottomSheetBehavior()
-    }
-
-    private fun setMediaValues() {
-        buttonArrowBackSettings = mediaBinding.toolbarInclude
-        artworkUrl100 = mediaBinding.trackImage
-        trackName = mediaBinding.trackName
-        artistName = mediaBinding.artistName
-        trackTime = mediaBinding.trackTime
-        collectionName = mediaBinding.collectionName
-        releaseDate = mediaBinding.releaseDate
-        primaryGenreName = mediaBinding.primaryGenreName
-        country = mediaBinding.country
-        time = mediaBinding.time
-        buttonPlay = mediaBinding.playButton
-        progressBar = mediaBinding.progressBar
-        likeButton = mediaBinding.likeButton
-
-    }
-
-    private  fun bottomSheetBehavior (){
-
-        val bottomSheetBehavior =
-            BottomSheetBehavior.from(mediaBinding.bottomSheetLinear).apply {
-                state = BottomSheetBehavior.STATE_HIDDEN
-            }
-
-        bottomSheetBehavior.addBottomSheetCallback(object :
-            BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when (newState) {
-                    BottomSheetBehavior.STATE_HIDDEN -> {
-                        mediaBinding.overlay.visibility = View.GONE
-                    }
-                    else -> {
-                        mediaBinding.overlay.visibility = View.VISIBLE
-                    }
-                }
-            }
-
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-
-            }
-        })
-
     }
 
     private fun initializeViews() {
@@ -121,24 +55,47 @@ class MediaFragment : Fragment() {
 
     private fun setupPlayer() {
         viewModel.observeIsFavourite().observe(viewLifecycleOwner) { isFavorite ->
-            likeButton.setImageResource(if (isFavorite) R.drawable.ic_like_button_favourite else R.drawable.like_button)
+            mediaBinding.likeButton.setImageResource(if (isFavorite) R.drawable.ic_like_button_favourite else R.drawable.like_button)
         }
     }
 
-    private fun setupAdapter() {
-        mediaBinding.playlistsBottomSheetRecyclerview.adapter = bottomPlaylistsAdapter
+    private fun bindClicks() {
+        mediaBinding.toolbarInclude.setOnClickListener {
+            findNavController().navigateUp()
+        }
+
+        mediaBinding.playButton.onTouchListener = {
+            viewModel.playbackControl()
+        }
     }
 
-    private fun observePlaylistChanges() {
-        viewModel.isAlreadyInPlaylist.observe(viewLifecycleOwner) {
-            val message = if (it.second) "Добавлено в плейлист ${it.first}" else "Трек уже добавлен в плейлист ${it.first}"
-            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    private fun observeTime() {
+        viewModel.time.observe(viewLifecycleOwner) {
+            mediaBinding.time.text = it
         }
+    }
 
-        viewModel.playlists.observe(viewLifecycleOwner) {
-            bottomPlaylistsAdapter.playlists = it as ArrayList<Playlist>
-            viewModel.fillData()
+    private fun observeInfo() {
+        viewModel.trackInfo.observe(viewLifecycleOwner) { track ->
+            showInfo(track)
         }
+    }
+
+    private fun showInfo(track: Track) {
+        mediaBinding.trackName.text = track.trackName
+        mediaBinding.artistName.text = track.artistName
+        mediaBinding.trackTime.text = viewModel.getTime(track.trackTimeMillis.toInt())
+        mediaBinding.collectionName.text = track.collectionName
+        mediaBinding.releaseDate.text = track.releaseDate?.let { viewModel.getDate(it) }
+        mediaBinding.primaryGenreName.text = track.primaryGenreName
+        mediaBinding.country.text = track.country
+
+        Glide.with(this)
+            .load(track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"))
+            .placeholder(R.drawable.placeholder)
+            .centerCrop()
+            .transform(RoundedCorners(resources.getDimensionPixelSize(R.dimen.button_margins)))
+            .into(mediaBinding.trackImage)
     }
 
     private fun initListeners() {
@@ -160,63 +117,47 @@ class MediaFragment : Fragment() {
             findNavController().navigate(R.id.action_playerFragment_to_newPlaylistFragment)
         }
 
-        likeButton.setOnClickListener {
+        mediaBinding.likeButton.setOnClickListener {
             viewModel.onFavouriteClicked(track = viewModel.trackInfo.value!!)
         }
     }
 
-    private fun bindClicks() {
-        buttonArrowBackSettings.setOnClickListener {
-            findNavController().navigateUp()
+    private fun setupAdapter() {
+        mediaBinding.playlistsBottomSheetRecyclerview.adapter = bottomPlaylistsAdapter
+    }
+
+    private fun observePlaylistChanges() {
+        viewModel.isAlreadyInPlaylist.observe(viewLifecycleOwner) {
+            val message = if (it.second) "Добавлено в плейлист ${it.first}" else "Трек уже добавлен в плейлист ${it.first}"
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
         }
 
-        buttonPlay.setOnClickListener {
-            viewModel.playbackControl()
+        viewModel.playlists.observe(viewLifecycleOwner) {
+            bottomPlaylistsAdapter.playlists = it as ArrayList<Playlist>
+            viewModel.fillData()
         }
     }
 
-    private fun observeInfo() {
-        viewModel.trackInfo.observe(viewLifecycleOwner) { track ->
-            showInfo(track)
+    private fun bottomSheetBehavior(){
+        val bottomSheetBehavior = BottomSheetBehavior.from(mediaBinding.bottomSheetLinear).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
         }
-    }
 
-    private fun observeState() {
-        viewModel.mediaState.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                MediaViewModel.State.PREPARED, MediaViewModel.State.PAUSED -> buttonPlay.setImageResource(R.drawable.play_media)
-                MediaViewModel.State.PLAYING -> buttonPlay.setImageResource(R.drawable.pause)
-                else -> {}
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        mediaBinding.overlay.visibility = View.GONE
+                    }
+                    else -> {
+                        mediaBinding.overlay.visibility = View.VISIBLE
+                    }
+                }
             }
-        }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) { }
+        })
     }
-
-    private fun observeTime() {
-        viewModel.time.observe(viewLifecycleOwner) {
-            time.text = it
-        }
-    }
-
-    private fun showInfo(track: Track) {
-
-        previewUrl = track.previewUrl.toString()
-        trackName.text = track.trackName
-        artistName.text = track.artistName
-        trackTime.text = viewModel.getTime(track.trackTimeMillis.toInt())
-        collectionName.text = track.collectionName
-        releaseDate.text = track.releaseDate?.let { viewModel.getDate(it) }
-        primaryGenreName.text = track.primaryGenreName
-        country.text = track.country
-
-        Glide.with(this)
-            .load(track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"))
-            .placeholder(R.drawable.placeholder)
-            .centerCrop()
-            .transform(RoundedCorners(resources.getDimensionPixelSize(R.dimen.button_margins)))
-            .into(artworkUrl100)
-
-    }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -224,7 +165,6 @@ class MediaFragment : Fragment() {
         viewModel.releasePlayer()
         _mediaBinding = null
     }
-
 
     companion object {
         fun createArgs(sendTrackId: Int): Bundle {
