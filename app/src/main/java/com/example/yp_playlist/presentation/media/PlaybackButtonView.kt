@@ -14,6 +14,7 @@ import com.example.yp_playlist.R
 import kotlin.math.min
 
 
+
 class PlaybackButtonView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -21,9 +22,8 @@ class PlaybackButtonView @JvmOverloads constructor(
     @StyleRes defStyleRes: Int = 0
 ) : View(context, attrs, defStyleAttr, defStyleRes) {
 
-    private var Play: Bitmap? = null
-    private var Pause: Bitmap? = null
-    private var ToShow: Bitmap? = null
+    private var play: Bitmap? = null
+    private var pause: Bitmap? = null
 
     private var imageRect = RectF(0f, 0f, 0f, 0f)
     private var isPlaying = false
@@ -37,9 +37,8 @@ class PlaybackButtonView @JvmOverloads constructor(
             defStyleRes
         ).apply {
             try {
-                Play = getDrawable(R.styleable.PlaybackButtonView_Play)?.toBitmap()
-                Pause = getDrawable(R.styleable.PlaybackButtonView_Pause)?.toBitmap()
-                ToShow = Play
+                play = getDrawable(R.styleable.PlaybackButtonView_play)?.toBitmap()
+                pause = getDrawable(R.styleable.PlaybackButtonView_pause)?.toBitmap()
             } finally {
                 recycle()
             }
@@ -59,7 +58,8 @@ class PlaybackButtonView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        ToShow?.let {
+        val bitmapToDraw = if (isPlaying) pause else play
+        bitmapToDraw?.let {
             canvas.drawBitmap(it, null, imageRect, null)
         }
     }
@@ -72,7 +72,7 @@ class PlaybackButtonView @JvmOverloads constructor(
                 }
 
                 MotionEvent.ACTION_UP -> {
-                    playerSwitch()
+                    togglePlaybackState()
                     invalidate()
                     return true
                 }
@@ -83,9 +83,8 @@ class PlaybackButtonView @JvmOverloads constructor(
         return super.onTouchEvent(event)
     }
 
-    private fun playerSwitch() {
+    fun togglePlaybackState() {
         onTouchListener?.invoke()
         isPlaying = !isPlaying
-        ToShow = if (isPlaying) Pause else Play
     }
 }

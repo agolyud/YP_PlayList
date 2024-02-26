@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="PlaybackButtonView">
-        <attr name="Play"
+        <attr name="play"
             format="reference"/>
-        <attr name="Pause"
+        <attr name="pause"
             format="reference"/>
     </declare-styleable>
 </resources>
