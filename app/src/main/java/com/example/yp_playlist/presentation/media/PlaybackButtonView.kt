@@ -26,8 +26,14 @@ class PlaybackButtonView @JvmOverloads constructor(
     private var pause: Bitmap? = null
 
     private var imageRect = RectF(0f, 0f, 0f, 0f)
-    private var isPlaying = false
     var onTouchListener: (() -> Unit)? = null
+
+    var isPlaying: Boolean = false
+        get() = field
+        set(value) {
+            field = value
+            invalidate()
+        }
 
     init {
         context.theme.obtainStyledAttributes(
@@ -72,7 +78,7 @@ class PlaybackButtonView @JvmOverloads constructor(
                 }
 
                 MotionEvent.ACTION_UP -> {
-                    togglePlaybackState()
+                    onTouchListener?.invoke()
                     invalidate()
                     return true
                 }
@@ -83,8 +89,4 @@ class PlaybackButtonView @JvmOverloads constructor(
         return super.onTouchEvent(event)
     }
 
-    fun togglePlaybackState() {
-        onTouchListener?.invoke()
-        isPlaying = !isPlaying
-    }
 }
