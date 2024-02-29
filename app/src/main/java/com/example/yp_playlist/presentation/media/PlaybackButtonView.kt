@@ -79,7 +79,6 @@ class PlaybackButtonView @JvmOverloads constructor(
 
                 MotionEvent.ACTION_UP -> {
                     onTouchListener?.invoke()
-                    invalidate()
                     return true
                 }
 

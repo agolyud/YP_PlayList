@@ -54,7 +54,6 @@ class MediaFragment : Fragment() {
     }
 
 
-
     private fun bindClicks() {
         mediaBinding.toolbarInclude.setOnClickListener {
             findNavController().navigateUp()
