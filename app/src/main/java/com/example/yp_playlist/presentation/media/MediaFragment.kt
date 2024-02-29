@@ -42,6 +42,7 @@ class MediaFragment : Fragment() {
         observeTime()
         observeInfo()
         initListeners()
+        observeState()
         setupAdapter()
         observePlaylistChanges()
         bottomSheetBehavior()
@@ -53,11 +54,6 @@ class MediaFragment : Fragment() {
         viewModel.checkIsFavourite(trackId)
     }
 
-    private fun setupPlayer() {
-        viewModel.observeIsFavourite().observe(viewLifecycleOwner) { isFavorite ->
-            mediaBinding.likeButton.setImageResource(if (isFavorite) R.drawable.ic_like_button_favourite else R.drawable.like_button)
-        }
-    }
 
     private fun bindClicks() {
         mediaBinding.toolbarInclude.setOnClickListener {
@@ -66,12 +62,31 @@ class MediaFragment : Fragment() {
 
         mediaBinding.playButton.onTouchListener = {
             viewModel.playbackControl()
+            mediaBinding.playButton.isPlaying = !mediaBinding.playButton.isPlaying
+            true
+        }
+    }
+
+    private fun setupPlayer() {
+        viewModel.observeIsFavourite().observe(viewLifecycleOwner) { isFavorite ->
+            mediaBinding.likeButton.setImageResource(if (isFavorite) R.drawable.ic_like_button_favourite else R.drawable.like_button)
         }
     }
 
     private fun observeTime() {
         viewModel.time.observe(viewLifecycleOwner) {
             mediaBinding.time.text = it
+        }
+    }
+
+    private fun observeState() {
+        viewModel.mediaState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                MediaViewModel.State.PLAYING -> mediaBinding.playButton.isPlaying = true
+                MediaViewModel.State.PAUSED -> mediaBinding.playButton.isPlaying = false
+                MediaViewModel.State.DEFAULT -> mediaBinding.playButton.isPlaying = false
+                else -> {}
+            }
         }
     }
 
