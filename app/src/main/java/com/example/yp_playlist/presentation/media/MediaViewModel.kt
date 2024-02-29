@@ -117,14 +117,16 @@ class MediaViewModel(
                 url = track.previewUrl,
                 onPrepared = {
                     _mediaState.postValue(State.PREPARED)
+                },
+                onCompletion = {
+                    _mediaState.postValue(State.PAUSED)
+                    timerJob?.cancel()
+                    _time.postValue(DEFAULT_TIME)
                 }
-            ) {
-                _mediaState.postValue(State.PREPARED)
-                timerJob?.cancel()
-                _time.postValue(DEFAULT_TIME)
-            }
+            )
         }
     }
+
 
     private fun getTrack(trackId: Int) = mediaInteractor.tracksHistoryFromJson().firstOrNull {
         it.trackId == trackId

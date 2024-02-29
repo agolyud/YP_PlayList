@@ -42,6 +42,7 @@ class MediaFragment : Fragment() {
         observeTime()
         observeInfo()
         initListeners()
+        observeState()
         setupAdapter()
         observePlaylistChanges()
         bottomSheetBehavior()
@@ -75,6 +76,17 @@ class MediaFragment : Fragment() {
     private fun observeTime() {
         viewModel.time.observe(viewLifecycleOwner) {
             mediaBinding.time.text = it
+        }
+    }
+
+    private fun observeState() {
+        viewModel.mediaState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                MediaViewModel.State.PLAYING -> mediaBinding.playButton.isPlaying = true
+                MediaViewModel.State.PAUSED -> mediaBinding.playButton.isPlaying = false
+                MediaViewModel.State.DEFAULT -> mediaBinding.playButton.isPlaying = false
+                else -> {}
+            }
         }
     }
 
