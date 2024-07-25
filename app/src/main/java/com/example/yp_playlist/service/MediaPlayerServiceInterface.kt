@@ -1,4 +1,4 @@
-package com.example.yp_playlist.presentation.media
+package com.example.yp_playlist.service
 
 import com.example.yp_playlist.domain.Track
 

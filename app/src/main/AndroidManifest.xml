@@ -45,7 +45,7 @@ xmlns:tools="http://schemas.android.com/tools">
     </activity>
 
     <service
-        android:name=".presentation.media.MediaPlayerService"
+        android:name=".service.MediaPlayerService"
         android:foregroundServiceType="mediaPlayback" />
 
 </application>

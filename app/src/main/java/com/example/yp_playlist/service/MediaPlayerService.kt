@@ -1,4 +1,4 @@
-package com.example.yp_playlist.presentation.media
+package com.example.yp_playlist.service
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -10,6 +10,7 @@ import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.example.yp_playlist.R
 import com.example.yp_playlist.domain.Track
 import com.example.yp_playlist.presentation.MainActivity
@@ -40,37 +41,43 @@ class MediaPlayerService : Service(), MediaPlayerServiceInterface {
     }
 
     private fun createNotificationChannel() {
-        val channel = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel(
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
                 CHANNEL_ID, CHANNEL_NAME,
                 NotificationManager.IMPORTANCE_LOW
             )
-        } else {
-            TODO("VERSION.SDK_INT < O")
+            val manager = getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(channel)
         }
-        val manager = getSystemService(NotificationManager::class.java)
-        manager.createNotificationChannel(channel)
     }
 
     private fun getNotification(): Notification {
         val notificationIntent = Intent(this, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Playlist Maker")
             .setContentText("${track?.artistName} - ${track?.trackName}")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentIntent(pendingIntent)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
     }
 
     override fun startForegroundNotification(track: Track) {
         this.track = track
-        startForeground(NOTIFICATION_ID, getNotification())
+        val notification = getNotification()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, notification)
+        }
+        startForeground(NOTIFICATION_ID, notification)
     }
 
     override fun stopForegroundNotification() {
         stopForeground(true)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            NotificationManagerCompat.from(this).cancel(NOTIFICATION_ID)
+        }
     }
 
     override fun start() {

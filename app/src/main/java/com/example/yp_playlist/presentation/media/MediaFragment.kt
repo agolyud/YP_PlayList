@@ -4,12 +4,15 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -20,6 +23,8 @@ import com.example.yp_playlist.databinding.FragmentPlayerBinding
 import com.example.yp_playlist.domain.Track
 import com.example.yp_playlist.medialibrary.playlists.domain.models.Playlist
 import com.example.yp_playlist.medialibrary.playlists.ui.adapter.ViewObjects
+import com.example.yp_playlist.service.MediaPlayerService
+import com.example.yp_playlist.service.MediaPlayerServiceInterface
 import com.example.yp_playlist.util.Constants.TRACK_ID
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -41,6 +46,7 @@ class MediaFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        checkAndRequestNotificationPermission()
         bindService()
         initializeViews()
         setupPlayer()
@@ -81,6 +87,33 @@ class MediaFragment : Fragment() {
         viewModel.pausePlayer()
         viewModel.releasePlayer()
         _mediaBinding = null
+    }
+
+    private fun checkAndRequestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), REQUEST_NOTIFICATION_PERMISSION)
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_NOTIFICATION_PERMISSION) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted
+            } else {
+                Toast.makeText(requireContext(), "Notification permission is required for background playback", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    companion object {
+        const val REQUEST_NOTIFICATION_PERMISSION = 1
+
+        fun createArgs(sendTrackId: Int): Bundle {
+            return bundleOf(TRACK_ID to sendTrackId)
+        }
     }
 
     private fun initializeViews() {
@@ -187,7 +220,7 @@ class MediaFragment : Fragment() {
         }
     }
 
-    private fun bottomSheetBehavior(){
+    private fun bottomSheetBehavior() {
         val bottomSheetBehavior = BottomSheetBehavior.from(mediaBinding.bottomSheetLinear).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
@@ -204,13 +237,7 @@ class MediaFragment : Fragment() {
                 }
             }
 
-            override fun onSlide(bottomSheet: View, slideOffset: Float) { }
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
         })
-    }
-
-    companion object {
-        fun createArgs(sendTrackId: Int): Bundle {
-            return bundleOf(TRACK_ID to sendTrackId)
-        }
     }
 }
