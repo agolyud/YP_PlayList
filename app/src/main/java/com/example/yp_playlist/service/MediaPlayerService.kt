@@ -1,5 +1,6 @@
 package com.example.yp_playlist.service
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -64,6 +65,7 @@ class MediaPlayerService : Service(), MediaPlayerServiceInterface {
             .build()
     }
 
+    @SuppressLint("MissingPermission")
     override fun startForegroundNotification(track: Track) {
         this.track = track
         val notification = getNotification()
