@@ -1,12 +1,14 @@
 package com.example.yp_playlist.presentation.media
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -29,6 +31,9 @@ class MediaFragment : Fragment() {
     private val mediaBinding get() = _mediaBinding!!
     private val bottomPlaylistsAdapter = ViewObjects.PlaylistsAdapter(viewObject = ViewObjects.Vertical)
 
+    private var isBound = false
+    private lateinit var mediaPlayerService: MediaPlayerServiceInterface
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _mediaBinding = FragmentPlayerBinding.inflate(inflater, container, false)
         return mediaBinding.root
@@ -36,6 +41,7 @@ class MediaFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        bindService()
         initializeViews()
         setupPlayer()
         bindClicks()
@@ -48,12 +54,40 @@ class MediaFragment : Fragment() {
         bottomSheetBehavior()
     }
 
+    private fun bindService() {
+        val intent = Intent(requireContext(), MediaPlayerService::class.java)
+        requireActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+    }
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as MediaPlayerService.MediaPlayerBinder
+            mediaPlayerService = binder.getService()
+            isBound = true
+            viewModel.setMediaPlayerService(mediaPlayerService)
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            isBound = false
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        if (isBound) {
+            requireActivity().unbindService(serviceConnection)
+            isBound = false
+        }
+        viewModel.pausePlayer()
+        viewModel.releasePlayer()
+        _mediaBinding = null
+    }
+
     private fun initializeViews() {
         val trackId = requireArguments().getInt(TRACK_ID)
         viewModel.preparePlayer(trackId)
         viewModel.checkIsFavourite(trackId)
     }
-
 
     private fun bindClicks() {
         mediaBinding.toolbarInclude.setOnClickListener {
@@ -172,13 +206,6 @@ class MediaFragment : Fragment() {
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) { }
         })
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        viewModel.pausePlayer()
-        viewModel.releasePlayer()
-        _mediaBinding = null
     }
 
     companion object {

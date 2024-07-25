@@ -16,13 +16,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-
 class MediaViewModel(
     private val mediaInteractor: MediaInteractor,
     private val favouriteTracksInteractor: FavouriteTracksInteractor,
     private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
-
 
     private val isFavouriteLiveData = MutableLiveData<Boolean>()
     private val _trackInfo = MutableLiveData<Track>()
@@ -42,6 +40,12 @@ class MediaViewModel(
     val mediaState: LiveData<State> = _mediaState
     fun observeIsFavourite(): LiveData<Boolean> = isFavouriteLiveData
 
+    private var mediaPlayerService: MediaPlayerServiceInterface? = null
+
+    fun setMediaPlayerService(service: MediaPlayerServiceInterface) {
+        mediaPlayerService = service
+    }
+
     fun getTime(trackTime: Int): String {
         return mediaInteractor.getTime(trackTime)
     }
@@ -55,11 +59,13 @@ class MediaViewModel(
             State.PREPARED, State.PAUSED -> {
                 _mediaState.postValue(State.PLAYING)
                 startPlayer()
+                mediaPlayerService?.startForegroundNotification(_trackInfo.value!!)
             }
 
             State.PLAYING -> {
                 _mediaState.postValue(State.PAUSED)
                 pausePlayer()
+                mediaPlayerService?.stopForegroundNotification()
             }
 
             else -> {}
@@ -81,7 +87,6 @@ class MediaViewModel(
             }
         }
     }
-
 
     fun checkIsFavourite(trackId: Int) {
         viewModelScope.launch {
@@ -122,33 +127,32 @@ class MediaViewModel(
                     _mediaState.postValue(State.PAUSED)
                     timerJob?.cancel()
                     _time.postValue(DEFAULT_TIME)
+                    mediaPlayerService?.stopForegroundNotification()
                 }
             )
         }
     }
 
-
     private fun getTrack(trackId: Int) = mediaInteractor.tracksHistoryFromJson().firstOrNull {
         it.trackId == trackId
     }
 
-
     private fun startPlayer() {
-        mediaInteractor.start()
+        mediaPlayerService?.start()
         startTimer()
     }
 
     fun pausePlayer() {
-        mediaInteractor.pause()
+        mediaPlayerService?.pause()
         _time.postValue(getPlayerPosition())
     }
 
     fun releasePlayer() {
-        mediaInteractor.release()
+        mediaPlayerService?.stop()
         _mediaState.postValue(State.DEFAULT)
     }
 
-    private fun startTimer () {
+    private fun startTimer() {
         timerJob = viewModelScope.launch {
             while (isActive) {
                 delay(DELAY_TIME_MILLIS)
@@ -156,7 +160,6 @@ class MediaViewModel(
             }
         }
     }
-
 
     private fun getPlayerPosition() = mediaInteractor.getTime(mediaInteractor.getPosition())
 
@@ -166,5 +169,4 @@ class MediaViewModel(
         PLAYING,
         PAUSED
     }
-
 }
