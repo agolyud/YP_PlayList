@@ -71,10 +71,25 @@ class MediaFragment : Fragment() {
             mediaPlayerService = binder.getService()
             isBound = true
             viewModel.setMediaPlayerService(mediaPlayerService)
+            mediaPlayerService.stopForegroundNotification()
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
             isBound = false
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (isBound && mediaPlayerService.isPlaying()) {
+            mediaPlayerService.stopForegroundNotification()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (isBound && mediaPlayerService.isPlaying()) {
+            mediaPlayerService.startForegroundNotification(viewModel.trackInfo.value!!)
         }
     }
 

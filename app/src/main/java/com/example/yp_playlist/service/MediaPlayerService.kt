@@ -23,6 +23,7 @@ class MediaPlayerService : Service(), MediaPlayerServiceInterface {
     private val binder = MediaPlayerBinder()
     private var track: Track? = null
     private val mediaInteractor: MediaInteractor by inject()
+    private var isForegroundService = false
 
     override fun onBind(intent: Intent?): IBinder {
         return binder
@@ -65,20 +66,19 @@ class MediaPlayerService : Service(), MediaPlayerServiceInterface {
             .build()
     }
 
-    @SuppressLint("MissingPermission")
     override fun startForegroundNotification(track: Track) {
         this.track = track
-        val notification = getNotification()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, notification)
+        if (!isForegroundService) {
+            val notification = getNotification()
+            startForeground(NOTIFICATION_ID, notification)
+            isForegroundService = true
         }
-        startForeground(NOTIFICATION_ID, notification)
     }
 
     override fun stopForegroundNotification() {
-        stopForeground(true)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            NotificationManagerCompat.from(this).cancel(NOTIFICATION_ID)
+        if (isForegroundService) {
+            stopForeground(true)
+            isForegroundService = false
         }
     }
 

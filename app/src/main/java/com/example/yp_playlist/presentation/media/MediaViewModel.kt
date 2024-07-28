@@ -60,13 +60,11 @@ class MediaViewModel(
             State.PREPARED, State.PAUSED -> {
                 _mediaState.postValue(State.PLAYING)
                 startPlayer()
-                mediaPlayerService?.startForegroundNotification(_trackInfo.value!!)
             }
 
             State.PLAYING -> {
                 _mediaState.postValue(State.PAUSED)
                 pausePlayer()
-                mediaPlayerService?.stopForegroundNotification()
             }
 
             else -> {}
