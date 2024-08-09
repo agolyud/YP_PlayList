@@ -1,4 +1,4 @@
-package com.example.yp_playlist.data.network
+package com.example.yp_playlist.data.api
 
 import com.example.yp_playlist.data.TrackResponse
 import retrofit2.http.GET
