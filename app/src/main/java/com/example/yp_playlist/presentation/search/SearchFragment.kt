@@ -33,6 +33,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
@@ -42,9 +43,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.executor.GlideExecutor.UncaughtThrowableStrategy.LOG
 import com.example.yp_playlist.R
 import com.example.yp_playlist.domain.Track
+import com.example.yp_playlist.presentation.media.MediaFragment
 import com.example.yp_playlist.presentation.search.SearchViewModel
 import com.example.yp_playlist.settings.ui.SettingsViewModel
 import com.example.yp_playlist.settings.ui.YourAppTheme
@@ -68,7 +72,17 @@ class SearchFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                SearchScreen(searchViewModel = searchViewModel, settingsViewModel = settingsViewModel)
+                SearchScreen(
+                    searchViewModel = searchViewModel,
+                    settingsViewModel = settingsViewModel,
+                    onTrackClick = { track ->
+                        findNavController().navigate(
+                            R.id.searchFragment_to_playerFragment,
+                            MediaFragment.createArgs(track.trackId)
+                        )
+                        Log.d ("TrackId222", track.trackId.toString())
+                    }
+                )
             }
         }
     }
@@ -77,30 +91,52 @@ class SearchFragment : Fragment() {
 @Composable
 fun SearchScreen(
     searchViewModel: SearchViewModel,
-    settingsViewModel: SettingsViewModel
+    settingsViewModel: SettingsViewModel,
+    onTrackClick: (Track) -> Unit
 ) {
     val searchState by searchViewModel.searchState.observeAsState(emptyList())
     val fragmentState by searchViewModel.fragmentState.observeAsState(SearchViewModel.FragmentState.HISTORY_EMPTY)
     val isSearching = fragmentState == SearchViewModel.FragmentState.LOADING
-
     val themeSettings by settingsViewModel.themeSettingsState.observeAsState()
     val darkThemeEnabled = themeSettings?.darkTheme ?: false
+    val historyItems by searchViewModel.tracksHistory.observeAsState(emptyList())
+    var searchText by rememberSaveable { mutableStateOf("") }
 
-    searchState?.let {
-        SearchScreenContent(
-            darkThemeEnabled = darkThemeEnabled,
-            isSearching = isSearching,
-            searchResults = it,
-            onSearchTextChanged = { searchViewModel.onSearchTextChanged(it) },
-            onSearchAction = { searchViewModel.searchTrack(it) },
-            fragmentState = fragmentState,
-            onRetryClick = { searchViewModel.searchTrack("") }
-        )
-
-        Log.d("DarkTheme", "Dark Theme Search: $darkThemeEnabled")
-
+    LaunchedEffect(Unit) {
+        if (searchText.isEmpty()) {
+            searchViewModel.setHistory()
+        }
     }
+
+    SearchScreenContent(
+        darkThemeEnabled = darkThemeEnabled,
+        isSearching = isSearching,
+        searchResults = searchState ?: emptyList(),
+        onSearchTextChanged = { text ->
+            searchText = text
+            searchViewModel.onSearchTextChanged(text)
+        },
+        onSearchAction = {
+            searchViewModel.searchTrack(searchText)
+        },
+        fragmentState = fragmentState,
+        onRetryClick = {
+            searchViewModel.searchTrack(searchText)
+        },
+        onTrackClick = onTrackClick,
+        historyItems = historyItems,
+        onClearHistoryClick = {
+            searchViewModel.clearHistory()
+            searchText = ""
+            searchViewModel.clearHistory()
+        },
+        onTrackClicked = { track ->
+            searchViewModel.addTrack(track, 1)
+        },
+        searchText = searchText
+    )
 }
+
 
 @Composable
 fun SearchScreenContent(
@@ -108,9 +144,14 @@ fun SearchScreenContent(
     isSearching: Boolean,
     searchResults: List<Track>,
     onSearchTextChanged: (String) -> Unit,
-    onSearchAction: (String) -> Unit,
+    onSearchAction: () -> Unit,
     fragmentState: SearchViewModel.FragmentState,
-    onRetryClick: () -> Unit
+    onRetryClick: () -> Unit,
+    onTrackClick: (Track) -> Unit,
+    historyItems: List<Track>,
+    onClearHistoryClick: () -> Unit,
+    onTrackClicked: (Track) -> Unit,
+    searchText: String
 ) {
     YourAppTheme(darkThemeEnabled) {
         Column(
@@ -131,35 +172,54 @@ fun SearchScreenContent(
                 elevation = 0.dp
             )
 
-            var currentSearchText by remember { mutableStateOf("") }
-
             SearchBar(
-                searchText = currentSearchText,
-                onSearchTextChanged = { text ->
-                    currentSearchText = text
-                    onSearchTextChanged(text)
-                },
-                onClearClick = { currentSearchText = "" },
-                onSearchAction = {
-                    onSearchAction(currentSearchText)
-                },
+                searchText = searchText,
+                onSearchTextChanged = onSearchTextChanged,
+                onClearClick = { onSearchTextChanged("") },
+                onSearchAction = onSearchAction,
                 darkTheme = darkThemeEnabled
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Box(modifier = Modifier.fillMaxSize()) {
-                when (fragmentState) {
-                    SearchViewModel.FragmentState.LOADING -> {
-                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                when {
+                    isSearching -> {
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.Center),
+                            color = Color.Black
+                        )
                     }
-                    SearchViewModel.FragmentState.ERROR -> {
-                        ConnectionProblemPlaceholder(onRetryClick = onRetryClick)
+                    searchText.isEmpty() && historyItems.isNotEmpty() -> {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            items(historyItems.size) { index ->
+                                val track = historyItems[index]
+                                SearchResultItem(
+                                    trackImage = track.artworkUrl100,
+                                    trackName = track.trackName,
+                                    artistName = track.artistName,
+                                    trackTimeMillis = track.trackTimeMillis,
+                                    onClick = {
+                                        onTrackClicked(track)
+                                        onTrackClick(track)
+                                    }
+                                )
+                            }
+                            item {
+                                Button(
+                                    onClick = onClearHistoryClick,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp)
+                                ) {
+                                    Text(text = stringResource(id = R.string.clear_history))
+                                }
+                            }
+                        }
                     }
-                    SearchViewModel.FragmentState.EMPTY -> {
-                        NoDataPlaceholder()
-                    }
-                    SearchViewModel.FragmentState.SUCCESS -> {
+                    fragmentState == SearchViewModel.FragmentState.SUCCESS && searchResults.isNotEmpty() -> {
                         LazyColumn {
                             items(searchResults.size) { index ->
                                 val track = searchResults[index]
@@ -168,12 +228,19 @@ fun SearchScreenContent(
                                     trackName = track.trackName,
                                     artistName = track.artistName,
                                     trackTimeMillis = track.trackTimeMillis,
-                                    onClick = { TODO() }
+                                    onClick = {
+                                        onTrackClicked(track)
+                                        onTrackClick(track)
+                                    }
                                 )
                             }
                         }
                     }
-                    else -> {
+                    fragmentState == SearchViewModel.FragmentState.EMPTY -> {
+                        NoDataPlaceholder()
+                    }
+                    fragmentState == SearchViewModel.FragmentState.ERROR -> {
+                        ConnectionProblemPlaceholder(onRetryClick)
                     }
                 }
             }
@@ -210,10 +277,12 @@ fun SearchBar(
     ) {
         BasicTextField(
             value = searchText,
-            onValueChange = onSearchTextChanged,
+            onValueChange = {
+                onSearchTextChanged(it)
+            },
             modifier = Modifier
                 .fillMaxSize()
-                .padding(start = 42.dp, end = 40.dp, top = 7.dp,),
+                .padding(start = 42.dp, end = 40.dp, top = 7.dp),
             textStyle = TextStyle(
                 color = textColor,
                 fontSize = 16.sp,
@@ -255,7 +324,10 @@ fun SearchBar(
 
         if (searchText.isNotEmpty()) {
             IconButton(
-                onClick = onClearClick,
+                onClick = {
+                    onClearClick()
+                    onSearchTextChanged("")
+                },
                 modifier = Modifier.align(Alignment.CenterEnd)
             ) {
                 Icon(
@@ -382,6 +454,7 @@ fun SearchResultItem(
 }
 
 
+
 @Composable
 fun NoDataPlaceholder() {
     Column(
@@ -434,47 +507,50 @@ fun ConnectionProblemPlaceholder(onRetryClick: () -> Unit) {
     }
 }
 
-@Composable
-fun SearchHistoryList() {
-}
-
-
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewSearchScreenContent() {
-    SearchScreenContent(
-        darkThemeEnabled = false,
-        isSearching = false,
-        searchResults = listOf(
-            Track(
-                trackId = 1,
-                trackName = "Последняя Любовь",
-                artistName = "Моргенштерн",
-                trackTimeMillis = 200000,
-                artworkUrl100 = "https://test.ru/1.jpg",
-                collectionName = "Album 1",
-                releaseDate = "10.08.2024",
-                primaryGenreName = "Pop",
-                country = "RU",
-                previewUrl = "https://test.ru/1.mp3"
+    YourAppTheme(darkTheme = false) {
+        SearchScreenContent(
+            darkThemeEnabled = false,
+            isSearching = false,
+            searchResults = listOf(
+                Track(
+                    trackId = 1,
+                    trackName = "Последняя Любовь",
+                    artistName = "Моргенштерн",
+                    trackTimeMillis = 200000,
+                    artworkUrl100 = "https://test.ru/1.jpg",
+                    collectionName = "Album 1",
+                    releaseDate = "10.08.2024",
+                    primaryGenreName = "Pop",
+                    country = "RU",
+                    previewUrl = "https://test.ru/1.mp3"
+                ),
+                Track(
+                    trackId = 2,
+                    trackName = "Dissipate",
+                    artistName = "Polaris",
+                    trackTimeMillis = 180000,
+                    artworkUrl100 = "https://test.ru/2.jpg",
+                    collectionName = "Album 2",
+                    releaseDate = "10.08.2022",
+                    primaryGenreName = "Rock",
+                    country = "USA",
+                    previewUrl = "https://test.ru/2.mp3"
+                )
             ),
-            Track(
-                trackId = 2,
-                trackName = "Dissipate",
-                artistName = "Polaris",
-                trackTimeMillis = 180000,
-                artworkUrl100 = "https://test.ru/2.jpg",
-                collectionName = "Album 2",
-                releaseDate = "10.08.2022",
-                primaryGenreName = "Rock",
-                country = "USA",
-                previewUrl = "https://test.ru/2.mp3"
-            )
-        ),
-        onSearchTextChanged = {},
-        onSearchAction = {},
-        fragmentState = SearchViewModel.FragmentState.SUCCESS,
-        onRetryClick = {}
-    )
+            onSearchTextChanged = {},
+            onSearchAction = {},
+            fragmentState = SearchViewModel.FragmentState.SUCCESS,
+            onRetryClick = {},
+            onTrackClick = {},
+            historyItems = emptyList(),
+            onClearHistoryClick = {},
+            onTrackClicked = {},
+            searchText = ""
+        )
+    }
 }
+
