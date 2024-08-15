@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.compose.ui.platform.ComposeView
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,6 +46,7 @@ import com.bumptech.glide.Glide
 import com.example.yp_playlist.R
 import com.example.yp_playlist.domain.Track
 import com.example.yp_playlist.presentation.search.SearchViewModel
+import com.example.yp_playlist.settings.ui.SettingsViewModel
 import com.example.yp_playlist.settings.ui.YourAppTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -56,7 +58,8 @@ import java.util.Locale
 
 class SearchFragment : Fragment() {
 
-    private val viewModel by viewModel<SearchViewModel>()
+    private val searchViewModel by viewModel<SearchViewModel>()
+    private val settingsViewModel by viewModel<SettingsViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,34 +68,43 @@ class SearchFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                SearchScreen(viewModel)
+                SearchScreen(searchViewModel = searchViewModel, settingsViewModel = settingsViewModel)
             }
         }
     }
 }
 
 @Composable
-fun SearchScreen(viewModel: SearchViewModel) {
-    val searchState by viewModel.searchState.observeAsState(emptyList())
-    val fragmentState by viewModel.fragmentState.observeAsState(SearchViewModel.FragmentState.HISTORY_EMPTY)
+fun SearchScreen(
+    searchViewModel: SearchViewModel,
+    settingsViewModel: SettingsViewModel
+) {
+    val searchState by searchViewModel.searchState.observeAsState(emptyList())
+    val fragmentState by searchViewModel.fragmentState.observeAsState(SearchViewModel.FragmentState.HISTORY_EMPTY)
     val isSearching = fragmentState == SearchViewModel.FragmentState.LOADING
+
+    val themeSettings by settingsViewModel.themeSettingsState.observeAsState()
+    val darkThemeEnabled = themeSettings?.darkTheme ?: false
 
     searchState?.let {
         SearchScreenContent(
-            darkTheme = false, // TODO
+            darkThemeEnabled = darkThemeEnabled,
             isSearching = isSearching,
             searchResults = it,
-            onSearchTextChanged = { viewModel.onSearchTextChanged(it) },
-            onSearchAction = { viewModel.searchTrack(it) },
+            onSearchTextChanged = { searchViewModel.onSearchTextChanged(it) },
+            onSearchAction = { searchViewModel.searchTrack(it) },
             fragmentState = fragmentState,
-            onRetryClick = { viewModel.searchTrack("") }
+            onRetryClick = { searchViewModel.searchTrack("") }
         )
+
+        Log.d("DarkTheme", "Dark Theme Search: $darkThemeEnabled")
+
     }
 }
 
 @Composable
 fun SearchScreenContent(
-    darkTheme: Boolean,
+    darkThemeEnabled: Boolean,
     isSearching: Boolean,
     searchResults: List<Track>,
     onSearchTextChanged: (String) -> Unit,
@@ -100,7 +112,7 @@ fun SearchScreenContent(
     fragmentState: SearchViewModel.FragmentState,
     onRetryClick: () -> Unit
 ) {
-    YourAppTheme(darkTheme = darkTheme) {
+    YourAppTheme(darkThemeEnabled) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -131,7 +143,7 @@ fun SearchScreenContent(
                 onSearchAction = {
                     onSearchAction(currentSearchText)
                 },
-                darkTheme = darkTheme
+                darkTheme = darkThemeEnabled
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -156,7 +168,7 @@ fun SearchScreenContent(
                                     trackName = track.trackName,
                                     artistName = track.artistName,
                                     trackTimeMillis = track.trackTimeMillis,
-                                    onClick = { /* Обработка клика на элемент поиска */ }
+                                    onClick = { TODO() }
                                 )
                             }
                         }
@@ -432,7 +444,7 @@ fun SearchHistoryList() {
 @Composable
 fun PreviewSearchScreenContent() {
     SearchScreenContent(
-        darkTheme = false,
+        darkThemeEnabled = false,
         isSearching = false,
         searchResults = listOf(
             Track(

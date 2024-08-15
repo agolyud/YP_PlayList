@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.compose.ui.platform.ComposeView
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,6 +53,8 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
         onSupportEmail = { viewModel.supportEmail() },
         onOpenAgreement = { viewModel.openAgreement() }
     )
+
+    Log.d("DarkTheme", "Dark Theme Settings: $darkThemeEnabled")
 }
 
 @Composable
