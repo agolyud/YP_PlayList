@@ -205,7 +205,8 @@ fun SearchScreenContent(
                                     onClick = {
                                         onTrackClicked(track)
                                         onTrackClick(track)
-                                    }
+                                    },
+                                    darkTheme = darkThemeEnabled
                                 )
                             }
                             item {
@@ -228,7 +229,8 @@ fun SearchScreenContent(
                                     onClick = {
                                         onTrackClicked(track)
                                         onTrackClick(track)
-                                    }
+                                    },
+                                    darkTheme = darkThemeEnabled
                                 )
                             }
                         }
@@ -253,7 +255,6 @@ fun SearchBar(
     onClearClick: () -> Unit,
     onSearchAction: () -> Unit,
 ) {
-
 
     val textColor = colorResource(id = R.color.black)
     val placeholderColor = colorResource(id = R.color.light_grey)
@@ -342,10 +343,25 @@ fun SearchResultItem(
     trackName: String,
     artistName: String,
     trackTimeMillis: Long,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    darkTheme: Boolean
 ) {
     val context = LocalContext.current
     var bitmap by remember { mutableStateOf<android.graphics.Bitmap?>(null) }
+
+    val titleTextColor = if (darkTheme) {
+        Color.White
+    } else {
+        colorResource(id = R.color.button_text)
+    }
+
+    val subTextColor = if (darkTheme) {
+        Color.White
+    } else {
+        colorResource(id = R.color.light_grey)
+    }
+
+    val fontFamily = FontFamily(Font(R.font.ys_display_medium))
 
     DisposableEffect(trackImage) {
         val job = CoroutineScope(Dispatchers.IO).launch {
@@ -371,7 +387,7 @@ fun SearchResultItem(
             .fillMaxWidth()
             .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .background(Color.White)
+            .background(MaterialTheme.colors.background)
     ) {
         bitmap?.let {
             Image(
@@ -402,11 +418,11 @@ fun SearchResultItem(
         ) {
             Text(
                 text = trackName,
-                color = MaterialTheme.colors.onBackground,
+                color = titleTextColor,
                 fontSize = 16.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.body1
+                fontFamily = fontFamily
             )
             Spacer(modifier = Modifier.height(4.dp))
             Row(
@@ -415,15 +431,15 @@ fun SearchResultItem(
             ) {
                 Text(
                     text = artistName,
-                    color = Color.Gray,
-                    style = MaterialTheme.typography.body2,
+                    color = subTextColor,
+                    style = TextStyle(fontSize = 12.sp, fontFamily = fontFamily),
                     maxLines = 1
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(
                     painter = painterResource(id = R.drawable.ellipse),
                     contentDescription = null,
-                    tint = Color.Gray,
+                    tint = subTextColor,
                     modifier = Modifier
                         .size(4.dp)
                         .align(Alignment.CenterVertically)
@@ -431,8 +447,8 @@ fun SearchResultItem(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTimeMillis),
-                    color = Color.Gray,
-                    style = MaterialTheme.typography.body2
+                    color = subTextColor,
+                    style = TextStyle(fontSize = 12.sp, fontFamily = fontFamily)
                 )
             }
         }
@@ -440,15 +456,13 @@ fun SearchResultItem(
         Icon(
             painter = painterResource(id = R.drawable.arrow_forward),
             contentDescription = null,
-            tint = Color.Gray,
+            tint = subTextColor,
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .size(14.dp)
         )
     }
 }
-
-
 
 @Composable
 fun NoDataPlaceholder(
@@ -530,8 +544,6 @@ fun ConnectionProblemPlaceholder(
         }
     }
 }
-
-
 
 
 @Composable
