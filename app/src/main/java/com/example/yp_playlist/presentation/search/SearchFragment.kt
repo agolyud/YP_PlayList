@@ -235,7 +235,7 @@ fun SearchScreenContent(
                         }
                     }
                     fragmentState == SearchViewModel.FragmentState.EMPTY -> {
-                        NoDataPlaceholder()
+                        NoDataPlaceholder(darkThemeEnabled)
                     }
                     fragmentState == SearchViewModel.FragmentState.ERROR -> {
                         ConnectionProblemPlaceholder(onRetryClick, darkThemeEnabled)
@@ -454,7 +454,12 @@ fun SearchResultItem(
 
 
 @Composable
-fun NoDataPlaceholder() {
+fun NoDataPlaceholder(
+    darkThemeEnabled: Boolean
+) {
+    val textColor = if (darkThemeEnabled) Color.White else Color.Black
+    val fontFamily = FontFamily(Font(R.font.ys_display_medium))
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -465,16 +470,20 @@ fun NoDataPlaceholder() {
         Icon(
             painter = painterResource(id = R.drawable.error_no_data),
             contentDescription = null,
-            modifier = Modifier.size(64.dp)
+            modifier = Modifier.size(64.dp),
+            tint = Color.Unspecified
         )
         Text(
             text = stringResource(id = R.string.no_data),
-            color = MaterialTheme.colors.onBackground,
+            color = textColor,
             fontSize = 18.sp,
+            fontFamily = fontFamily,
+            textAlign = TextAlign.Center,
             modifier = Modifier.padding(top = 8.dp)
         )
     }
 }
+
 
 @Composable
 fun ConnectionProblemPlaceholder(
