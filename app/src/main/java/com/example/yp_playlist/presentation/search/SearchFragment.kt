@@ -39,6 +39,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -208,14 +210,10 @@ fun SearchScreenContent(
                                 )
                             }
                             item {
-                                Button(
-                                    onClick = onClearHistoryClick,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp)
-                                ) {
-                                    Text(text = stringResource(id = R.string.clear_history))
-                                }
+                                ClearHistoryButton(
+                                    darkThemeEnabled = darkThemeEnabled,
+                                    onClick = onClearHistoryClick
+                                )
                             }
                         }
                     }
@@ -506,6 +504,44 @@ fun ConnectionProblemPlaceholder(onRetryClick: () -> Unit) {
         }
     }
 }
+
+
+@Composable
+fun ClearHistoryButton(
+    darkThemeEnabled: Boolean,
+    onClick: () -> Unit
+) {
+    val backgroundColor = if (darkThemeEnabled) Color.White else Color(0xFF000000)
+    val textColor = if (darkThemeEnabled) Color(0xFF000000) else Color.White
+    val fontFamily = FontFamily(Font(R.font.ys_display_medium))
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Button(
+            onClick = onClick,
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = backgroundColor,
+                contentColor = textColor
+            ),
+            shape = RoundedCornerShape(50.dp),
+            modifier = Modifier
+                .padding(16.dp)
+                .wrapContentWidth()
+                .height(IntrinsicSize.Min)
+        ) {
+            Text(
+                text = stringResource(id = R.string.clear_history),
+                fontFamily = fontFamily,
+                fontSize = 14.sp,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+
 
 
 @Preview(showBackground = true)
