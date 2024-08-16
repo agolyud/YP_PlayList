@@ -212,7 +212,9 @@ fun SearchScreenContent(
                             item {
                                 ClearHistoryButton(
                                     darkThemeEnabled = darkThemeEnabled,
-                                    onClick = onClearHistoryClick
+                                    onClick = onClearHistoryClick,
+                                    onClearClick = { onSearchTextChanged("") },
+                                    onSearchTextChanged = onSearchTextChanged
                                 )
                             }
                         }
@@ -549,7 +551,9 @@ fun ConnectionProblemPlaceholder(
 @Composable
 fun ClearHistoryButton(
     darkThemeEnabled: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onClearClick: () -> Unit,
+    onSearchTextChanged: (String) -> Unit
 ) {
     val backgroundColor = if (darkThemeEnabled) Color.White else Color.Black
     val textColor = if (darkThemeEnabled) Color.Black else Color.White
@@ -560,7 +564,11 @@ fun ClearHistoryButton(
         contentAlignment = Alignment.Center
     ) {
         Button(
-            onClick = onClick,
+            onClick = {
+                onClick()
+                onClearClick()
+                onSearchTextChanged("")
+            },
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = backgroundColor,
                 contentColor = textColor
@@ -580,6 +588,7 @@ fun ClearHistoryButton(
         }
     }
 }
+
 
 
 
