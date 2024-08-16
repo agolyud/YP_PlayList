@@ -238,7 +238,7 @@ fun SearchScreenContent(
                         NoDataPlaceholder()
                     }
                     fragmentState == SearchViewModel.FragmentState.ERROR -> {
-                        ConnectionProblemPlaceholder(onRetryClick)
+                        ConnectionProblemPlaceholder(onRetryClick, darkThemeEnabled)
                     }
                 }
             }
@@ -477,7 +477,15 @@ fun NoDataPlaceholder() {
 }
 
 @Composable
-fun ConnectionProblemPlaceholder(onRetryClick: () -> Unit) {
+fun ConnectionProblemPlaceholder(
+    onRetryClick: () -> Unit,
+    darkThemeEnabled: Boolean
+) {
+    val textColor = if (darkThemeEnabled) Color.White else Color.Black
+    val buttonBackgroundColor = if (darkThemeEnabled) Color.White else Color.Black
+    val buttonTextColor = if (darkThemeEnabled) Color.Black else Color.White
+    val fontFamily = FontFamily(Font(R.font.ys_display_medium))
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -488,22 +496,36 @@ fun ConnectionProblemPlaceholder(onRetryClick: () -> Unit) {
         Icon(
             painter = painterResource(id = R.drawable.error_no_connection),
             contentDescription = null,
-            modifier = Modifier.size(64.dp)
+            modifier = Modifier.size(64.dp),
+            tint = Color.Unspecified
         )
         Text(
             text = stringResource(id = R.string.no_connection),
-            color = MaterialTheme.colors.onBackground,
+            color = textColor,
             fontSize = 18.sp,
+            fontFamily = fontFamily,
+            textAlign = TextAlign.Center,
             modifier = Modifier.padding(top = 8.dp)
         )
         Button(
             onClick = onRetryClick,
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = buttonBackgroundColor,
+                contentColor = buttonTextColor
+            ),
+            shape = RoundedCornerShape(50.dp),
             modifier = Modifier.padding(top = 16.dp)
         ) {
-            Text(text = stringResource(id = R.string.refresh_button))
+            Text(
+                text = stringResource(id = R.string.refresh_button),
+                fontFamily = fontFamily,
+                fontSize = 14.sp
+            )
         }
     }
 }
+
+
 
 
 @Composable
