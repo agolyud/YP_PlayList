@@ -178,8 +178,7 @@ fun SearchScreenContent(
                 searchText = searchText,
                 onSearchTextChanged = onSearchTextChanged,
                 onClearClick = { onSearchTextChanged("") },
-                onSearchAction = onSearchAction,
-                darkTheme = darkThemeEnabled
+                onSearchAction = onSearchAction
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -253,16 +252,12 @@ fun SearchBar(
     onSearchTextChanged: (String) -> Unit,
     onClearClick: () -> Unit,
     onSearchAction: () -> Unit,
-    darkTheme: Boolean
 ) {
-    val backgroundColor = if (darkTheme) {
-        colorResource(id = R.color.button_text)
-    } else {
-        colorResource(id = R.color.grey_tint_search)
-    }
+
 
     val textColor = colorResource(id = R.color.black)
     val placeholderColor = colorResource(id = R.color.light_grey)
+    val fontFamily = FontFamily(Font(R.font.ys_display_medium))
 
     Box(
         modifier = Modifier
@@ -270,7 +265,7 @@ fun SearchBar(
             .padding(horizontal = 16.dp)
             .height(36.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(backgroundColor),
+            .background(colorResource(id = R.color.grey_tint_search)),
         contentAlignment = Alignment.CenterStart
     ) {
         BasicTextField(
@@ -284,6 +279,7 @@ fun SearchBar(
             textStyle = TextStyle(
                 color = textColor,
                 fontSize = 16.sp,
+                fontFamily = fontFamily,
                 textAlign = TextAlign.Start
             ),
             singleLine = true,
@@ -303,6 +299,7 @@ fun SearchBar(
                         text = stringResource(id = R.string.find_button),
                         color = placeholderColor,
                         fontSize = 16.sp,
+                        fontFamily = fontFamily,
                         modifier = Modifier.padding(bottom = 4.dp)
                     )
                 }
