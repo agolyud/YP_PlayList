@@ -511,8 +511,8 @@ fun ClearHistoryButton(
     darkThemeEnabled: Boolean,
     onClick: () -> Unit
 ) {
-    val backgroundColor = if (darkThemeEnabled) Color.White else Color(0xFF000000)
-    val textColor = if (darkThemeEnabled) Color(0xFF000000) else Color.White
+    val backgroundColor = if (darkThemeEnabled) Color.White else Color.Black
+    val textColor = if (darkThemeEnabled) Color.Black else Color.White
     val fontFamily = FontFamily(Font(R.font.ys_display_medium))
 
     Box(
