@@ -2,6 +2,7 @@ package com.example.yp_playlist.medialibrary.ui.fragment
 
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +30,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -51,15 +53,24 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.example.yp_playlist.domain.Track
+import com.example.yp_playlist.medialibrary.favourite.domain.api.FavouriteTracksInteractor
+import com.example.yp_playlist.medialibrary.favourite.ui.models.FavouriteTracksState
+import com.example.yp_playlist.medialibrary.favourite.ui.viewmodel.FavouriteTracksViewModel
+import com.example.yp_playlist.settings.ui.YourAppTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 
 class MediaLibraryFragment : Fragment() {
+
+    private val favouriteTracksViewModel by viewModel<FavouriteTracksViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -72,17 +83,21 @@ class MediaLibraryFragment : Fragment() {
         }
     }
 
-
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun MediaLibraryScreen() {
-        val tabs = listOf(stringResource(id = R.string.favourite), stringResource(id = R.string.playlist))
+        val tabs = listOf(
+            stringResource(id = R.string.favourite),
+            stringResource(id = R.string.playlist)
+        )
         val pagerState = rememberPagerState(pageCount = { tabs.size }, initialPage = 0)
         val coroutineScope = rememberCoroutineScope()
 
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colors.background)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.background)
+        ) {
 
             TopAppBar(
                 title = {
@@ -102,8 +117,7 @@ class MediaLibraryFragment : Fragment() {
                 selectedTabIndex = pagerState.currentPage,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp)
-                    .padding(horizontal = 0.dp),
+                    .height(48.dp),
                 backgroundColor = Color.White,
                 contentColor = Color.Black,
                 indicator = { tabPositions ->
@@ -148,12 +162,55 @@ class MediaLibraryFragment : Fragment() {
                 modifier = Modifier.fillMaxSize()
             ) { page ->
                 when (page) {
-                    0 -> FavouriteScreen()
+                    0 -> FavouriteTabScreen(favouriteTracksViewModel)
                     1 -> PlaylistScreen()
                 }
             }
         }
     }
+
+    @Composable
+    fun FavouriteTabScreen(favouriteTracksViewModel: FavouriteTracksViewModel) {
+        val state by favouriteTracksViewModel.observeState()
+            .observeAsState(FavouriteTracksState.Empty)
+
+        when (state) {
+            is FavouriteTracksState.Content -> {
+                val tracks = (state as FavouriteTracksState.Content).tracks
+                Column {
+                    tracks.forEach { track ->
+                        FavouriteScreen(
+                            trackImage = track.artworkUrl100,
+                            trackName = track.trackName,
+                            artistName = track.artistName,
+                            trackTimeMillis = track.trackTimeMillis,
+                            onClick = {
+                                navigateToTrackDetails(track.trackId)
+                            },
+                            darkTheme = false
+                        )
+
+                        Log.d("FavouriteScreen", "Track: $tracks")
+                    }
+                }
+            }
+
+            is FavouriteTracksState.Empty -> {
+                Text("No favourites available")
+            }
+        }
+    }
+
+
+    private fun navigateToTrackDetails(trackId: Int) {
+        findNavController().navigate(
+            R.id.action_mediaLibraryFragment_to_playerFragment,
+            Bundle().apply {
+                putInt("trackId", trackId)
+            }
+        )
+    }
+
 
     @Composable
     fun FavouriteScreen(
@@ -264,7 +321,10 @@ class MediaLibraryFragment : Fragment() {
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTimeMillis),
+                        text = SimpleDateFormat(
+                            "mm:ss",
+                            Locale.getDefault()
+                        ).format(trackTimeMillis),
                         color = subTextColor,
                         style = TextStyle(fontSize = 12.sp, fontFamily = fontFamily)
                     )
@@ -282,17 +342,18 @@ class MediaLibraryFragment : Fragment() {
         }
     }
 
-
-
     @Composable
     fun PlaylistScreen() {
     }
+
 
     @Preview
     @Composable
     fun PreviewMediaLibraryScreen() {
         MediaLibraryScreen()
     }
+
+
 
 
 }
