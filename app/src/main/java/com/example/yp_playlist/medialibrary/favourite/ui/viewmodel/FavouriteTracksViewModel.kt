@@ -1,5 +1,6 @@
 package com.example.yp_playlist.medialibrary.favourite.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -18,6 +19,10 @@ class FavouriteTracksViewModel(
     private val stateLiveData = MutableLiveData<FavouriteTracksState>()
     fun observeState(): LiveData<FavouriteTracksState> = stateLiveData
 
+    init {
+        getFavouriteTracks()
+    }
+
     fun getFavouriteTracks() {
         viewModelScope.launch {
             favouriteTracksInteractor
@@ -25,10 +30,11 @@ class FavouriteTracksViewModel(
                 .collect { tracks ->
                     if (tracks.isEmpty()) {
                         renderState(FavouriteTracksState.Empty)
-                    }
-                    else {
+                    } else {
                         renderState(FavouriteTracksState.Content(tracks))
                     }
+                    // Логирование полученных данных
+                    Log.d("FavouriteTracksViewModel", "Received tracks: ${tracks.size}")
                 }
         }
     }
