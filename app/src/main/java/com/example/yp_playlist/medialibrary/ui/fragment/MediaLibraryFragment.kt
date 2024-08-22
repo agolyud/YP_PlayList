@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
@@ -23,6 +24,7 @@ import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -67,24 +69,33 @@ class MediaLibraryFragment : Fragment() {
                         fontSize = 22.sp
                     )
                 },
-                backgroundColor = MaterialTheme.colors.background,
-                modifier = Modifier.fillMaxWidth(),
-                elevation = 0.dp
+                backgroundColor = Color.White,
+                elevation = 0.dp,
+                modifier = Modifier
+                    .height(56.dp)
             )
-
-
 
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
                 modifier = Modifier
-                    .background(color = MaterialTheme.colors.surface),
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .padding(horizontal = 0.dp),
+                backgroundColor = Color.White,
+                contentColor = Color.Black,
                 indicator = { tabPositions ->
                     TabRowDefaults.Indicator(
                         Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
-                        color = MaterialTheme.colors.onSecondary
+                        color = Color.Black,
+                        height = 2.dp
                     )
                 },
-                backgroundColor = MaterialTheme.colors.surface
+                divider = {
+                    Divider(
+                        color = Color.Transparent,
+                        thickness = 0.dp
+                    )
+                }
             ) {
                 tabs.forEachIndexed { index, title ->
                     Tab(
@@ -97,13 +108,12 @@ class MediaLibraryFragment : Fragment() {
                         text = {
                             Text(
                                 text = title,
-                                color = if (pagerState.currentPage == index) MaterialTheme.colors.onSecondary else Color.Gray,
+                                color = if (pagerState.currentPage == index) Color.Black else Color.Gray,
                                 fontSize = 14.sp,
-                                fontFamily = FontFamily.SansSerif, 
                                 fontWeight = FontWeight.Medium,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.padding(16.dp)
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .wrapContentSize(Alignment.Center)
                             )
                         }
                     )
