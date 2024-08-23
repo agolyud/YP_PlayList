@@ -2,7 +2,6 @@ package com.example.yp_playlist.medialibrary.ui.fragment
 
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +15,7 @@ import androidx.fragment.app.Fragment
 import com.example.yp_playlist.R
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -50,15 +50,15 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.example.yp_playlist.domain.Track
-import com.example.yp_playlist.medialibrary.favourite.domain.api.FavouriteTracksInteractor
 import com.example.yp_playlist.medialibrary.favourite.ui.models.FavouriteTracksState
 import com.example.yp_playlist.medialibrary.favourite.ui.viewmodel.FavouriteTracksViewModel
+import com.example.yp_playlist.presentation.media.MediaFragment
+import com.example.yp_playlist.settings.ui.SettingsViewModel
 import com.example.yp_playlist.settings.ui.YourAppTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -71,144 +71,162 @@ import java.util.Locale
 class MediaLibraryFragment : Fragment() {
 
     private val favouriteTracksViewModel by viewModel<FavouriteTracksViewModel>()
+    private val settingsViewModel by viewModel<SettingsViewModel>()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                MediaLibraryScreen()
+                MediaLibraryScreen(
+                    settingsViewModel = settingsViewModel,
+                    onTrackClick = { track ->
+                        findNavController().navigate(
+                            R.id.action_mediaLibraryFragment_to_playerFragment,
+                            MediaFragment.createArgs(track.trackId)
+                        )
+                    }
+                )
             }
         }
     }
 
+
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    fun MediaLibraryScreen() {
+    fun MediaLibraryScreen(
+        settingsViewModel: SettingsViewModel,
+        onTrackClick: (Track) -> Unit
+    ) {
         val tabs = listOf(
             stringResource(id = R.string.favourite),
             stringResource(id = R.string.playlist)
         )
+        val themeSettings by settingsViewModel.themeSettingsState.observeAsState()
+        val darkThemeEnabled = themeSettings?.darkTheme ?: false
+
         val pagerState = rememberPagerState(pageCount = { tabs.size }, initialPage = 0)
         val coroutineScope = rememberCoroutineScope()
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background)
-        ) {
-
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(id = R.string.media_button),
-                        color = MaterialTheme.colors.onBackground,
-                        fontSize = 22.sp
-                    )
-                },
-                backgroundColor = Color.White,
-                elevation = 0.dp,
+        YourAppTheme(darkTheme = darkThemeEnabled) {
+            Column(
                 modifier = Modifier
-                    .height(56.dp)
-            )
-
-            TabRow(
-                selectedTabIndex = pagerState.currentPage,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
-                backgroundColor = Color.White,
-                contentColor = Color.Black,
-                indicator = { tabPositions ->
-                    TabRowDefaults.Indicator(
-                        Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
-                        color = Color.Black,
-                        height = 2.dp
-                    )
-                },
-                divider = {
-                    Divider(
-                        color = Color.Transparent,
-                        thickness = 0.dp
-                    )
-                }
+                    .fillMaxSize()
+                    .background(MaterialTheme.colors.background)
             ) {
-                tabs.forEachIndexed { index, title ->
-                    Tab(
-                        selected = pagerState.currentPage == index,
-                        onClick = {
-                            coroutineScope.launch {
-                                pagerState.scrollToPage(index)
-                            }
-                        },
-                        text = {
-                            Text(
-                                text = title,
-                                color = if (pagerState.currentPage == index) Color.Black else Color.Gray,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Medium,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .wrapContentSize(Alignment.Center)
-                            )
-                        }
-                    )
-                }
-            }
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = stringResource(id = R.string.media_button),
+                            color = MaterialTheme.colors.onBackground,
+                            fontSize = 22.sp
+                        )
+                    },
+                    backgroundColor = MaterialTheme.colors.surface,
+                    elevation = 0.dp,
+                    modifier = Modifier
+                        .height(56.dp)
+                )
 
-            HorizontalPager(
-                state = pagerState,
-                modifier = Modifier.fillMaxSize()
-            ) { page ->
-                when (page) {
-                    0 -> FavouriteTabScreen(favouriteTracksViewModel)
-                    1 -> PlaylistScreen()
+                TabRow(
+                    selectedTabIndex = pagerState.currentPage,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    backgroundColor = MaterialTheme.colors.surface,
+                    contentColor = MaterialTheme.colors.onSurface,
+                    indicator = { tabPositions ->
+                        TabRowDefaults.Indicator(
+                            Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
+                            color = MaterialTheme.colors.onBackground,
+                            height = 2.dp
+                        )
+                    },
+                    divider = {
+                        Divider(
+                            color = Color.Transparent,
+                            thickness = 0.dp
+                        )
+                    }
+                ) {
+                    tabs.forEachIndexed { index, title ->
+                        Tab(
+                            selected = pagerState.currentPage == index,
+                            onClick = {
+                                coroutineScope.launch {
+                                    pagerState.scrollToPage(index)
+                                }
+                            },
+                            text = {
+                                Text(
+                                    text = title,
+                                    color = MaterialTheme.colors.onBackground,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .wrapContentSize(Alignment.Center)
+                                )
+                            }
+                        )
+                    }
+                }
+
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 16.dp)
+                ) { page ->
+                    when (page) {
+                        0 -> FavouriteTabScreen(
+                            favouriteTracksViewModel = favouriteTracksViewModel,
+                            onTrackClick = onTrackClick,
+                            darkThemeEnabled = darkThemeEnabled,
+                        )
+                        1 -> PlaylistScreen()
+                    }
                 }
             }
         }
     }
 
+
+
     @Composable
-    fun FavouriteTabScreen(favouriteTracksViewModel: FavouriteTracksViewModel) {
-        val state by favouriteTracksViewModel.observeState()
-            .observeAsState(FavouriteTracksState.Empty)
+    fun FavouriteTabScreen(
+        favouriteTracksViewModel: FavouriteTracksViewModel,
+        onTrackClick: (Track) -> Unit,
+        darkThemeEnabled: Boolean
+    ) {
+        val state by favouriteTracksViewModel.observeState().observeAsState(FavouriteTracksState.Empty)
 
         when (state) {
             is FavouriteTracksState.Content -> {
                 val tracks = (state as FavouriteTracksState.Content).tracks
-                Column {
-                    tracks.forEach { track ->
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    items(tracks.size) { index ->
+                        val track = tracks[index]
                         FavouriteScreen(
                             trackImage = track.artworkUrl100,
                             trackName = track.trackName,
                             artistName = track.artistName,
                             trackTimeMillis = track.trackTimeMillis,
-                            onClick = {
-                                navigateToTrackDetails(track.trackId)
-                            },
-                            darkTheme = false
+                            onClick = { onTrackClick(track) },
+                            darkTheme = darkThemeEnabled
                         )
-
-                        Log.d("FavouriteScreen", "Track: $tracks")
                     }
                 }
             }
-
-            is FavouriteTracksState.Empty -> {
-                Text("No favourites available")
+            FavouriteTracksState.Empty -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(text = stringResource(id = R.string.your_media_isEmpty))
+                }
             }
+
         }
-    }
-
-
-    private fun navigateToTrackDetails(trackId: Int) {
-        findNavController().navigate(
-            R.id.action_mediaLibraryFragment_to_playerFragment,
-            Bundle().apply {
-                putInt("trackId", trackId)
-            }
-        )
     }
 
 
@@ -342,18 +360,9 @@ class MediaLibraryFragment : Fragment() {
         }
     }
 
+
     @Composable
     fun PlaylistScreen() {
     }
-
-
-    @Preview
-    @Composable
-    fun PreviewMediaLibraryScreen() {
-        MediaLibraryScreen()
-    }
-
-
-
 
 }
