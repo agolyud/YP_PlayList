@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -50,6 +51,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.findNavController
@@ -363,6 +365,58 @@ class MediaLibraryFragment : Fragment() {
 
     @Composable
     fun PlaylistScreen() {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp, bottom = 8.dp, start = 4.dp, end = 4.dp)
+                .clickable { TODO() }
+                .background(MaterialTheme.colors.background)
+        ) {
+            Card(
+                shape = RoundedCornerShape(8.dp),
+                elevation = 0.dp,
+                modifier = Modifier.wrapContentSize()
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.placeholder),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(160.dp)
+                        .background(MaterialTheme.colors.background)
+                )
+            }
+
+            Text(
+                text = stringResource(id = R.string.name_playlist),
+                color = MaterialTheme.colors.onSurface,
+                fontSize = 12.sp,
+                maxLines = 1,
+                modifier = Modifier
+                    .padding(top = 4.dp)
+            )
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(1.dp)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.count_tracks),
+                    color = MaterialTheme.colors.onSurface,
+                    fontSize = 12.sp,
+                    maxLines = 1
+                )
+            }
+        }
+    }
+
+
+
+    @Preview
+    @Composable
+    fun Preview() {
+        PlaylistScreen()
     }
 
 }
