@@ -502,6 +502,7 @@ class MediaLibraryFragment : Fragment() {
                         bitmap = futureBitmap
                     }
                 } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             }
             onDispose { job.cancel() }
@@ -559,6 +560,7 @@ class MediaLibraryFragment : Fragment() {
             )
         }
     }
+
 
 
     @Composable
