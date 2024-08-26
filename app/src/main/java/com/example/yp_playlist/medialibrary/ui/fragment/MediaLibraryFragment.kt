@@ -2,6 +2,7 @@ package com.example.yp_playlist.medialibrary.ui.fragment
 
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
@@ -16,9 +18,13 @@ import com.example.yp_playlist.R
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
@@ -50,15 +56,19 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.yp_playlist.domain.Track
 import com.example.yp_playlist.medialibrary.favourite.ui.models.FavouriteTracksState
 import com.example.yp_playlist.medialibrary.favourite.ui.viewmodel.FavouriteTracksViewModel
+import com.example.yp_playlist.medialibrary.playlists.domain.models.Playlist
+import com.example.yp_playlist.medialibrary.playlists.ui.models.PlaylistsScreenState
+import com.example.yp_playlist.medialibrary.playlists.ui.viewmodel.PlaylistsViewModel
 import com.example.yp_playlist.presentation.media.MediaFragment
 import com.example.yp_playlist.settings.ui.SettingsViewModel
 import com.example.yp_playlist.settings.ui.YourAppTheme
@@ -73,6 +83,7 @@ import java.util.Locale
 class MediaLibraryFragment : Fragment() {
 
     private val favouriteTracksViewModel by viewModel<FavouriteTracksViewModel>()
+    private val playlistsViewModel by viewModel<PlaylistsViewModel>()
     private val settingsViewModel by viewModel<SettingsViewModel>()
 
     override fun onCreateView(
@@ -84,6 +95,7 @@ class MediaLibraryFragment : Fragment() {
             setContent {
                 MediaLibraryScreen(
                     settingsViewModel = settingsViewModel,
+                    favouriteTracksViewModel = favouriteTracksViewModel,
                     onTrackClick = { track ->
                         findNavController().navigate(
                             R.id.action_mediaLibraryFragment_to_playerFragment,
@@ -95,11 +107,11 @@ class MediaLibraryFragment : Fragment() {
         }
     }
 
-
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun MediaLibraryScreen(
         settingsViewModel: SettingsViewModel,
+        favouriteTracksViewModel: FavouriteTracksViewModel,
         onTrackClick: (Track) -> Unit
     ) {
         val tabs = listOf(
@@ -188,13 +200,22 @@ class MediaLibraryFragment : Fragment() {
                             onTrackClick = onTrackClick,
                             darkThemeEnabled = darkThemeEnabled,
                         )
-                        1 -> PlaylistScreen()
+
+                        1 -> PlaylistScreen(
+                            playlistsViewModel = playlistsViewModel,
+                            onPlaylistClick = { playlist ->
+                                playlistsViewModel.saveCurrentPlaylistId(playlist.id)
+                                findNavController().navigate(R.id.action_mediaLibraryFragment_to_openPlaylistFragment)
+                            },
+                            onNewPlaylistClick = {
+                                findNavController().navigate(R.id.newPlaylistFragment)
+                            }
+                        )
                     }
                 }
             }
         }
     }
-
 
 
     @Composable
@@ -364,48 +385,66 @@ class MediaLibraryFragment : Fragment() {
 
 
     @Composable
-    fun PlaylistScreen() {
+    fun PlaylistScreen(
+        playlistsViewModel: PlaylistsViewModel,
+        onPlaylistClick: (Playlist) -> Unit,
+        onNewPlaylistClick: () -> Unit
+    ) {
+        val state by playlistsViewModel.stateLiveData.observeAsState(PlaylistsScreenState.Empty)
+
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp, bottom = 8.dp, start = 4.dp, end = 4.dp)
-                .clickable { TODO() }
-                .background(MaterialTheme.colors.background)
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
         ) {
-            Card(
-                shape = RoundedCornerShape(8.dp),
-                elevation = 0.dp,
-                modifier = Modifier.wrapContentSize()
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.placeholder),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(160.dp)
-                        .background(MaterialTheme.colors.background)
-                )
-            }
 
-            Text(
-                text = stringResource(id = R.string.name_playlist),
-                color = MaterialTheme.colors.onSurface,
-                fontSize = 12.sp,
-                maxLines = 1,
-                modifier = Modifier
-                    .padding(top = 4.dp)
+               AddPlayListButton(
+                darkThemeEnabled = isSystemInDarkTheme(),
+                onNewPlaylistClick = onNewPlaylistClick
             )
+        when (state) {
+            is PlaylistsScreenState.Filled -> {
+                val playlists = (state as PlaylistsScreenState.Filled).playlists
+                PlaylistsGrid(playlists = playlists, onPlaylistClick = onPlaylistClick)
+            }
+            PlaylistsScreenState.Empty -> {
+                NotCreatePlaylist(darkThemeEnabled = isSystemInDarkTheme())
+            }
+        }
+            }
+    }
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
+    @Composable
+    fun AddPlayListButton(
+        darkThemeEnabled: Boolean,
+        onNewPlaylistClick: () -> Unit
+    ) {
+        val backgroundColor = if (darkThemeEnabled) Color.White else Color.Black
+        val textColor = if (darkThemeEnabled) Color.Black else Color.White
+        val fontFamily = FontFamily(Font(R.font.ys_display_medium))
+
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Button(
+                onClick = onNewPlaylistClick,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = backgroundColor,
+                    contentColor = textColor
+                ),
+                shape = RoundedCornerShape(50.dp),
                 modifier = Modifier
-                    .padding(1.dp)
+                    .wrapContentWidth()
+                    .height(56.dp)
+                    .wrapContentHeight()
+                    .padding(top = 8.dp)
             ) {
                 Text(
-                    text = stringResource(id = R.string.count_tracks),
-                    color = MaterialTheme.colors.onSurface,
-                    fontSize = 12.sp,
-                    maxLines = 1
+                    text = stringResource(id = R.string.newPlaylist),
+                    fontFamily = fontFamily,
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Center
                 )
             }
         }
@@ -413,10 +452,144 @@ class MediaLibraryFragment : Fragment() {
 
 
 
-    @Preview
     @Composable
-    fun Preview() {
-        PlaylistScreen()
+    fun PlaylistsGrid(
+        playlists: List<Playlist>,
+        onPlaylistClick: (Playlist) -> Unit
+    ) {
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            contentPadding = PaddingValues(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(playlists.size) { index ->
+                PlaylistItem(
+                    playlist = playlists[index],
+                    onClick = { onPlaylistClick(playlists[index]) }
+                )
+            }
+        }
+    }
+
+    @Composable
+    fun PlaylistItem(
+        playlist: Playlist,
+        onClick: () -> Unit
+    ) {
+        val context = LocalContext.current
+        var bitmap by remember { mutableStateOf<android.graphics.Bitmap?>(null) }
+        val placeholder = painterResource(id = R.drawable.placeholder)
+
+        DisposableEffect(playlist.imageUri) {
+            val job = CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val futureBitmap = playlist.imageUri?.let { uri ->
+                        Glide.with(context)
+                            .asBitmap()
+                            .load(uri)
+                            .submit()
+                            .get()
+                    }
+                    withContext(Dispatchers.Main) {
+                        bitmap = futureBitmap
+                    }
+                } catch (e: Exception) {
+                }
+            }
+            onDispose { job.cancel() }
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onClick() }
+                .padding(4.dp)
+                .background(MaterialTheme.colors.background)
+        ) {
+            Card(
+                shape = RoundedCornerShape(8.dp),
+                elevation = 0.dp,
+                modifier = Modifier
+                    .aspectRatio(1f)
+                    .fillMaxWidth()
+            ) {
+                if (bitmap != null) {
+                    Image(
+                        bitmap = bitmap!!.asImageBitmap(),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colors.background)
+                    )
+                } else {
+                    Image(
+                        painter = placeholder,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+            }
+
+            Text(
+                text = playlist.title,
+                color = MaterialTheme.colors.onSurface,
+                fontSize = 12.sp,
+                maxLines = 1,
+                modifier = Modifier
+                    .padding(top = 4.dp)
+            )
+
+            Text(
+                text = LocalContext.current.resources.getQuantityString(
+                    R.plurals.tracks, playlist.size ?: 0, playlist.size ?: 0
+                ),
+                color = MaterialTheme.colors.onSurface,
+                fontSize = 12.sp,
+                maxLines = 1
+            )
+        }
+    }
+
+
+    @Composable
+    fun NotCreatePlaylist(
+        darkThemeEnabled: Boolean
+    ) {
+        val textColor = if (darkThemeEnabled) MaterialTheme.colors.onSecondary else Color.Black
+        val fontFamily = FontFamily(Font(R.font.ys_display_medium))
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Icon(
+                painter = painterResource(id = R.drawable.error_no_data),
+                contentDescription = null,
+                tint = Color.Unspecified
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = stringResource(id = R.string.not_create_Playlist),
+                color = textColor,
+                fontSize = 19.sp,
+                fontFamily = fontFamily,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .wrapContentHeight()
+                    .align(Alignment.CenterHorizontally)
+            )
+        }
     }
 
 }
+
+
