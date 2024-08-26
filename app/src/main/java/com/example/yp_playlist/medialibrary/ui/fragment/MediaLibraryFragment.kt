@@ -490,19 +490,28 @@ class MediaLibraryFragment : Fragment() {
 
         DisposableEffect(playlist.imageUri) {
             val job = CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    val futureBitmap = playlist.imageUri?.let { uri ->
-                        Glide.with(context)
-                            .asBitmap()
-                            .load(uri)
-                            .submit()
-                            .get()
+                if (playlist.imageUri != null) {
+                    try {
+                        val futureBitmap = playlist.imageUri?.let { uri ->
+                            Glide.with(context)
+                                .asBitmap()
+                                .load(uri)
+                                .submit()
+                                .get()
+                        }
+                        withContext(Dispatchers.Main) {
+                            bitmap = futureBitmap
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        withContext(Dispatchers.Main) {
+                            bitmap = null
+                        }
                     }
+                } else {
                     withContext(Dispatchers.Main) {
-                        bitmap = futureBitmap
+                        bitmap = null
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
                 }
             }
             onDispose { job.cancel() }
@@ -560,7 +569,6 @@ class MediaLibraryFragment : Fragment() {
             )
         }
     }
-
 
 
     @Composable
