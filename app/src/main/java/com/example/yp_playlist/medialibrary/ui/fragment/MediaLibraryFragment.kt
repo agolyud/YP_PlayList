@@ -2,7 +2,6 @@ package com.example.yp_playlist.medialibrary.ui.fragment
 
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -106,6 +105,13 @@ class MediaLibraryFragment : Fragment() {
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        favouriteTracksViewModel.getFavouriteTracks()
+        playlistsViewModel.fillData()
+    }
+
 
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
@@ -248,9 +254,9 @@ class MediaLibraryFragment : Fragment() {
                     Text(text = stringResource(id = R.string.your_media_isEmpty))
                 }
             }
-
         }
     }
+
 
 
     @Composable
