@@ -14,8 +14,7 @@
     <fragment
         android:id="@+id/mediaLibraryFragment"
         android:name="com.example.yp_playlist.medialibrary.ui.fragment.MediaLibraryFragment"
-        android:label="fragment_media_library"
-        tools:layout="@layout/fragment_media" >
+        android:label="fragment_media_library">
         <action
             android:id="@+id/action_mediaLibraryFragment_to_newPlaylistFragment"
             app:destination="@id/newPlaylistFragment" />
