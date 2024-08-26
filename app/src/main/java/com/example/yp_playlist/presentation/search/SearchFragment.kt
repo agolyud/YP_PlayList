@@ -470,29 +470,33 @@ fun SearchResultItem(
 fun NoDataPlaceholder(
     darkThemeEnabled: Boolean
 ) {
-    val textColor = if (darkThemeEnabled) Color.White else Color.Black
+    val textColor = if (darkThemeEnabled) MaterialTheme.colors.onSecondary else Color.Black
     val fontFamily = FontFamily(Font(R.font.ys_display_medium))
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
+            .padding(86.dp),
+
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Icon(
             painter = painterResource(id = R.drawable.error_no_data),
             contentDescription = null,
-            modifier = Modifier.size(64.dp),
             tint = Color.Unspecified
         )
+        Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = stringResource(id = R.string.no_data),
             color = textColor,
-            fontSize = 18.sp,
+            fontSize = 19.sp,
             fontFamily = fontFamily,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 8.dp)
+            modifier = Modifier
+                .wrapContentWidth()
+                .wrapContentHeight()
+                .align(Alignment.CenterHorizontally)
         )
     }
 }
@@ -575,9 +579,10 @@ fun ClearHistoryButton(
             ),
             shape = RoundedCornerShape(50.dp),
             modifier = Modifier
-                .padding(16.dp)
                 .wrapContentWidth()
-                .height(IntrinsicSize.Min)
+                .height(56.dp)
+                .wrapContentHeight()
+                .padding(top = 8.dp)
         ) {
             Text(
                 text = stringResource(id = R.string.clear_history),
