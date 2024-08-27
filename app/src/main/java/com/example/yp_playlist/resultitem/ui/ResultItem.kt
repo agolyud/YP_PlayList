@@ -7,12 +7,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -39,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.Glide
 import com.example.yp_playlist.R
+import com.example.yp_playlist.medialibrary.playlists.domain.models.Playlist
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -169,6 +173,97 @@ fun ResultItem(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .size(14.dp)
+        )
+    }
+}
+
+@Composable
+fun PlaylistItem(
+    playlist: Playlist,
+    onClick: () -> Unit
+) {
+    val context = LocalContext.current
+    var bitmap by remember { mutableStateOf<android.graphics.Bitmap?>(null) }
+    val placeholder = painterResource(id = R.drawable.placeholder)
+
+    DisposableEffect(playlist.imageUri) {
+        val job = CoroutineScope(Dispatchers.IO).launch {
+            if (playlist.imageUri != null) {
+                try {
+                    val futureBitmap = playlist.imageUri?.let { uri ->
+                        Glide.with(context)
+                            .asBitmap()
+                            .load(uri)
+                            .submit()
+                            .get()
+                    }
+                    withContext(Dispatchers.Main) {
+                        bitmap = futureBitmap
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    withContext(Dispatchers.Main) {
+                        bitmap = null
+                    }
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    bitmap = null
+                }
+            }
+        }
+        onDispose { job.cancel() }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(4.dp)
+            .background(MaterialTheme.colors.background)
+    ) {
+        Card(
+            shape = RoundedCornerShape(8.dp),
+            elevation = 0.dp,
+            modifier = Modifier
+                .aspectRatio(1f)
+                .fillMaxWidth()
+        ) {
+            if (bitmap != null) {
+                Image(
+                    bitmap = bitmap!!.asImageBitmap(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colors.background)
+                )
+            } else {
+                Image(
+                    painter = placeholder,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        }
+
+        Text(
+            text = playlist.title,
+            color = MaterialTheme.colors.onSurface,
+            fontSize = 12.sp,
+            maxLines = 1,
+            modifier = Modifier
+                .padding(top = 4.dp)
+        )
+
+        Text(
+            text = LocalContext.current.resources.getQuantityString(
+                R.plurals.tracks, playlist.size ?: 0, playlist.size ?: 0
+            ),
+            color = MaterialTheme.colors.onSurface,
+            fontSize = 12.sp,
+            maxLines = 1
         )
     }
 }
