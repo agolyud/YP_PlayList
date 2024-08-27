@@ -87,6 +87,7 @@ fun SettingsScreenContent(
 
             SettingsItem(
                 text = stringResource(id = R.string.black_theme),
+                onClick = {onThemeSwitch(!darkThemeEnabled)},
                 trailingContent = {
                     Switch(
                         checked = darkThemeEnabled,
@@ -98,66 +99,69 @@ fun SettingsScreenContent(
 
             SettingsItem(
                 text = stringResource(id = R.string.share_application),
+                onClick = onShareApp,
                 trailingContent = {
-                    IconButton(onClick = onShareApp) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.share_app),
-                            contentDescription = null,
-                            tint = MaterialTheme.colors.onBackground
-                        )
-                    }
+                    Icon(
+                        painter = painterResource(id = R.drawable.share_app),
+                        contentDescription = null,
+                        tint = MaterialTheme.colors.onBackground
+                    )
                 }
             )
 
             SettingsItem(
                 text = stringResource(id = R.string.write_to_support),
+                onClick = onSupportEmail,
                 trailingContent = {
-                    IconButton(onClick = onSupportEmail) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.write_to_support),
-                            contentDescription = null,
-                            tint = MaterialTheme.colors.onBackground
-                        )
-                    }
+                    Icon(
+                        painter = painterResource(id = R.drawable.write_to_support),
+                        contentDescription = null,
+                        tint = MaterialTheme.colors.onBackground
+                    )
                 }
             )
 
             SettingsItem(
                 text = stringResource(id = R.string.license_agreement),
+                onClick = onOpenAgreement,
                 trailingContent = {
-                    IconButton(onClick = onOpenAgreement) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.terms_of_use),
-                            contentDescription = null,
-                            tint = MaterialTheme.colors.onBackground
-                        )
-                    }
+                    Icon(
+                        painter = painterResource(id = R.drawable.terms_of_use),
+                        contentDescription = null,
+                        tint = MaterialTheme.colors.onBackground
+                    )
                 }
             )
         }
     }
 }
 
+
 @Composable
 fun SettingsItem(
     text: String,
+    onClick: () -> Unit,
     trailingContent: @Composable () -> Unit
 ) {
-    Row(
+    TextButton(
+        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 21.dp),
-        verticalAlignment = Alignment.CenterVertically
+        contentPadding = PaddingValues(start = 16.dp)
     ) {
-        Text(
-            text = text,
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = 16.dp),
-            style = MaterialTheme.typography.body1,
-            color = MaterialTheme.colors.onBackground
-        )
-        trailingContent()
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = text,
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.body1,
+                color = MaterialTheme.colors.onBackground
+            )
+            trailingContent()
+        }
     }
 }
 
