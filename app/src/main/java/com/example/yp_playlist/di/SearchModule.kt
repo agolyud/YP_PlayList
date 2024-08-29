@@ -4,7 +4,7 @@ import android.content.Context
 import com.example.yp_playlist.App
 import com.example.yp_playlist.data.history.SearchHistory
 import com.example.yp_playlist.data.history.SearchHistoryImpl
-import com.example.yp_playlist.data.network.ITunesApi
+import com.example.yp_playlist.data.api.ITunesApi
 import com.example.yp_playlist.data.network.NetworkClient
 import com.example.yp_playlist.data.network.NetworkClientImpl
 import com.example.yp_playlist.domain.interactors.tracks.TracksInteractor

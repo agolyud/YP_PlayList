@@ -1,5 +1,6 @@
 package com.example.yp_playlist.medialibrary.playlists.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,6 +17,7 @@ class PlaylistsViewModel(private val playlistInteractor: PlaylistInteractor): Vi
 
     init {
         _stateLiveData.postValue(PlaylistsScreenState.Empty)
+        fillData()
     }
 
     fun fillData() {
@@ -35,8 +37,10 @@ class PlaylistsViewModel(private val playlistInteractor: PlaylistInteractor): Vi
     private fun processResult(playlists: List<Playlist>) {
         if (playlists.isEmpty()) {
             _stateLiveData.postValue(PlaylistsScreenState.Empty)
+            Log.d("PlaylistsViewModel", "No playlists found")
         } else {
             _stateLiveData.postValue(PlaylistsScreenState.Filled(playlists))
+            Log.d("PlaylistsViewModel", "Playlists found: ${playlists.size}")
         }
     }
 }

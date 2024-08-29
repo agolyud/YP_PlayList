@@ -9,14 +9,12 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.yp_playlist.settings.ui.SettingsFragment"
-        android:label="fragment_settings"
-        tools:layout="@layout/fragment_settings" />
+        android:label="fragment_settings" />
 
     <fragment
         android:id="@+id/mediaLibraryFragment"
         android:name="com.example.yp_playlist.medialibrary.ui.fragment.MediaLibraryFragment"
-        android:label="fragment_media_library"
-        tools:layout="@layout/fragment_media" >
+        android:label="fragment_media_library">
         <action
             android:id="@+id/action_mediaLibraryFragment_to_newPlaylistFragment"
             app:destination="@id/newPlaylistFragment" />
@@ -50,8 +48,7 @@
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.example.yp_playlist.presentation.search.SearchFragment"
-        android:label="fragment_settings"
-        tools:layout="@layout/fragment_search">
+        android:label="fragment_settings">
 
     <action
         android:id="@+id/searchFragment_to_playerFragment"
